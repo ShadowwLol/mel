@@ -14,23 +14,6 @@ int toggleFullscreen(Window window);
 
 static Window window;
 
-// Vertices coordinates
-GLfloat vertices[] =
-{ //     COORDINATES     /        COLORS      /   TexCoord  //
-	-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,	0.0f, 0.0f, // Lower left corner
-	-0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,	0.0f, 1.0f, // Upper left corner
-	 0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,	1.0f, 1.0f, // Upper right corner
-	 0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,	1.0f, 0.0f  // Lower right corner
-};
-
-// Indices for vertices order
-GLuint indices[] =
-{
-	0, 2, 1, // Upper triangle
-	0, 3, 2 // Lower triangle
-};
-
-
 #if __WIN32
 #include <windows.h>
 int main(void){
@@ -100,34 +83,27 @@ int main(void){
 
     /* Images  */
     stbi_set_flip_vertically_on_load(true);
-    Image crate = img_load_image("resources/images/container.jpg");
+    Image crate = img_load_image("resources/images/container.jpg", GL_RGB);
+
+    GLuint VAO, VBO, EBO;
+    crate.position[0] = logical_width(100);
+    crate.position[1] = logical_height(100);
+    crate.size[0] = logical_width(crate.width);
+    crate.size[1] = logical_height(crate.height);
+    printf("sz : %lfx%lf\n", ((float)crate.width/(float)window.mode->width), ((float)crate.height/(float)window.mode->height));
+    /*
+    1 = 1280
+    ? = width
+    */
+    image_init(&VAO, &VBO, &EBO, crate.position, crate.size);
 
     Shader sprite_shader;
     sprite_shader.vertex_shader = "resources/shaders/image.vert";
     sprite_shader.fragment_shader = "resources/shaders/image.frag";
     sprite_shader.shader_program = create_shader_program(sprite_shader);
 
-    GLuint VAO, VBO, EBO;
-    glBindVertexArray(VAO);
-    glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), NULL);
-	glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glUseProgram(sprite_shader.shader_program);
-    glUniform1i(glGetUniformLocation(sprite_shader.shader_program, "tex0"), 0);
+    //glUniform1i(glGetUniformLocation(sprite_shader.shader_program, "tex0"), 0);
+    
 
     /* Main loop */
     while (!glfwWindowShouldClose(window.window)){
@@ -137,11 +113,12 @@ int main(void){
         glClear(GL_COLOR_BUFFER_BIT);
         
         /* Drawing */
-        glUseProgram(sprite_shader.shader_program);
-        glUniform1f(glGetUniformLocation(sprite_shader.shader_program, "scale"), 0.5f);
         glBindTexture(GL_TEXTURE_2D, crate.texture);
+        glUseProgram(sprite_shader.shader_program);
+        glUniform1i(glGetUniformLocation(sprite_shader.shader_program, "texture1"), 0);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         /* * * * * */
         
         glfwSwapBuffers(window.window);
