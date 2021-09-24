@@ -14,6 +14,19 @@ typedef struct{
 } Window;
 
 typedef struct {
+    GLint x;
+    GLint y;
+	GLuint w;
+	GLuint h;
+	GLfloat R;
+	GLfloat G;
+	GLfloat B;
+	GLfloat rotation;
+    vec3 color_mod;
+    GLfloat vertices[32];
+} Rect;
+
+typedef struct {
     const GLchar * vertex_shader;
     const GLchar * fragment_shader;
     GLuint shader_program;

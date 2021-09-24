@@ -3,61 +3,126 @@
 #include <cglm/affine.h>
 #include <cglm/util.h>
 
-#if __WIN32
-Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GLenum channels){
-#else
-Image image_load_image(GLchar * path, GLenum channels){
-#endif
-    Image img;
-    glGenTextures(1, &img.texture);
-    glBindTexture(GL_TEXTURE_2D, img.texture);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    GLfloat border_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
+#define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
+#define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
+#define DEBUG fprintf(stdout, "[DEBUG] LINE: [%d] FUNCTION : [%s]\n", __LINE__, __func__);
 
-    img.path = path;
-    img.data = stbi_load(img.path, &img.width, &img.height, &img.channels, 0);
-    if (img.data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, channels, GL_UNSIGNED_BYTE, img.data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", img.path);
-    }else{
-        log_log(LOG_ERROR, "Failed loading image : {%s}", img.path);
-    }
-    stbi_image_free(img.data);
-    return img;
+#if __WIN32
+Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLuint width, GLuint height, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
+#else
+Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLuint width, GLuint height, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
+#endif
+	if (!width || !height){
+    	Image img = {
+			.path = path,
+    		.data = stbi_load(img.path, &img.width, &img.height, &img.channels, 0),
+			.rect.x = x,
+			.rect.y = y,
+			.rect.R = R,
+			.rect.G = G,
+			.rect.B = B,
+			.rect.rotation = rotation,
+    		.rect.vertices = {
+    		    // positions                        // colors // texture coords
+    		    x+img.width, y,              0.0f,  R, G, B,  1.0f, 1.0f, // top right
+    		    x+img.width, y-img.height,   0.0f,  R, G, B,  1.0f, 0.0f, // bottom right
+    		    x,           y-img.height,   0.0f,  R, G, B,  0.0f, 0.0f, // bottom left
+    		    x,           y,              0.0f,  R, G, B,  0.0f, 1.0f  // top left <-- anchor point
+			},
+			.indices = {
+    		    0, 1, 3, // first triangle
+    		    1, 2, 3  // second triangle
+    		},
+			.image_shader.vertex_shader = IMAGE_VERT_SHADER_PATH,
+			.image_shader.fragment_shader = IMAGE_FRAG_SHADER_PATH,
+			.image_shader.shader_program = shader_create_shader_program(img.image_shader)
+		};
+    	glGenTextures(1, &img.texture);
+    	glBindTexture(GL_TEXTURE_2D, img.texture);
+
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    	GLfloat border_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
+
+    	if (img.data){
+    	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.width, img.height, 0, channels, GL_UNSIGNED_BYTE, img.data);
+    	    glGenerateMipmap(GL_TEXTURE_2D);
+    	    glBindTexture(GL_TEXTURE_2D, 0);
+    	    log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", img.path);
+    	}else{
+    	    log_log(LOG_ERROR, "Failed loading image : {%s}", img.path);
+    	}
+    	stbi_image_free(img.data);
+    	return img;
+	}else{
+    	Image img = {
+			.path = path,
+    		.data = stbi_load(img.path, &img.width, &img.height, &img.channels, 0),
+			.rect.x = x,
+			.rect.y = y,
+			.rect.R = R,
+			.rect.G = G,
+			.rect.B = B,
+			.rect.rotation = rotation,
+    		.rect.vertices = {
+    		    // positions                        // colors // texture coords
+    		    x+img.width, y,              0.0f,  R, G, B,  1.0f, 1.0f, // top right
+    		    x+img.width, y-img.height,   0.0f,  R, G, B,  1.0f, 0.0f, // bottom right
+    		    x,           y-img.height,   0.0f,  R, G, B,  0.0f, 0.0f, // bottom left
+    		    x,           y,              0.0f,  R, G, B,  0.0f, 1.0f  // top left <-- anchor point
+			},
+			.indices = {
+    		    0, 1, 3, // first triangle
+    		    1, 2, 3  // second triangle
+    		},
+			.image_shader.vertex_shader = IMAGE_VERT_SHADER_PATH,
+			.image_shader.fragment_shader = IMAGE_FRAG_SHADER_PATH,
+			.image_shader.shader_program = shader_create_shader_program(img.image_shader)
+		};
+    	glGenTextures(1, &img.texture);
+    	glBindTexture(GL_TEXTURE_2D, img.texture);
+
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    	GLfloat border_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+    	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
+
+    	if (img.data){
+    	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.width, img.height, 0, channels, GL_UNSIGNED_BYTE, img.data);
+    	    glGenerateMipmap(GL_TEXTURE_2D);
+    	    glBindTexture(GL_TEXTURE_2D, 0);
+    	    log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", img.path);
+    	}else{
+    	    log_log(LOG_ERROR, "Failed loading image : {%s}", img.path);
+    	}
+    	stbi_image_free(img.data);
+    	return img;
+	}
 }
 
+/*
+void image_draw_image(Image img, mat4 projection){
+	if (img.VAO == 0){
+    	glGenVertexArrays(1, &img.VAO);
+    	glBindVertexArray(img.VAO);
+	}
+	if (img.VBO == 0){
+    	glGenBuffers(1, &img.VBO);
+    	glBindBuffer(GL_ARRAY_BUFFER, img.VBO);
+	}
 
-void image_init(GLuint * VAO, GLuint * VBO, GLuint * EBO, vec2 pos, vec2 size){
-    GLfloat vertices[] = {
-        // positions                             // colors           // texture coords
-        pos[0]+size[0],  pos[1],         0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-        pos[0]+size[0],  pos[1]-size[1], 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        pos[0],          pos[1]-size[1], 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        pos[0],          pos[1],         0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left <-- anchor point
-    };
-    GLuint indices[] = {  
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-    glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
-    glGenBuffers(1, EBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(img.vertices), img.vertices, GL_STATIC_DRAW);
 
-    glBindVertexArray(*VAO);
+	if (img.EBO == 0){
+    	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, img.EBO);
+	}
 
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(img.indices), img.indices, GL_STATIC_DRAW);
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -67,47 +132,37 @@ void image_init(GLuint * VAO, GLuint * VBO, GLuint * EBO, vec2 pos, vec2 size){
     // texture coord attribute
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+	DEBUG;
+	bind_image_texture(GL_TEXTURE_2D, img);
+	DEBUG;
+	glUseProgram(img.image_shader.shader_program);
+	DEBUG;
+	glUniform1i(glGetUniformLocation(img.image_shader.shader_program, "texture1"), 0);
+	DEBUG;
+	glUniformMatrix4fv(glGetUniformLocation(img.image_shader.shader_program, "projection"), 1, GL_FALSE, (const GLfloat *)projection);
+	DEBUG;
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	DEBUG;
 }
+*/
 
-#define DEBUG fprintf(stdout, "[DEBUG] LINE: [%d] FUNCTION : [%s]\n", __LINE__, __func__);
-
-
-void draw_image(GLuint * VAO, GLuint * shader_program, GLuint * texture, vec2 position, vec2 size, float rotate, vec3 color){
-    // prepare transformations
-    glUseProgram(*shader_program);
-    mat4 model = {1.0f, 1.0f, 1.0f, 1.0f};
-
-    vec3 model_pos = {position[0], position[1], 0.0f};
-    DEBUG;
-
-    glm_translate(model, model_pos);
-
-    vec3 new_model_pos = {0.5f * size[0], 0.5f * size[1], 0.0f};
-    glm_translate(model, new_model_pos);
-
-    vec3 model_rotation = {0.0f, 0.0f, 1.0f};
-    glm_rotate(model, glm_rad(rotate), model_rotation);
-    DEBUG;
-    
-    vec3 new_new_model_pos = {-0.5f * size[0], -0.5f * size[1], 0.0f};
-    glm_translate(model, new_new_model_pos);
-
-    vec3 model_scale = {size[0], size[1], 1.0f};
-    glm_scale(model, model_scale);
-    DEBUG;
-
-    glUniformMatrix4fv(glGetUniformLocation(*shader_program, "model"), 1, GL_FALSE, (const GLfloat *)&model);
-    DEBUG;
-    glUniform3fv(glGetUniformLocation(*shader_program, "spriteColor"), 1, (const GLfloat *)&color);
-    DEBUG;
-  
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, *texture);
-
-    glBindVertexArray(*VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    DEBUG;
-    glBindVertexArray(0);
-    DEBUG;
-
+Rect image_update_image(Image source){
+	Rect img = {
+		.x = source.rect.x,
+		.y = source.rect.y,
+		.w = source.width,
+		.h = source.height,
+		.R = source.rect.R,
+		.G = source.rect.G,
+		.B = source.rect.B,
+		.rotation = source.rect.rotation,
+    	.vertices = {
+    	    // positions                                                    // colors                                     // texture coords
+    	    source.rect.x+source.width, source.rect.y,               0.0f,  source.rect.R, source.rect.G, source.rect.B,  1.0f, 1.0f, // top right
+    	    source.rect.x+source.width, source.rect.y-source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  1.0f, 0.0f, // bottom right
+    	    source.rect.x,              source.rect.y-source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 0.0f, // bottom left
+    	    source.rect.x,              source.rect.y,               0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 1.0f  // top left <-- anchor point
+		}
+	};
+	return img;
 }
