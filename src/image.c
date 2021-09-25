@@ -12,6 +12,7 @@ Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GL
 #else
 Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLuint width, GLuint height, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
 #endif
+	stbi_set_flip_vertically_on_load(true);
 	if (!width || !height){
     	Image img = {
 			.path = path,
@@ -101,6 +102,7 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
     	    log_log(LOG_ERROR, "Failed loading image : {%s}", img.path);
     	}
     	stbi_image_free(img.data);
+		glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, img.rect.projection);
     	return img;
 	}
 }
@@ -158,10 +160,10 @@ Rect image_update_image(Image source){
 		.rotation = source.rect.rotation,
     	.vertices = {
     	    // positions                                                    // colors                                     // texture coords
+    	    source.rect.x,              source.rect.y+source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 0.0f, // bottom left
+    	    source.rect.x,              source.rect.y,               0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 1.0f,  // top left <-- anchor point
     	    source.rect.x+source.width, source.rect.y,               0.0f,  source.rect.R, source.rect.G, source.rect.B,  1.0f, 1.0f, // top right
-    	    source.rect.x+source.width, source.rect.y-source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  1.0f, 0.0f, // bottom right
-    	    source.rect.x,              source.rect.y-source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 0.0f, // bottom left
-    	    source.rect.x,              source.rect.y,               0.0f,  source.rect.R, source.rect.G, source.rect.B,  0.0f, 1.0f  // top left <-- anchor point
+    	    source.rect.x+source.width, source.rect.y+source.height, 0.0f,  source.rect.R, source.rect.G, source.rect.B,  1.0f, 0.0f, // bottom right
 		}
 	};
 	return img;

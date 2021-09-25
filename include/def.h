@@ -3,10 +3,16 @@
 
 #include "../include/opengl.h"
 #include <GLFW/glfw3.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#define WINDOW_WIDTH (1280)
-#define WINDOW_HEIGHT (720)
+#define WINDOW_WIDTH (1280.0f)
+#define WINDOW_HEIGHT (720.0f)
 #define WINDOW_TITLE "Game"
+
+#define ASPECT_RATIO_W (16.0f)
+#define ASPECT_RATIO_H (9.0f)
+#define ASPECT_RATIO (ASPECT_RATIO_W/ASPECT_RATIO_H)
 
 typedef struct{
     GLFWwindow * window;
@@ -23,6 +29,7 @@ typedef struct {
 	GLfloat B;
 	GLfloat rotation;
     vec3 color_mod;
+	mat4 projection;
     GLfloat vertices[32];
 } Rect;
 
@@ -38,8 +45,8 @@ typedef struct {
 } ivec2;
 
 typedef struct {
-    unsigned long int w;
-    unsigned long int h;
+    uint32_t w;
+    uint32_t h;
 } Size;
 
 #endif
