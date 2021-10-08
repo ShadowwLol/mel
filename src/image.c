@@ -1,11 +1,23 @@
-#include "../include/logs.h"
-#include "../include/image.h"
+#include "../include/MEL_logs.h"
+#include "../include/MEL_image.h"
 #include <cglm/affine.h>
 #include <cglm/util.h>
 
 #define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
-#define DEBUG fprintf(stdout, "[DEBUG] LINE: [%d] FUNCTION : [%s]\n", __LINE__, __func__);
+
+int8_t MEL_image_cmp(Image i, Image j){
+	/* Position*/
+	if (i.rect.x == j.rect.x && i.rect.y == j.rect.y &&\
+	/* Color*/\
+	i.rect.R == j.rect.R && i.rect.G == j.rect.G && i.rect.B == i.rect.B &&\
+	/* Rotation */\
+	i.rect.rotation == j.rect.rotation){
+		return 0;
+	}else{
+		return 1;
+	}
+}
 
 #if __WIN32
 Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLuint width, GLuint height, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
@@ -15,6 +27,7 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
 	stbi_set_flip_vertically_on_load(true);
 	if (!width || !height){
     	Image img = {
+			.changed = MEL_TRUE,
 			.path = path,
     		.data = stbi_load(img.path, &img.width, &img.height, &img.channels, 0),
 			.rect.x = x,
@@ -148,8 +161,8 @@ void image_draw_image(Image img, mat4 projection){
 }
 */
 
-Rect image_update_image(Image source){
-	Rect img = {
+struct rect image_update_image(Image source){
+	struct rect img = {
 		.x = source.rect.x,
 		.y = source.rect.y,
 		.w = source.width,

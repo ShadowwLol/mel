@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include "../include/logs.h"
+#include "../include/MEL_logs.h"
 
 #if __WIN32
 #include <windows.h>

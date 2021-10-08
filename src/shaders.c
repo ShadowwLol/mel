@@ -1,17 +1,21 @@
-#include "../include/opengl.h"
-#include "../include/def.h"
-#include "../include/logs.h"
+#include "../include/MEL_opengl.h"
+#include "../include/MEL_def.h"
+#include "../include/MEL_logs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-GLchar * read_from_file(const GLchar * path){
+GLchar * read_from_file(const GLchar * restrict path){
     FILE * fp = fopen(path, "r");
     fseek(fp, 0L, SEEK_END);
     GLuint size_of_file = ftell(fp);
     fseek(fp, 0L, SEEK_SET);
 
     GLchar * file_contents = malloc(size_of_file);
-    if (file_contents){fread(file_contents, 1, size_of_file, fp);}
+    if (file_contents){
+		if (fread(file_contents, 1, size_of_file, fp) < 1){
+			log_log(LOG_ERROR, "Failed reading file : {%s}\n", path);
+		}
+	}
     fclose(fp);
     file_contents[size_of_file] = '\0';
     return file_contents;

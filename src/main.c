@@ -1,22 +1,20 @@
-#include "../include/opengl.h"
-#include "../include/io.h"
-#include "../include/def.h"
-#include "../include/shader.h"
+#include "../include/MEL_opengl.h"
+#include "../include/MEL_io.h"
+#include "../include/MEL_def.h"
+#include "../include/MEL_shader.h"
 #include <cglm/cam.h>
-#include "../include/logs.h"
-#include "../include/image.h"
+#include "../include/MEL_logs.h"
+#include "../include/MEL_image.h"
 
-#define DEBUG fprintf(stdout, "[DEBUG] LINE: [%d] FUNCTION : [%s]\n", __LINE__, __func__);
-
-void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void error_callback(int error, const char* description);
 void window_size_callback(GLFWwindow * window, int width, int height);
-int toggleFullscreen(Window window);
+int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-static Window window;
+static GLFWwindow * win;
+static GLFWvidmode* win_mode;
 static Image smiley;
-static int has_rotated = 0;
 
 #if __WIN32
 #include <windows.h>
@@ -46,9 +44,9 @@ int main(void){
 	/* * * * * * * * * * * */
 
 	/* Creating the window */
-	window.mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	window.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
-	if (!window.window){
+	win_mode = (GLFWvidmode *)glfwGetVideoMode(glfwGetPrimaryMonitor());
+	win = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
+	if (!win){
 		log_log(LOG_ERROR, "Failed creating window");
 		glfwTerminate();
 		return -1;
@@ -58,7 +56,7 @@ int main(void){
 	/* * * * * * * * * * * */
 
 	/* Make the window's context current */
-	glfwMakeContextCurrent(window.window);
+	glfwMakeContextCurrent(win);
 	/* * * * * * * * * * * * * * * * * * */
 
 	/* OPENGL configuration */
@@ -67,12 +65,13 @@ int main(void){
 
 	/* Setting callbacks */
 	glfwSetErrorCallback(error_callback);
-	glfwSetKeyCallback(window.window, key_callback);
-	glfwSetWindowSizeCallback(window.window, window_size_callback);
+	glfwSetKeyCallback(win, key_callback);
+	glfwSetWindowSizeCallback(win, window_size_callback);
 	//glfwSetWindowAspectRatio(window.window, 16, 9);
-	glfwSetWindowSizeLimits(window.window, (window.mode->width/2), (window.mode->height/2), window.mode->width, window.mode->height);
+	glfwSetWindowSizeLimits(win, (win_mode->width/2), (win_mode->height/2), win_mode->width, win_mode->height);
+	glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
 
-	glfwSetScrollCallback (window.window, scroll_callback);
+	glfwSetScrollCallback(win, scroll_callback);
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	/* * * * * * * * * * */
 
@@ -84,23 +83,21 @@ int main(void){
 	MEL_prepare_image(crate);
 	crate.width /= 2;
 	crate.height /= 2;
-	//crate.rect.x = 0;
-	//crate.rect.y = 0;
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	/* Main loop */
-	while (!glfwWindowShouldClose(window.window)){
+	while (!glfwWindowShouldClose(win)){
 		glfwPollEvents();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
-		MEL_update_image(crate);
+		//MEL_update_image(crate);
 		MEL_update_image(smiley);
 		/* * * * * */
 
-		glfwSwapBuffers(window.window);
+		glfwSwapBuffers(win);
 
 	}
 	/* * * * * * */
@@ -108,14 +105,14 @@ int main(void){
 	/* Terminating */
 	MEL_delete_image(smiley);
 	MEL_delete_image(crate);
-	glfwDestroyWindow(window.window);
+	glfwDestroyWindow(win);
 	glfwTerminate();
 	/* * * * * * * */
 
 	return 0;
 }
 
-void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods){
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	switch(action){
 		case GLFW_RELEASE:
 			switch(key){
@@ -125,9 +122,10 @@ void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods){
 					break;
 				case GLFW_KEY_F11:
 					/* Fullscreen the game */
-					toggleFullscreen(window);
+					toggleFullscreen(window, win_mode);
 					break;
 				case GLFW_KEY_SPACE:
+					MEL_MODIFY_IMAGE(smiley);
 					if (smiley.rect.R == 1.0f){
 						smiley.rect.R = 0.0f;
 					}else{
@@ -139,6 +137,7 @@ void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods){
 			}
 			break;
 		case GLFW_REPEAT:
+			MEL_MODIFY_IMAGE(smiley);
 			switch(key){
 				case GLFW_KEY_W:
 					smiley.rect.y -= 10;
@@ -153,14 +152,13 @@ void key_callback(GLFWwindow* win, int key, int scancode, int action, int mods){
 					smiley.rect.x += 10;
 					break;
 				case GLFW_KEY_RIGHT:
-					has_rotated = 1;
 					smiley.rect.rotation += 1.0f;
 					break;
 				case GLFW_KEY_LEFT:
-					has_rotated = 1;
 					smiley.rect.rotation -= 1.0f;
 					break;
 				default:
+					MEL_UNMODIFY_IMAGE(smiley);
 					break;
 			}
 		default:
@@ -173,6 +171,7 @@ void error_callback(int error, const char* description){
 }
 
 void window_size_callback(GLFWwindow * window, int width, int height){
+	/*
 	float aspectRatio = (float)width/(float)height;
 	printf("Window size %fx%f, aspect ratio: %f\n", WINDOW_WIDTH, WINDOW_HEIGHT, (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT);
 	if(aspectRatio != ASPECT_RATIO) {
@@ -184,10 +183,13 @@ void window_size_callback(GLFWwindow * window, int width, int height){
 	}
 	glViewport(0, 0, width, height);
 	printf("Setting window size to %dx%d, aspect ratio: %f\n", width, height, (float)width/(float)height);
+	*/
+	glViewport(0, 0, width, height);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	//printf("%lf, %lf", xoffset, yoffset);
+	MEL_MODIFY_IMAGE(smiley);
 	switch((int)yoffset){
 		case -1:
 			smiley.width -= 10;
@@ -198,6 +200,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 			smiley.height += 10;
 			break;
 		default:
+			MEL_UNMODIFY_IMAGE(smiley);
 			break;
 	}
 }
