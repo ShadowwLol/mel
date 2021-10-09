@@ -22,12 +22,12 @@ GLchar * read_from_file(const GLchar * restrict path){
 }
 
 #if __WIN32
-GLuint create_shader_program(HANDLE hConsole, WORD saved_attributes, Shader shader){
+GLuint create_shader_program(HANDLE hConsole, WORD saved_attributes, const char * vert_path, const char * frag_path){
 #else
-GLuint create_shader_program(Shader shader){
+GLuint create_shader_program(const char * vert_path, const char * frag_path){
 #endif
-	const GLchar * vertex_source = read_from_file(shader.vertex_shader);
-    const GLchar * fragment_source = read_from_file(shader.fragment_shader);
+	const GLchar * vertex_source = read_from_file(vert_path);
+    const GLchar * fragment_source = read_from_file(frag_path);
 
     /* Create vertex shader object and its reference */
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -39,11 +39,11 @@ GLuint create_shader_program(Shader shader){
 	GLint success = 0;
 	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE){
-		log_log(LOG_ERROR, "Failed compiling vertex shader {%s}", shader.vertex_shader);
+		log_log(LOG_ERROR, "Failed compiling vertex shader {%s}", vert_path);
 		glDeleteShader(vertex_shader);
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully compiled vertex shader {%s}", shader.vertex_shader);
+		log_log(LOG_SUCCESS, "Successfully compiled vertex shader {%s}", vert_path);
 	}
 
     /* Create vertex shader object and its reference */
@@ -55,12 +55,12 @@ GLuint create_shader_program(Shader shader){
 
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE){
-		log_log(LOG_ERROR, "Failed compiling fragment shader {%s}", shader.fragment_shader);
+		log_log(LOG_ERROR, "Failed compiling fragment shader {%s}", frag_path);
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully compiled fragment shader {%s}", shader.fragment_shader);
+		log_log(LOG_SUCCESS, "Successfully compiled fragment shader {%s}", frag_path);
 	}
 
     /* Create shader program object and its reference */
