@@ -76,13 +76,15 @@ int main(void){
 	/* * * * * * * * * * */
 
 	/* Images  */
-	stbi_set_flip_vertically_on_load(true);
+	MEL_Renderer2D Rend;
+	MEL_Renderer2D_init(Rend);
 	smiley = img_load_image("resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	MEL_prepare_image(smiley);
+	MEL_prepare_image(Rend, smiley);
 	Image crate = img_load_image("resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	MEL_prepare_image(crate);
+	MEL_prepare_image(Rend, crate);
 	crate.width /= 2;
 	crate.height /= 2;
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -93,8 +95,10 @@ int main(void){
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
-		//MEL_update_image(crate);
-		MEL_update_image(smiley);
+		crate.rect.x = 0;
+		crate.rect.y = 0;
+		MEL_update_image(Rend, crate);
+		MEL_update_image(Rend, smiley);
 		/* * * * * */
 
 		glfwSwapBuffers(win);
@@ -125,7 +129,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					toggleFullscreen(window, win_mode);
 					break;
 				case GLFW_KEY_SPACE:
-					MEL_MODIFY_IMAGE(smiley);
 					if (smiley.rect.R == 1.0f){
 						smiley.rect.R = 0.0f;
 					}else{
@@ -137,7 +140,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			}
 			break;
 		case GLFW_REPEAT:
-			MEL_MODIFY_IMAGE(smiley);
 			switch(key){
 				case GLFW_KEY_W:
 					smiley.rect.y -= 10;
@@ -158,7 +160,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					smiley.rect.rotation -= 1.0f;
 					break;
 				default:
-					MEL_UNMODIFY_IMAGE(smiley);
 					break;
 			}
 		default:
@@ -189,7 +190,6 @@ void window_size_callback(GLFWwindow * window, int width, int height){
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	//printf("%lf, %lf", xoffset, yoffset);
-	MEL_MODIFY_IMAGE(smiley);
 	switch((int)yoffset){
 		case -1:
 			smiley.width -= 10;
@@ -200,7 +200,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 			smiley.height += 10;
 			break;
 		default:
-			MEL_UNMODIFY_IMAGE(smiley);
 			break;
 	}
 }
