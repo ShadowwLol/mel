@@ -3,9 +3,6 @@
 #include <cglm/affine.h>
 #include <cglm/util.h>
 
-#define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
-#define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
-
 int8_t MEL_image_cmp(Image i, Image j){
 	/* Position*/
 	if (i.rect.x == j.rect.x && i.rect.y == j.rect.y &&\
@@ -27,7 +24,6 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
 	stbi_set_flip_vertically_on_load(true);
 	if (!width || !height){
     	Image img = {
-			.changed = MEL_TRUE,
 			.path = path,
     		.data = stbi_load(img.path, &img.width, &img.height, &img.channels, 0),
 			.rect.x = x,
@@ -47,9 +43,6 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
     		    0, 1, 3, // first triangle
     		    1, 2, 3  // second triangle
     		},
-			.image_shader.vertex_shader = IMAGE_VERT_SHADER_PATH,
-			.image_shader.fragment_shader = IMAGE_FRAG_SHADER_PATH,
-			.image_shader.shader_program = shader_create_shader_program(img.image_shader)
 		};
     	glGenTextures(1, &img.texture);
     	glBindTexture(GL_TEXTURE_2D, img.texture);
@@ -92,9 +85,6 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
     		    0, 1, 3, // first triangle
     		    1, 2, 3  // second triangle
     		},
-			.image_shader.vertex_shader = IMAGE_VERT_SHADER_PATH,
-			.image_shader.fragment_shader = IMAGE_FRAG_SHADER_PATH,
-			.image_shader.shader_program = shader_create_shader_program(img.image_shader)
 		};
     	glGenTextures(1, &img.texture);
     	glBindTexture(GL_TEXTURE_2D, img.texture);
