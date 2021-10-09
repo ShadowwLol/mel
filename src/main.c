@@ -95,8 +95,6 @@ int main(void){
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
-		crate.rect.x = 0;
-		crate.rect.y = 0;
 		MEL_update_image(Rend, crate);
 		MEL_update_image(Rend, smiley);
 		/* * * * * */
@@ -107,8 +105,9 @@ int main(void){
 	/* * * * * * */
 
 	/* Terminating */
-	MEL_delete_image(smiley);
-	MEL_delete_image(crate);
+	MEL_destroy_image(smiley);
+	MEL_destroy_image(crate);
+	MEL_Renderer2D_destroy(Rend);
 	glfwDestroyWindow(win);
 	glfwTerminate();
 	/* * * * * * * */

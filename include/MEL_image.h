@@ -45,6 +45,16 @@ typedef struct {
 	Renderer.shader_program = shader_create_shader_program(IMAGE_VERT_SHADER_PATH, IMAGE_FRAG_SHADER_PATH);\
 }
 
+#define MEL_Renderer2D_destroy(Renderer){\
+	glBindVertexArray(0);\
+	glBindBuffer(GL_ARRAY_BUFFER, 0);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
+	glDeleteVertexArrays(1, &Renderer.VAO);\
+	glDeleteBuffers(1, &Renderer.VBO);\
+	glDeleteBuffers(1, &Renderer.EBO);\
+	glDeleteProgram(Renderer.shader_program);\
+}
+
 #define logical_width(size_provided) ((float)size_provided/(float)window.mode->width)
 #define logical_height(size_provided) ((float)size_provided/(float)window.mode->height)
 #define MEL_prepare_image(Renderer, Img){\
@@ -87,11 +97,8 @@ typedef struct {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
-#define MEL_delete_image(image){\
+#define MEL_destroy_image(image){\
 	glBindTexture(GL_TEXTURE_2D, 0);\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 	glDeleteTextures(1, &image.texture);\
 }
 
