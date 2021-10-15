@@ -82,8 +82,8 @@ int main(void){
 	MEL_prepare_image(Rend, smiley);
 	Image crate = img_load_image("resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
 	MEL_prepare_image(Rend, crate);
-	crate.width /= 2;
-	crate.height /= 2;
+	crate.rect.w /= 2;
+	crate.rect.h /= 2;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -128,10 +128,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					toggleFullscreen(window, win_mode);
 					break;
 				case GLFW_KEY_SPACE:
-					if (smiley.rect.R == 1.0f){
-						smiley.rect.R = 0.0f;
+					if (smiley.rect.color[0] == 1.0f){
+						smiley.rect.color[0] = 0.0f;
 					}else{
-						smiley.rect.R = 1.0;
+						smiley.rect.color[0] = 1.0;
 					}
 					break;
 				default:
@@ -191,12 +191,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	//printf("%lf, %lf", xoffset, yoffset);
 	switch((int)yoffset){
 		case -1:
-			smiley.width -= 10;
-			smiley.height -= 10;
+			smiley.rect.w -= 10;
+			smiley.rect.h -= 10;
 			break;
 		case 1:
-			smiley.width += 10;
-			smiley.height += 10;
+			smiley.rect.w += 10;
+			smiley.rect.h += 10;
 			break;
 		default:
 			break;

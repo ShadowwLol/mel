@@ -20,19 +20,15 @@ typedef struct {
 static struct rect{
 	GLint x, y;
 	GLuint w, h;
-	GLfloat R, G, B;
+	vec3 color;
 	GLfloat rotation;
-   	vec3 color_mod;
 	mat4 projection;
    	GLfloat vertices[32];
 } rect;
 
 typedef struct {
-    GLchar * path;
-    GLint width;
-    GLint height;
     GLint channels;
-    GLuchar * data;
+    stbi_uc * data;
     GLuint texture;
 	struct rect rect;
 	GLuint indices[6];
@@ -82,7 +78,7 @@ typedef struct {
 		Img.rect = image_update_image(Img);\
    		glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, GL_STATIC_DRAW);\
 		vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
-		vec3 pivot = {(float)(Img.rect.x + Img.width/2.0f), (float)(Img.rect.y + Img.height/2.0f), 0.0f};\
+		vec3 pivot = {(float)(Img.rect.x + Img.rect.w/2.0f), (float)(Img.rect.y + Img.rect.h/2.0f), 0.0f};\
 		glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, Img.rect.projection);\
 		glm_rotate_at(Img.rect.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 	}\
@@ -110,9 +106,6 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLu
 #define img_load_image(path, channels, x, y, w, h, R, G, B, rotation) image_load_image(path, channels, x, y, w, h, R, G, B, rotation);
 #endif
 
-//void image_init(GLuint * VAO, GLuint * VBO, GLuint * EBO, vec2 pos, vec2 size, GLfloat R, GLfloat G, GLfloat B);
-//void image_draw_image(Image img, mat4 projection);
-int8_t MEL_image_cmp(Image i, Image j);
 struct rect image_update_image(Image source);
 
 #endif
