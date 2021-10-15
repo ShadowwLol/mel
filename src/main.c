@@ -78,10 +78,8 @@ int main(void){
 	/* Images  */
 	MEL_Renderer2D Rend;
 	MEL_Renderer2D_init(Rend);
-	smiley = img_load_image("resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	MEL_prepare_image(Rend, smiley);
-	Image crate = img_load_image("resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	MEL_prepare_image(Rend, crate);
+	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+	Image crate = img_load_image(Rend, "resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
@@ -141,16 +139,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		case GLFW_REPEAT:
 			switch(key){
 				case GLFW_KEY_W:
-					smiley.rect.y -= 10;
+					smiley.rect.coord[1] -= 10;
 					break;
 				case GLFW_KEY_A:
-					smiley.rect.x -= 10;
+					smiley.rect.coord[0] -= 10;
 					break;
 				case GLFW_KEY_S:
-					smiley.rect.y += 10;
+					smiley.rect.coord[1] += 10;
 					break;
 				case GLFW_KEY_D:
-					smiley.rect.x += 10;
+					smiley.rect.coord[0] += 10;
 					break;
 				case GLFW_KEY_RIGHT:
 					smiley.rect.rotation += 1.0f;

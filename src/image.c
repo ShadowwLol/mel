@@ -4,16 +4,16 @@
 #include <cglm/util.h>
 
 #if __WIN32
-Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
+Image image_load_image(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
 #else
-Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
+Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation){
 #endif
 	stbi_set_flip_vertically_on_load(true);
 	GLint w, h, c;
 	Image img = {
 		.data = stbi_load(path, &w, &h, &c, 0),
-		.rect.x = x,
-		.rect.y = y,
+		.rect.coord[0] = x,
+		.rect.coord[1] = y,
 		.rect.size[0] = w,
 		.rect.size[1] = h,
 		.rect.color[0] = R,
@@ -32,6 +32,12 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLf
 		    1, 2, 3  // second triangle
 		},
 	};
+	if (Renderer.tex_count < Renderer.MAX_TEXTURES){
+		++Renderer.tex_count;
+	}else{
+		Renderer.tex_count = 1;
+	}
+	glActiveTexture(GL_TEXTURE0+(Renderer.tex_count-1));
 	glGenTextures(1, &img.texture);
 	glBindTexture(GL_TEXTURE_2D, img.texture);
 
@@ -51,13 +57,30 @@ Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLf
 	    log_log(LOG_ERROR, "Failed loading image : {%s}", path);
 	}
 	stbi_image_free(img.data);
+
+	img.id = Renderer.tex_count-1;\
+	glBindVertexArray(Renderer.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
+	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), img.rect.vertices, GL_STATIC_DRAW);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(img.indices), img.indices, GL_STATIC_DRAW);\
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);\
+	glEnableVertexAttribArray(0);\
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));\
+	glEnableVertexAttribArray(1);\
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));\
+	glEnableVertexAttribArray(2);\
+	glBindVertexArray(0);\
+	glBindBuffer(GL_ARRAY_BUFFER, 0);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
+
 	return img;
 }
 
 struct rect image_update_image(Image source){
 	struct rect img = {
-		.x = source.rect.x,
-		.y = source.rect.y,
+		.coord[0] = source.rect.coord[0],
+		.coord[1] = source.rect.coord[1],
 		.size[0] = source.rect.size[0],
 		.size[1] = source.rect.size[1],
 		.color[0] = source.rect.color[0],
@@ -66,10 +89,10 @@ struct rect image_update_image(Image source){
 		.rotation = source.rect.rotation,
     	.vertices = {
     	    // positions                                                                 // colors                                                          // texture coords
-    	    source.rect.x,                     source.rect.y+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 0.0f, // bottom left
-    	    source.rect.x,                     source.rect.y,                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 1.0f,  // top left <-- anchor point
-    	    source.rect.x+source.rect.size[0], source.rect.y,                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 1.0f, // top right
-    	    source.rect.x+source.rect.size[0], source.rect.y+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 0.0f, // bottom right
+    	    source.rect.coord[0],                     source.rect.coord[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 0.0f, // bottom left
+    	    source.rect.coord[0],                     source.rect.coord[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 1.0f,  // top left <-- anchor point
+    	    source.rect.coord[0]+source.rect.size[0], source.rect.coord[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 1.0f, // top right
+    	    source.rect.coord[0]+source.rect.size[0], source.rect.coord[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 0.0f, // bottom right
 		}
 	};
 	return img;

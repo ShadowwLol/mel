@@ -15,10 +15,11 @@
 typedef struct {
 	GLuint VAO, VBO, EBO;
     GLuint shader_program;
+	GLuint tex_count, MAX_TEXTURES;
 } MEL_Renderer2D;
 
 static struct rect{
-	GLint x, y;
+	vec2 coord;
 	vec2 size;
 	vec3 color;
 	GLfloat rotation;
@@ -27,14 +28,16 @@ static struct rect{
 } rect;
 
 typedef struct {
-    GLint channels;
     stbi_uc * data;
+	GLuint id;
     GLuint texture;
 	struct rect rect;
 	GLuint indices[6];
 } Image;
 
 #define MEL_Renderer2D_init(Renderer){\
+	Renderer.tex_count = 0;\
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.MAX_TEXTURES);\
 	glGenVertexArrays(1, &Renderer.VAO);\
 	glGenBuffers(1, &Renderer.VBO);\
 	glGenBuffers(1, &Renderer.EBO);\
@@ -51,40 +54,21 @@ typedef struct {
 	glDeleteProgram(Renderer.shader_program);\
 }
 
-#define logical_width(size_provided) ((float)size_provided/(float)window.mode->width)
-#define logical_height(size_provided) ((float)size_provided/(float)window.mode->height)
-#define MEL_prepare_image(Renderer, Img){\
-    glBindVertexArray(Renderer.VAO);\
-    glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, GL_STATIC_DRAW);\
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Img.indices), Img.indices, GL_STATIC_DRAW);\
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);\
-    glEnableVertexAttribArray(0);\
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));\
-    glEnableVertexAttribArray(1);\
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));\
-    glEnableVertexAttribArray(2);\
-    glBindVertexArray(0);\
-    glBindBuffer(GL_ARRAY_BUFFER, 0);\
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
-}
-
 #define MEL_update_image(Renderer, Img){\
 	glBindVertexArray(Renderer.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 	{\
 		Img.rect = image_update_image(Img);\
-   		glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, GL_STATIC_DRAW);\
+   		glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, GL_DYNAMIC_DRAW);\
 		vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
-		vec3 pivot = {(float)(Img.rect.x + Img.rect.size[0]/2.0f), (float)(Img.rect.y + Img.rect.size[1]/2.0f), 0.0f};\
+		vec3 pivot = {(float)(Img.rect.coord[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.coord[1] + Img.rect.size[1]/2.0f), 0.0f};\
 		glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, Img.rect.projection);\
 		glm_rotate_at(Img.rect.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 	}\
 	glBindTexture(GL_TEXTURE_2D, Img.texture);\
 	glUseProgram(Renderer.shader_program);\
-	glUniform1i(glGetUniformLocation(Renderer.shader_program, "texture1"), 0);\
+	glUniform1i(glGetUniformLocation(Renderer.shader_program, "texture1"), Img.id);\
 	glUniformMatrix4fv(glGetUniformLocation(Renderer.shader_program, "projection"), 1, GL_FALSE, (const GLfloat *)Img.rect.projection);\
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 	glBindTexture(GL_TEXTURE_2D, 0);\
@@ -99,11 +83,11 @@ typedef struct {
 }
 
 #if __WIN32
-Image image_load_image(HANDLE hConsole, WORD saved_attributes, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation);
-#define img_load_image(path, channels, x, y, R, G, B, rotation) image_load_image(hConsole, saved_attributes, path, channels, x, y, R, G, B, rotation);
+Image image_load_image(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation);
+#define img_load_image(Rend, path, channels, x, y, R, G, B, rotation) image_load_image(hConsole, saved_attributes, Rend, path, channels, x, y, R, G, B, rotation);
 #else
-Image image_load_image(GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation);
-#define img_load_image(path, channels, x, y, R, G, B, rotation) image_load_image(path, channels, x, y, R, G, B, rotation);
+Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GLfloat x, GLfloat y, GLfloat R, GLfloat G, GLfloat B, GLfloat rotation);
+#define img_load_image(Rend, path, channels, x, y, R, G, B, rotation) image_load_image(Rend, path, channels, x, y, R, G, B, rotation);
 #endif
 
 struct rect image_update_image(Image source);
