@@ -78,12 +78,12 @@ int main(void){
 	/* Images  */
 	MEL_Renderer2D Rend;
 	MEL_Renderer2D_init(Rend);
-	smiley = img_load_image("resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+	smiley = img_load_image("resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 1.0f, 1.0f, 1.0f, 0.0f);
 	MEL_prepare_image(Rend, smiley);
-	Image crate = img_load_image("resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+	Image crate = img_load_image("resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
 	MEL_prepare_image(Rend, crate);
-	crate.rect.w /= 2;
-	crate.rect.h /= 2;
+	crate.rect.size[0] /= 2;
+	crate.rect.size[1] /= 2;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -191,12 +191,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	//printf("%lf, %lf", xoffset, yoffset);
 	switch((int)yoffset){
 		case -1:
-			smiley.rect.w -= 10;
-			smiley.rect.h -= 10;
+			smiley.rect.size[0] -= 10;
+			smiley.rect.size[1] -= 10;
 			break;
 		case 1:
-			smiley.rect.w += 10;
-			smiley.rect.h += 10;
+			smiley.rect.size[0] += 10;
+			smiley.rect.size[1] += 10;
 			break;
 		default:
 			break;
