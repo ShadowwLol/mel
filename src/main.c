@@ -71,7 +71,7 @@ int main(void){
 	//glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
 
 	glfwSetScrollCallback(win, scroll_callback);
-	glViewport(100, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	/* * * * * * * * * * */
 
 	/* Images  */

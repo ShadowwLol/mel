@@ -42,9 +42,9 @@ typedef struct {
 		glm_rotate_at(Renderer.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 	}\
 	glBindTexture(GL_TEXTURE_2D, Img.texture);\
-	glUseProgram(Renderer.shader_program);\
-	glUniform1i(glGetUniformLocation(Renderer.shader_program, "texture1"), Img.id);\
-	glUniformMatrix4fv(glGetUniformLocation(Renderer.shader_program, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
+	glUseProgram(Renderer.img_shader);\
+	glUniform1i(glGetUniformLocation(Renderer.img_shader, "texture1"), Img.id);\
+	glUniformMatrix4fv(glGetUniformLocation(Renderer.img_shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 	glBindTexture(GL_TEXTURE_2D, 0);\
 	glBindVertexArray(0);\
