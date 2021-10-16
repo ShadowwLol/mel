@@ -16,16 +16,20 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 		.rect.pos[1] = 0.0f,
 		.rect.size[0] = w,
 		.rect.size[1] = h,
+		.rect.src[0] = 0.0f,
+		.rect.src[1] = 0.0f,
+		.rect.src[2] = w,
+		.rect.src[3] = h,
 		.rect.color[0] = 1.0f,
 		.rect.color[1] = 1.0f,
 		.rect.color[2] = 1.0f,
 		.rect.rotation = 0.0f,
 		.rect.vertices = {
 		    // positions                                                               // colors                                                 // texture coords
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  1.0f, 1.0f, // top right
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  1.0f, 0.0f, // bottom right
-		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  0.0f, 0.0f, // bottom left
-		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  0.0f, 1.0f  // top left <-- anchor point
+		    img.rect.pos[0],                                   img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  (img.rect.src[0]+img.rect.src[2])/w, (img.rect.src[1])/h,                 // top right
+		    img.rect.pos[0],                                   img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  (img.rect.src[0]+img.rect.src[2])/w, (img.rect.src[1]+img.rect.src[3])/h, // bottom right
+		    img.rect.pos[0]+img.rect.size[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  (img.rect.src[0])/w, (img.rect.src[1]+img.rect.src[3])/h,                 // bottom left
+		    img.rect.pos[0]+img.rect.size[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  (img.rect.src[0])/w, (img.rect.src[1])/h                                  // top left <-- anchor point
 		},
 		.indices = {
 		    0, 1, 3, // first triangle
@@ -83,16 +87,20 @@ struct rect image_update_image(Image source){
 		.pos[1] = source.rect.pos[1],
 		.size[0] = source.rect.size[0],
 		.size[1] = source.rect.size[1],
+		.src[0] = source.rect.src[0],
+		.src[1] = source.rect.src[1],
+		.src[2] = source.rect.src[2],
+		.src[3] = source.rect.src[3],
 		.color[0] = source.rect.color[0],
 		.color[1] = source.rect.color[1],
 		.color[2] = source.rect.color[2],
 		.rotation = source.rect.rotation,
     	.vertices = {
-    	    // positions                                                                 // colors                                                          // texture coords
-    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 0.0f, // bottom left
-    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  0.0f, 1.0f,  // top left <-- anchor point
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 1.0f, // top right
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2],  1.0f, 0.0f, // bottom right
+    	    // positions                                                                 // colors                                                                   // texture coords
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1])/source.rect.size[1],                    // bottom left
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top left <-- anchor point
+    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top right
+    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1])/source.rect.size[1],                    // bottom right
 		}
 	};
 	return img;

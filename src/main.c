@@ -85,8 +85,16 @@ int main(void){
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
 	r.color[2] = 0.0f;
-	r.size[0] = 100;
-	r.size[1] = 200;
+	r.size[0] = WINDOW_WIDTH;
+	r.size[1] = WINDOW_HEIGHT;
+
+	crate.rect.size[0] /= 2;
+	crate.rect.size[1] /= 2;
+
+	crate.rect.src[0] = 750/2;
+	crate.rect.src[1] = (crate.rect.size[1])/2;
+	crate.rect.src[2] = 200/2;
+	crate.rect.src[3] = crate.rect.size[1]/2;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -98,8 +106,8 @@ int main(void){
 		glClear(GL_COLOR_BUFFER_BIT);
 
 			/* Drawing */
-			MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
 			MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
+			MEL_update_image(Rend, crate, MEL_IMAGE_DYNAMIC);
 			MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
 
 			/* * * * * */

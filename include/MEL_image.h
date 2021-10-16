@@ -14,11 +14,12 @@
 #define MEL_IMAGE_DYNAMIC GL_DYNAMIC_DRAW
 
 static struct rect{
-	vec2 pos;
-	vec2 size;
-	vec3 color;
-	GLfloat rotation;
-   	GLfloat vertices[32];
+	vec2 pos;             /* Image position         [x,y]     */
+	vec4 src;             /* Texture coordinates    [x,y,w,h] */
+	vec2 size;            /* Image size             [w,h]     */
+	vec3 color;           /* Image color modulation [r,g,b]   */
+	GLfloat rotation;     /* Image rotation deg               */
+	GLfloat vertices[32]; /* Image vertices                   */
 } rect;
 
 typedef struct {
