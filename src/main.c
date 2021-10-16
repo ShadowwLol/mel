@@ -1,11 +1,10 @@
-#include "../include/MEL_opengl.h"
-#include "../include/MEL_io.h"
-#include "../include/MEL_def.h"
-#include "../include/MEL_shader.h"
-#include <cglm/cam.h>
-#include "../include/MEL_logs.h"
-#include "../include/MEL_image.h"
-#include "../include/MEL_rect.h"
+#include "../include/MEL_opengl.h" /* for gl defs */
+#include "../include/MEL_io.h"     /* for i/o     */
+#include "../include/MEL_def.h"    /* for configs */
+#include "../include/MEL_shader.h" /* for shaders */
+#include "../include/MEL_logs.h"   /* for logging */
+#include "../include/MEL_image.h"  /* for images  */
+#include "../include/MEL_rect.h"   /* for rects   */
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void error_callback(int error, const char* description);
@@ -68,26 +67,26 @@ int main(void){
 	glfwSetErrorCallback(error_callback);
 	glfwSetKeyCallback(win, key_callback);
 	glfwSetWindowSizeCallback(win, window_size_callback);
-	//glfwSetWindowAspectRatio(window.window, 16, 9);
 	glfwSetWindowSizeLimits(win, (win_mode->width/2), (win_mode->height/2), win_mode->width, win_mode->height);
-	glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
+	//glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
 
 	glfwSetScrollCallback(win, scroll_callback);
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glViewport(100, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	/* * * * * * * * * * */
 
 	/* Images  */
 	MEL_Renderer2D Rend;
 	MEL_Renderer2D_init(Rend);
-	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA, 640.0f, 360.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	Image crate = img_load_image(Rend, "resources/images/container.jpg", GL_RGB, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-	crate.rect.size[0] /= 2;
-	crate.rect.size[1] /= 2;
-
+	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
+	smiley.rect.pos[0] = 640.0f;
+	smiley.rect.pos[1] = 360.0f;
+	Image crate = img_load_image(Rend, "resources/images/container.jpg", GL_RGB);
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
 	r.color[2] = 0.0f;
+	r.size[0] = 100;
+	r.size[1] = 200;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -98,115 +97,100 @@ int main(void){
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		++r.size[0];
-		++r.size[1];
+			/* Drawing */
+			MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
+			MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
+			MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
 
-		/* Drawing */
-		MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
-		MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
-		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
-		/* * * * * */
+			/* * * * * */
 
-		glfwSwapBuffers(win);
+			glfwSwapBuffers(win);
 
+		}
+		/* * * * * * */
+
+		/* Terminating */
+		MEL_destroy_image(smiley);
+		MEL_destroy_image(crate);
+		MEL_Renderer2D_destroy(Rend);
+		glfwDestroyWindow(win);
+		glfwTerminate();
+		/* * * * * * * */
+
+		return 0;
 	}
-	/* * * * * * */
 
-	/* Terminating */
-	MEL_destroy_image(smiley);
-	MEL_destroy_image(crate);
-	MEL_Renderer2D_destroy(Rend);
-	glfwDestroyWindow(win);
-	glfwTerminate();
-	/* * * * * * * */
-
-	return 0;
-}
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	switch(action){
-		case GLFW_RELEASE:
-			switch(key){
-				case GLFW_KEY_ESCAPE:
-					/* Close the game */
-					glfwSetWindowShouldClose(win, GLFW_TRUE);
-					break;
-				case GLFW_KEY_F11:
-					/* Fullscreen the game */
-					toggleFullscreen(window, win_mode);
-					break;
-				case GLFW_KEY_SPACE:
-					if (smiley.rect.color[0] == 1.0f){
-						smiley.rect.color[0] = 0.0f;
-					}else{
-						smiley.rect.color[0] = 1.0;
-					}
-					break;
-				default:
-					break;
-			}
-			break;
-		case GLFW_REPEAT:
-			switch(key){
-				case GLFW_KEY_W:
-					smiley.rect.coord[1] -= 10;
-					break;
-				case GLFW_KEY_A:
-					smiley.rect.coord[0] -= 10;
-					break;
-				case GLFW_KEY_S:
-					smiley.rect.coord[1] += 10;
-					break;
-				case GLFW_KEY_D:
-					smiley.rect.coord[0] += 10;
-					break;
-				case GLFW_KEY_RIGHT:
-					smiley.rect.rotation += 1.0f;
-					break;
-				case GLFW_KEY_LEFT:
-					smiley.rect.rotation -= 1.0f;
-					break;
-				default:
-					break;
-			}
-		default:
-			break;
-	}
-}
-
-void error_callback(int error, const char* description){
-	fprintf(stderr, "[-] Error: %s\n", description);
-}
-
-void window_size_callback(GLFWwindow * window, int width, int height){
-	/*
-	float aspectRatio = (float)width/(float)height;
-	printf("Window size %fx%f, aspect ratio: %f\n", WINDOW_WIDTH, WINDOW_HEIGHT, (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT);
-	if(aspectRatio != ASPECT_RATIO) {
-		if(aspectRatio > ASPECT_RATIO) {
-			height = (1.f / ASPECT_RATIO) * width;
-		}else {
-			width = ASPECT_RATIO * height;
+	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+		switch(action){
+			case GLFW_RELEASE:
+				switch(key){
+					case GLFW_KEY_ESCAPE:
+						/* Close the game */
+						glfwSetWindowShouldClose(win, GLFW_TRUE);
+						break;
+					case GLFW_KEY_F11:
+						/* Fullscreen the game */
+						toggleFullscreen(window, win_mode);
+						break;
+					case GLFW_KEY_SPACE:
+						if (smiley.rect.color[0] == 1.0f){
+							smiley.rect.color[0] = 0.0f;
+						}else{
+							smiley.rect.color[0] = 1.0;
+						}
+						break;
+					default:
+						break;
+				}
+				break;
+			case GLFW_REPEAT:
+				switch(key){
+					case GLFW_KEY_W:
+						smiley.rect.pos[1] -= 10;
+						break;
+					case GLFW_KEY_A:
+						smiley.rect.pos[0] -= 10;
+						break;
+					case GLFW_KEY_S:
+						smiley.rect.pos[1] += 10;
+						break;
+					case GLFW_KEY_D:
+						smiley.rect.pos[0] += 10;
+						break;
+					case GLFW_KEY_RIGHT:
+						smiley.rect.rotation += 1.0f;
+						break;
+					case GLFW_KEY_LEFT:
+						smiley.rect.rotation -= 1.0f;
+						break;
+					default:
+						break;
+				}
+			default:
+				break;
 		}
 	}
-	glViewport(0, 0, width, height);
-	printf("Setting window size to %dx%d, aspect ratio: %f\n", width, height, (float)width/(float)height);
-	*/
-	glViewport(0, 0, width, height);
-}
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-	//printf("%lf, %lf", xoffset, yoffset);
-	switch((int)yoffset){
-		case -1:
-			smiley.rect.size[0] -= 10;
-			smiley.rect.size[1] -= 10;
-			break;
-		case 1:
-			smiley.rect.size[0] += 10;
-			smiley.rect.size[1] += 10;
-			break;
-		default:
-			break;
+	void error_callback(int error, const char* description){
+		fprintf(stderr, "[-] Error: %s\n", description);
 	}
-}
+
+	void window_size_callback(GLFWwindow * window, int width, int height){
+		glViewport(0, 0, width, height);
+	}
+
+	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+		//printf("%lf, %lf", xoffset, yoffset);
+		switch((int)yoffset){
+			case -1:
+				smiley.rect.size[0] -= 10;
+				smiley.rect.size[1] -= 10;
+				break;
+			case 1:
+				smiley.rect.size[0] += 10;
+				smiley.rect.size[1] += 10;
+				break;
+			default:
+				break;
+		}
+	}

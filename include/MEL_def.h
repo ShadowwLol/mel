@@ -3,7 +3,7 @@
 
 #define PRINT_DEBUG fprintf(stdout, "[DEBUG] LINE: [%d] FUNCTION : [%s]\n", __LINE__, __func__);
 
-#include "../include/MEL_opengl.h"
+#include "MEL_opengl.h"
 #include <GLFW/glfw3.h>
 #include <stdint.h>
 #include <stdbool.h>
