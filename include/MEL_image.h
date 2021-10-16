@@ -1,22 +1,17 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "../include/MEL_opengl.h"
-#include "../include/MEL_shader.h"
-#include "../include/MEL_def.h"
+#include "MEL_opengl.h"
+#include "MEL_render.h"
+#include "MEL_shader.h"
+#include "MEL_def.h"
 
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
-#define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
-
-typedef struct {
-	GLuint VAO, VBO, EBO;
-    GLuint shader_program;
-	GLuint tex_count, MAX_TEXTURES;
-} MEL_Renderer2D;
+#define MEL_IMAGE_STATIC  GL_STATIC_DRAW
+#define MEL_IMAGE_DYNAMIC GL_DYNAMIC_DRAW
 
 static struct rect{
 	vec2 coord;
@@ -35,32 +30,13 @@ typedef struct {
 	GLuint indices[6];
 } Image;
 
-#define MEL_Renderer2D_init(Renderer){\
-	Renderer.tex_count = 0;\
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.MAX_TEXTURES);\
-	glGenVertexArrays(1, &Renderer.VAO);\
-	glGenBuffers(1, &Renderer.VBO);\
-	glGenBuffers(1, &Renderer.EBO);\
-	Renderer.shader_program = shader_create_shader_program(IMAGE_VERT_SHADER_PATH, IMAGE_FRAG_SHADER_PATH);\
-}
-
-#define MEL_Renderer2D_destroy(Renderer){\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
-	glDeleteVertexArrays(1, &Renderer.VAO);\
-	glDeleteBuffers(1, &Renderer.VBO);\
-	glDeleteBuffers(1, &Renderer.EBO);\
-	glDeleteProgram(Renderer.shader_program);\
-}
-
-#define MEL_update_image(Renderer, Img){\
+#define MEL_update_image(Renderer, Img, Config){\
 	glBindVertexArray(Renderer.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 	{\
 		Img.rect = image_update_image(Img);\
-   		glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, GL_DYNAMIC_DRAW);\
+   		glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, Config);\
 		vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 		vec3 pivot = {(float)(Img.rect.coord[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.coord[1] + Img.rect.size[1]/2.0f), 0.0f};\
 		glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, Img.rect.projection);\

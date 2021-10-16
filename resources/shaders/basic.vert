@@ -1,5 +1,12 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aColor;
+
+uniform mat4 projection;
+
+out vec3 o_Color;
+
 void main(){
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = projection * vec4(aPos.xyz, 1.0);
+	o_Color = aColor;
 }

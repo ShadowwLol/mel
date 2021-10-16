@@ -5,6 +5,7 @@
 #include <cglm/cam.h>
 #include "../include/MEL_logs.h"
 #include "../include/MEL_image.h"
+#include "../include/MEL_rect.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void error_callback(int error, const char* description);
@@ -83,6 +84,11 @@ int main(void){
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
+	MEL_Rect r = MEL_load_rect(Rend);
+	r.color[0] = 1.0f;
+	r.color[1] = 0.0f;
+	r.color[2] = 0.0f;
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -92,9 +98,13 @@ int main(void){
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		++r.size[0];
+		++r.size[1];
+
 		/* Drawing */
-		MEL_update_image(Rend, crate);
-		MEL_update_image(Rend, smiley);
+		MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
+		MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
+		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
 		/* * * * * */
 
 		glfwSwapBuffers(win);
