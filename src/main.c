@@ -80,6 +80,7 @@ int main(void){
 	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
+	smiley.rect.color[3] = 0.5f;
 	Image crate = img_load_image(Rend, "resources/images/container.jpg", GL_RGB);
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
@@ -125,7 +126,7 @@ int main(void){
 			double MEL_fps = (1.0f/MEL_tdiff) * MEL_cter;
 			MEL_prevt = MEL_currt;
 			MEL_cter = 0;
-			printf("%ffps\n", MEL_fps);
+			//printf("%ffps\n", MEL_fps);
 		}
 
 		glfwSwapBuffers(win);

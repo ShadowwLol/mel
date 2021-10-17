@@ -24,6 +24,7 @@ typedef struct {
 	mat4 projection;
 	GLuint VAO, VBO, EBO;
     GLuint img_shader;
+	GLuint rVAO, rVBO, rEBO;
 	GLuint rect_shader;
 	GLint tex_count, MAX_TEXTURES;
 	MEL_Renderer2D_ri rect_items;
@@ -36,6 +37,9 @@ typedef struct {
 	glGenBuffers(1, &Renderer.VBO);\
 	glGenBuffers(1, &Renderer.EBO);\
 	Renderer.img_shader = shader_create_shader_program(IMAGE_VERT_SHADER_PATH, IMAGE_FRAG_SHADER_PATH);\
+	glGenVertexArrays(1, &Renderer.rVAO);\
+	glGenBuffers(1, &Renderer.rVBO);\
+	glGenBuffers(1, &Renderer.rEBO);\
 	Renderer.rect_shader = shader_create_shader_program(RECT_VERT_SHADER_PATH, RECT_FRAG_SHADER_PATH);\
 }
 
@@ -47,6 +51,9 @@ typedef struct {
 	glDeleteBuffers(1, &Renderer.VBO);\
 	glDeleteBuffers(1, &Renderer.EBO);\
 	glDeleteProgram(Renderer.img_shader);\
+	glDeleteVertexArrays(1, &Renderer.rVAO);\
+	glDeleteBuffers(1, &Renderer.rVBO);\
+	glDeleteBuffers(1, &Renderer.rEBO);\
 	glDeleteProgram(Renderer.rect_shader);\
 }
 

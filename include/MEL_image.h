@@ -19,9 +19,9 @@ static struct rect{
 	vec2 pos;             /* Image position         [x,y]     */
 	vec4 src;             /* Texture coordinates    [x,y,w,h] */
 	vec2 size;            /* Image size             [w,h]     */
-	vec3 color;           /* Image color modulation [r,g,b]   */
+	vec4 color;           /* Image color modulation [r,g,b]   */
 	GLfloat rotation;     /* Image rotation deg               */
-	GLfloat vertices[32]; /* Image vertices                   */
+	GLfloat vertices[36]; /* Image vertices                   */
 } rect;
 
 typedef struct {
@@ -59,6 +59,7 @@ typedef struct {
 		glUniform1i(glGetUniformLocation(Renderer.img_shader, "texture1"), Img.id);\
 		glUniformMatrix4fv(glGetUniformLocation(Renderer.img_shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
+		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\
 	}\
 	glBindVertexArray(0);\

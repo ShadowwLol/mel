@@ -24,13 +24,14 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 		.rect.color[0] = 1.0f,
 		.rect.color[1] = 1.0f,
 		.rect.color[2] = 1.0f,
+		.rect.color[3] = 1.0f,
 		.rect.rotation = 0.0f,
 		.rect.vertices = {
 		    // positions                                                               // colors                                                                  // texture coords
-		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  1.0f, 1.0f, // top right
-		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  1.0f, 0.0f, // bottom right
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  0.0f, 0.0f, // bottom left
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2],  0.0f, 1.0f, // top left <-- anchor point
+		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 1.0f, // top right
+		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f, // bottom right
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f, // bottom left
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f, // top left <-- anchor point
 		},
 		.indices = {
 		    0, 1, 3, // first triangle
@@ -56,25 +57,31 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 	if (img.data){
 	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.rect.size[0], img.rect.size[1], 0, channels, GL_UNSIGNED_BYTE, img.data);
 	    glGenerateMipmap(GL_TEXTURE_2D);
-	    glBindTexture(GL_TEXTURE_2D, 0);
 	    log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", path);
 	}else{
 	    log_log(LOG_ERROR, "Failed loading image : {%s}", path);
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(img.data);
 
 	img.id = Renderer.tex_count-1;\
+
 	glBindVertexArray(Renderer.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), img.rect.vertices, GL_STATIC_DRAW);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(img.indices), img.indices, GL_STATIC_DRAW);\
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);\
+
+	/* Position Attribute [x,y,z] */
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);\
 	glEnableVertexAttribArray(0);\
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));\
+	/* Color Attribute [R,G,B,A] */
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));\
 	glEnableVertexAttribArray(1);\
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));\
+	/* Texture Coords Attribute */
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));\
 	glEnableVertexAttribArray(2);\
+
 	glBindVertexArray(0);\
 	glBindBuffer(GL_ARRAY_BUFFER, 0);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
@@ -96,13 +103,14 @@ struct rect image_update_image(Image source){
 			.color[0] = source.rect.color[0],
 			.color[1] = source.rect.color[1],
 			.color[2] = source.rect.color[2],
+			.color[3] = source.rect.color[3],
 			.rotation = source.rect.rotation,
     		.vertices = {
-    		    // positions                                                                 // colors                                                                   // texture coords
-    		    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1])/source.rect.size[1],                    // bottom left
-    		    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top left <-- anchor point
-    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top right
-    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1])/source.rect.size[1],                    // bottom right
+    		    // positions                                                                 // colors                                                                                         // texture coords
+    		    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1])/source.rect.size[1],                    // bottom left
+    		    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], (source.rect.src[0]+source.rect.src[2])/source.rect.size[0], (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top left <-- anchor point
+    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1]+source.rect.src[3])/source.rect.size[1], // top right
+    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], (source.rect.src[0])/source.rect.size[0],                    (source.rect.src[1])/source.rect.size[1],                    // bottom right
 			}
 		};
 		return img;
@@ -119,13 +127,14 @@ struct rect image_update_image(Image source){
 			.color[0] = source.rect.color[0],
 			.color[1] = source.rect.color[1],
 			.color[2] = source.rect.color[2],
+			.color[3] = source.rect.color[3],
 			.rotation = source.rect.rotation,
     		.vertices = {
-    		    // positions                                                                 // colors                                                                   // texture coords
-    		    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], 0.0f, 0.0f, // bottom left
-    		    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], 0.0f, 1.0f, // top left <-- anchor point
-    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], 1.0f, 1.0f, // top right
-    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], 1.0f, 0.0f, // bottom right
+    		    // positions                                                                 // colors                                                                                         // texture coords
+    		    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, // bottom left
+    		    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, // top left <-- anchor point
+    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 1.0f, // top right
+    		    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, // bottom right
 			}
 		};
 		return img;

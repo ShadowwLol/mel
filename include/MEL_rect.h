@@ -7,16 +7,16 @@
 typedef struct{
 	vec2 pos;
 	vec2 size;
-	vec3 color;
+	vec4 color;
 	GLfloat rotation;
 	GLfloat vertices[32];
 	GLuint indices[6];
 } MEL_Rect;
 
 #define MEL_update_rect(Renderer, Rect, Config){\
-	glBindVertexArray(Renderer.VAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	glBindVertexArray(Renderer.rVAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rVBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rEBO);\
 	if (((Rect.pos[0] > WINDOW_WIDTH) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
 	((Rect.pos[1] > WINDOW_HEIGHT) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
 		{\
@@ -34,6 +34,7 @@ typedef struct{
 		glUseProgram(Renderer.rect_shader);\
 		glUniformMatrix4fv(glGetUniformLocation(Renderer.rect_shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
+		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\
 	}\
 	glBindVertexArray(0);\
