@@ -20,20 +20,4 @@ typedef uint8_t MEL_bool;
 #define MEL_TRUE (1)
 #define MEL_FALSE (0)
 
-typedef struct {
-    const GLchar * vertex_shader;
-    const GLchar * fragment_shader;
-    GLuint shader_program;
-} Shader;
-
-typedef struct {
-    GLint x;
-    GLint y;
-} ivec2;
-
-typedef struct {
-    uint32_t w;
-    uint32_t h;
-} Size;
-
 #endif

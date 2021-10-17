@@ -61,7 +61,7 @@ int main(void){
 
 	/* OPENGL configuration */
 	gladLoadGL();
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	/* Setting callbacks */
 	glfwSetErrorCallback(error_callback);
@@ -99,22 +99,38 @@ int main(void){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	double MEL_prevt = 0.0f;
+	double MEL_currt = 0.0f;
+	double MEL_tdiff = 0.0f;
+	uint32_t MEL_cter = 0;
+
 	/* Main loop */
 	while (!glfwWindowShouldClose(win)){
 		glfwPollEvents();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
+		smiley.rect.src[2] = smiley.rect.size[0];
+		smiley.rect.src[3] = smiley.rect.size[1];
 
-			/* Drawing */
-			MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
-			MEL_update_image(Rend, crate, MEL_IMAGE_DYNAMIC);
-			MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
+		/* Drawing */
+		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
+		MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
+		MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
 
-			/* * * * * */
-
-			glfwSwapBuffers(win);
-
+		/* * * * * */
+		MEL_currt = glfwGetTime();
+		MEL_tdiff = MEL_currt - MEL_prevt;
+		++MEL_cter;
+		if (MEL_tdiff >= (1.0f / 30.0f)){
+			double MEL_fps = (1.0f/MEL_tdiff) * MEL_cter;
+			MEL_prevt = MEL_currt;
+			MEL_cter = 0;
+			printf("%ffps\n", MEL_fps);
 		}
+
+		glfwSwapBuffers(win);
+	}
+
 		/* * * * * * */
 
 		/* Terminating */

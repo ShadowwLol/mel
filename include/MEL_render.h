@@ -8,9 +8,17 @@
 #define RECT_VERT_SHADER_PATH  "resources/shaders/basic.vert"
 #define RECT_FRAG_SHADER_PATH  "resources/shaders/basic.frag"
 
-//#define MAX_QUADS (20000)
-//#define MAX_VERTICES (MAX_QUADS*4)
-//#define MAX_INDICES (MAX_QUADS*6)
+#define MAX_QUADS (20000)
+#define MAX_VERTICES (MAX_QUADS*4)
+#define MAX_INDICES (MAX_QUADS*6)
+
+#define MEL_RECTANGLE (0x00000001)
+#define MEL_IMAGE     (0x00000010)
+
+typedef struct{
+	GLfloat vertices[32 * MAX_QUADS];
+	GLfloat indices[MAX_INDICES];
+} MEL_Renderer2D_ri;
 
 typedef struct {
 	mat4 projection;
@@ -18,6 +26,7 @@ typedef struct {
     GLuint img_shader;
 	GLuint rect_shader;
 	GLint tex_count, MAX_TEXTURES;
+	MEL_Renderer2D_ri rect_items;
 } MEL_Renderer2D;
 
 #define MEL_Renderer2D_init(Renderer){\
