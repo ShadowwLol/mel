@@ -34,18 +34,18 @@ typedef struct {
 } Image;
 
 #define MEL_update_image(Renderer, Img, Config){\
-	glBindVertexArray(Renderer.VAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	glBindVertexArray(Renderer.image_items.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
 	if (((Img.rect.pos[0] > WINDOW_WIDTH) || ((Img.rect.pos[0]+Img.rect.size[0]) < 0)) ||\
 	((Img.rect.pos[1] > WINDOW_HEIGHT) || ((Img.rect.pos[1]+Img.rect.size[1]) < 0))){\
 		{\
 			Img.rect = image_update_image(Img);\
 		}\
 	}else{\
-		glBindVertexArray(Renderer.VAO);\
-		glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+		glBindVertexArray(Renderer.image_items.VAO);\
+		glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
 		{\
 			Img.rect = image_update_image(Img);\
    			glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, Config);\
@@ -55,9 +55,9 @@ typedef struct {
 			glm_rotate_at(Renderer.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\
-		glUseProgram(Renderer.img_shader);\
-		glUniform1i(glGetUniformLocation(Renderer.img_shader, "texture1"), Img.id);\
-		glUniformMatrix4fv(glGetUniformLocation(Renderer.img_shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
+		glUseProgram(Renderer.image_items.shader);\
+		glUniform1i(glGetUniformLocation(Renderer.image_items.shader, "texture1"), Img.id);\
+		glUniformMatrix4fv(glGetUniformLocation(Renderer.image_items.shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\

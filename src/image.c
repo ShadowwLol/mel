@@ -38,12 +38,12 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 		    1, 2, 3  // second triangle
 		},
 	};
-	if (Renderer.tex_count < Renderer.MAX_TEXTURES){
-		++Renderer.tex_count;
+	if (Renderer.image_items.tex_count < Renderer.image_items.MAX_TEXTURES){
+		++Renderer.image_items.tex_count;
 	}else{
-		Renderer.tex_count = 1;
+		Renderer.image_items.tex_count = 1;
 	}
-	glActiveTexture(GL_TEXTURE0+(Renderer.tex_count-1));
+	glActiveTexture(GL_TEXTURE0+(Renderer.image_items.tex_count-1));
 	glGenTextures(1, &img.texture);
 	glBindTexture(GL_TEXTURE_2D, img.texture);
 
@@ -64,12 +64,12 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(img.data);
 
-	img.id = Renderer.tex_count-1;\
+	img.id = Renderer.image_items.tex_count-1;\
 
-	glBindVertexArray(Renderer.VAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
+	glBindVertexArray(Renderer.image_items.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
 	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), img.rect.vertices, GL_STATIC_DRAW);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(img.indices), img.indices, GL_STATIC_DRAW);\
 
 	/* Position Attribute [x,y,z] */

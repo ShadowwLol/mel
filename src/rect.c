@@ -27,10 +27,10 @@ MEL_Rect rect_load_rect(MEL_Renderer2D Renderer){
 		    1, 2, 3  // second triangle
 		},
 	};
-	glBindVertexArray(Renderer.rVAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rVBO);\
+	glBindVertexArray(Renderer.rect_items.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rect_items.VBO);\
 	glBufferData(GL_ARRAY_BUFFER, sizeof(r.vertices), r.vertices, GL_STATIC_DRAW);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rEBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rect_items.EBO);\
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(r.indices), r.indices, GL_STATIC_DRAW);\
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);\

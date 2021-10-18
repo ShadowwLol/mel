@@ -1,10 +1,15 @@
 #include "../include/MEL_opengl.h"
 #include "../include/MEL_def.h"
+#include "../include/MEL_shader.h"
 #include "../include/MEL_logs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+#if __WIN32
+GLchar * read_from_file(HANDLE hConsole, WORD saved_attributes, const GLchar * restrict path){
+#else
 GLchar * read_from_file(const GLchar * restrict path){
+#endif
     FILE * fp = fopen(path, "r");
     fseek(fp, 0L, SEEK_END);
     GLuint size_of_file = ftell(fp);
@@ -26,8 +31,8 @@ GLuint create_shader_program(HANDLE hConsole, WORD saved_attributes, const char 
 #else
 GLuint create_shader_program(const char * vert_path, const char * frag_path){
 #endif
-	const GLchar * vertex_source = read_from_file(vert_path);
-    const GLchar * fragment_source = read_from_file(frag_path);
+	const GLchar * vertex_source = MEL_read_from_file(vert_path);
+    const GLchar * fragment_source = MEL_read_from_file(frag_path);
 
     /* Create vertex shader object and its reference */
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);

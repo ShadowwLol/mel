@@ -14,9 +14,9 @@ typedef struct{
 } MEL_Rect;
 
 #define MEL_update_rect(Renderer, Rect, Config){\
-	glBindVertexArray(Renderer.rVAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rVBO);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rEBO);\
+	glBindVertexArray(Renderer.rect_items.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rect_items.VBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rect_items.EBO);\
 	if (((Rect.pos[0] > WINDOW_WIDTH) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
 	((Rect.pos[1] > WINDOW_HEIGHT) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
 		{\
@@ -31,8 +31,8 @@ typedef struct{
 			glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, Renderer.projection);\
 			glm_rotate_at(Renderer.projection, pivot, glm_rad(Rect.rotation), rotation_axis);\
 		}\
-		glUseProgram(Renderer.rect_shader);\
-		glUniformMatrix4fv(glGetUniformLocation(Renderer.rect_shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
+		glUseProgram(Renderer.rect_items.shader);\
+		glUniformMatrix4fv(glGetUniformLocation(Renderer.rect_items.shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\
@@ -45,6 +45,7 @@ typedef struct{
 MEL_Rect rect_update_rect(MEL_Rect rect);
 
 #if __WIN32
+#include <windows.h>
 MEL_Rect rect_load_rect(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer);
 #define MEL_load_rect(Renderer) rect_load_rect(hConsole, saved_attributes, Renderer);
 #else
