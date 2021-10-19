@@ -75,8 +75,7 @@ int main(void){
 	/* * * * * * * * * * */
 
 	/* Images  */
-	MEL_Renderer2D Rend;
-	MEL_Renderer2D_init(Rend);
+	MEL_Renderer2D Rend = MEL_Renderer2D_init();
 	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
@@ -86,15 +85,16 @@ int main(void){
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
 	r.color[2] = 0.0f;
+	r.color[3] = 0.0f;
 	r.size[0] = WINDOW_WIDTH;
 	r.size[1] = WINDOW_HEIGHT;
 
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
-	crate.rect.src[0] = 750/2;
+	crate.rect.src[0] = 750/2.0f;
 	crate.rect.src[1] = (crate.rect.size[1])/2;
-	crate.rect.src[2] = 200/2;
+	crate.rect.src[2] = 200/2.0f;
 	crate.rect.src[3] = crate.rect.size[1]/2;
 
 	glEnable(GL_BLEND);
@@ -114,9 +114,10 @@ int main(void){
 		smiley.rect.src[3] = smiley.rect.size[1];
 
 		/* Drawing */
-		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
 		MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
 		MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
+		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
+		r.color[3] += 0.001;
 
 		/* * * * * */
 		MEL_currt = glfwGetTime();

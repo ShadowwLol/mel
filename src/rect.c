@@ -22,16 +22,12 @@ MEL_Rect rect_load_rect(MEL_Renderer2D Renderer){
 		    r.pos[0],           r.pos[1]+r.size[1], 0.0f,  r.color[0], r.color[1], r.color[2], r.color[3], // bottom left
 		    r.pos[0],           r.pos[1],           0.0f,  r.color[0], r.color[1], r.color[2], r.color[3], // top left <-- anchor point
 		},
-		.indices = {
-		    0, 1, 3, // first triangle
-		    1, 2, 3  // second triangle
-		},
 	};
 	glBindVertexArray(Renderer.rect_items.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rect_items.VBO);\
 	glBufferData(GL_ARRAY_BUFFER, sizeof(r.vertices), r.vertices, GL_STATIC_DRAW);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rect_items.EBO);\
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(r.indices), r.indices, GL_STATIC_DRAW);\
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.rect_items.indices), Renderer.rect_items.indices, GL_STATIC_DRAW);\
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);\
 	glEnableVertexAttribArray(0);\

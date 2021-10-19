@@ -11,10 +11,12 @@
 typedef struct{
 	GLuint VAO, VBO, EBO, shader;
 	GLint tex_count, MAX_TEXTURES;
+	GLuint indices[6];
 } MEL_Renderer2D_image_items;
 
 typedef struct{
 	GLuint VAO, VBO, EBO, shader;
+	GLuint indices[6];
 } MEL_Renderer2D_rect_items;
 
 typedef struct {
@@ -22,19 +24,6 @@ typedef struct {
 	MEL_Renderer2D_image_items image_items;
 	MEL_Renderer2D_rect_items rect_items;
 } MEL_Renderer2D;
-
-#define MEL_Renderer2D_init(Renderer){\
-	Renderer.image_items.tex_count = 0;\
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.image_items.MAX_TEXTURES);\
-	glGenVertexArrays(1, &Renderer.image_items.VAO);\
-	glGenBuffers(1, &Renderer.image_items.VBO);\
-	glGenBuffers(1, &Renderer.image_items.EBO);\
-	Renderer.image_items.shader = shader_create_shader_program(IMAGE_VERT_SHADER_PATH, IMAGE_FRAG_SHADER_PATH);\
-	glGenVertexArrays(1, &Renderer.rect_items.VAO);\
-	glGenBuffers(1, &Renderer.rect_items.VBO);\
-	glGenBuffers(1, &Renderer.rect_items.EBO);\
-	Renderer.rect_items.shader = shader_create_shader_program(RECT_VERT_SHADER_PATH, RECT_FRAG_SHADER_PATH);\
-}
 
 #define MEL_Renderer2D_destroy(Renderer){\
 	glBindVertexArray(0);\
@@ -49,5 +38,7 @@ typedef struct {
 	glDeleteBuffers(1, &Renderer.rect_items.EBO);\
 	glDeleteProgram(Renderer.rect_items.shader);\
 }
+
+MEL_Renderer2D MEL_Renderer2D_init();
 
 #endif

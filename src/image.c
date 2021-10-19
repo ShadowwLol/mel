@@ -32,11 +32,7 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f, // bottom right
 		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f, // bottom left
 		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f, // top left <-- anchor point
-		},
-		.indices = {
-		    0, 1, 3, // first triangle
-		    1, 2, 3  // second triangle
-		},
+		}
 	};
 	if (Renderer.image_items.tex_count < Renderer.image_items.MAX_TEXTURES){
 		++Renderer.image_items.tex_count;
@@ -70,7 +66,7 @@ Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
 	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), img.rect.vertices, GL_STATIC_DRAW);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(img.indices), img.indices, GL_STATIC_DRAW);\
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.image_items.indices), Renderer.image_items.indices, GL_STATIC_DRAW);\
 
 	/* Position Attribute [x,y,z] */
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);\
