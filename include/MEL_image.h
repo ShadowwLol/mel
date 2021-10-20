@@ -33,12 +33,12 @@ typedef struct {
 	GLuint indices[6];
 } Image;
 
-#define MEL_update_image(Renderer, Img, Config){\
+#define MEL_update_image(MELW, Renderer, Img, Config){\
 	glBindVertexArray(Renderer.image_items.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
-	if (((Img.rect.pos[0] > WINDOW_WIDTH) || ((Img.rect.pos[0]+Img.rect.size[0]) < 0)) ||\
-	((Img.rect.pos[1] > WINDOW_HEIGHT) || ((Img.rect.pos[1]+Img.rect.size[1]) < 0))){\
+	if (((Img.rect.pos[0] > MELW.mode->width) || ((Img.rect.pos[0]+Img.rect.size[0]) < 0)) ||\
+	((Img.rect.pos[1] > MELW.mode->height) || ((Img.rect.pos[1]+Img.rect.size[1]) < 0))){\
 		{\
 			Img.rect = image_update_image(Img);\
 		}\
@@ -51,7 +51,7 @@ typedef struct {
    			glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, Config);\
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f};\
-			glm_ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f, Renderer.projection);\
+			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);\
 			glm_rotate_at(Renderer.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\

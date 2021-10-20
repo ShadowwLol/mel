@@ -39,6 +39,13 @@ typedef struct {
 	glDeleteProgram(Renderer.rect_items.shader);\
 }
 
-MEL_Renderer2D MEL_Renderer2D_init();
+#if __WIN32
+#include <windows.h>
+MEL_Renderer2D MEL_Renderer2D_ini(HANDLE hConsole, WORD saved_attributes);
+#define MEL_Renderer2D_init() MEL_Renderer2D_ini(hConsole, saved_attributes)
+#else
+MEL_Renderer2D MEL_Renderer2D_ini();
+#define MEL_Renderer2D_init() MEL_Renderer2D_ini()
+#endif
 
 #endif

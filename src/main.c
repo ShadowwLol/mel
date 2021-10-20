@@ -12,8 +12,7 @@ void window_size_callback(GLFWwindow * window, int width, int height);
 int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-static GLFWwindow * win;
-static GLFWvidmode* win_mode;
+MEL_Window win;
 static Image smiley;
 
 #if __WIN32
@@ -44,9 +43,9 @@ int main(void){
 	/* * * * * * * * * * * */
 
 	/* Creating the window */
-	win_mode = (GLFWvidmode *)glfwGetVideoMode(glfwGetPrimaryMonitor());
-	win = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
-	if (!win){
+	win.mode = (GLFWvidmode *)glfwGetVideoMode(glfwGetPrimaryMonitor());
+	win.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
+	if (!win.window){
 		log_log(LOG_ERROR, "Failed creating window");
 		glfwTerminate();
 		return -1;
@@ -56,7 +55,7 @@ int main(void){
 	/* * * * * * * * * * * */
 
 	/* Make the window's context current */
-	glfwMakeContextCurrent(win);
+	glfwMakeContextCurrent(win.window);
 	/* * * * * * * * * * * * * * * * * * */
 
 	/* OPENGL configuration */
@@ -65,12 +64,12 @@ int main(void){
 
 	/* Setting callbacks */
 	glfwSetErrorCallback(error_callback);
-	glfwSetKeyCallback(win, key_callback);
-	glfwSetWindowSizeCallback(win, window_size_callback);
-	glfwSetWindowSizeLimits(win, (win_mode->width/2), (win_mode->height/2), win_mode->width, win_mode->height);
+	glfwSetKeyCallback(win.window, key_callback);
+	glfwSetWindowSizeCallback(win.window, window_size_callback);
+	glfwSetWindowSizeLimits(win.window, (win.mode->width/2), (win.mode->height/2), win.mode->width, win.mode->height);
 	//glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
 
-	glfwSetScrollCallback(win, scroll_callback);
+	glfwSetScrollCallback(win.window, scroll_callback);
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	/* * * * * * * * * * */
 
@@ -85,9 +84,11 @@ int main(void){
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
 	r.color[2] = 0.0f;
-	r.color[3] = 0.0f;
-	r.size[0] = WINDOW_WIDTH;
-	r.size[1] = WINDOW_HEIGHT;
+	r.color[3] = 1.0f;
+	r.pos[0] = 200.0f;
+	r.pos[1] = 70.0f;
+	r.size[0] = 500.0f;
+	r.size[1] = 500.0f;
 
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
@@ -106,7 +107,7 @@ int main(void){
 	uint32_t MEL_cter = 0;
 
 	/* Main loop */
-	while (!glfwWindowShouldClose(win)){
+	while (!glfwWindowShouldClose(win.window)){
 		glfwPollEvents();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -114,10 +115,10 @@ int main(void){
 		smiley.rect.src[3] = smiley.rect.size[1];
 
 		/* Drawing */
-		MEL_update_image(Rend, crate, MEL_IMAGE_STATIC);
-		MEL_update_image(Rend, smiley, MEL_IMAGE_DYNAMIC);
-		MEL_update_rect(Rend, r, MEL_IMAGE_STATIC);
-		r.color[3] += 0.001;
+		MEL_update_rect(win, Rend, r, MEL_IMAGE_STATIC);
+		MEL_update_image(win, Rend, crate, MEL_IMAGE_STATIC);
+		MEL_update_image(win, Rend, smiley, MEL_IMAGE_DYNAMIC);
+		//r.color[3] += 0.001;
 
 		/* * * * * */
 		MEL_currt = glfwGetTime();
@@ -130,7 +131,7 @@ int main(void){
 			//printf("%ffps\n", MEL_fps);
 		}
 
-		glfwSwapBuffers(win);
+		glfwSwapBuffers(win.window);
 	}
 
 		/* * * * * * */
@@ -139,7 +140,7 @@ int main(void){
 		MEL_destroy_image(smiley);
 		MEL_destroy_image(crate);
 		MEL_Renderer2D_destroy(Rend);
-		glfwDestroyWindow(win);
+		glfwDestroyWindow(win.window);
 		glfwTerminate();
 		/* * * * * * * */
 
@@ -152,11 +153,11 @@ int main(void){
 				switch(key){
 					case GLFW_KEY_ESCAPE:
 						/* Close the game */
-						glfwSetWindowShouldClose(win, GLFW_TRUE);
+						glfwSetWindowShouldClose(window, GLFW_TRUE);
 						break;
 					case GLFW_KEY_F11:
 						/* Fullscreen the game */
-						toggleFullscreen(window, win_mode);
+						toggleFullscreen(window, win.mode);
 						break;
 					case GLFW_KEY_SPACE:
 						if (smiley.rect.color[0] == 1.0f){
@@ -206,7 +207,6 @@ int main(void){
 	}
 
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-		//printf("%lf, %lf", xoffset, yoffset);
 		switch((int)yoffset){
 			case -1:
 				smiley.rect.size[0] -= 10;

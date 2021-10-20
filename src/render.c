@@ -2,7 +2,11 @@
 #include "../include/MEL_image.h"
 #include "../include/MEL_rect.h"
 
-MEL_Renderer2D MEL_Renderer2D_init(){
+#if __WIN32
+MEL_Renderer2D MEL_Renderer2D_ini(HANDLE hConsole, WORD saved_attributes){
+#else
+MEL_Renderer2D MEL_Renderer2D_ini(){
+#endif
 	MEL_Renderer2D tmp;
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &tmp.image_items.MAX_TEXTURES);\
 	MEL_Renderer2D Renderer = {
