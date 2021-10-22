@@ -4,26 +4,23 @@
 #include "../include/MEL_logs.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #if __WIN32
-GLchar * read_from_file(HANDLE hConsole, WORD saved_attributes, const GLchar * restrict path){
+GLchar * read_from_file(HANDLE hConsole, WORD saved_attributes, const GLchar * path){
 #else
-GLchar * read_from_file(const GLchar * restrict path){
+GLchar * read_from_file(const GLchar * path){
 #endif
-    FILE * fp = fopen(path, "r");
-    fseek(fp, 0L, SEEK_END);
-    GLuint size_of_file = ftell(fp);
-    fseek(fp, 0L, SEEK_SET);
-
-    GLchar * file_contents = malloc(size_of_file);
-    if (file_contents){
-		if (fread(file_contents, 1, size_of_file, fp) < 1){
-			log_log(LOG_ERROR, "Failed reading file : {%s}\n", path);
-		}
-	}
-    fclose(fp);
-    file_contents[size_of_file] = '\0';
-    return file_contents;
+	FILE *f = fopen(path, "rt");
+	assert(f);
+	fseek(f, 0, SEEK_END);
+	long length = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	char *buffer = (char *) malloc(length + 1);
+	buffer[length] = '\0';
+	fread(buffer, 1, length, f);
+	fclose(f);
+	return buffer;
 }
 
 #if __WIN32
