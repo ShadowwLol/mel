@@ -2,7 +2,6 @@
 #include "../include/MEL_opengl.h"
 
 #include "../include/MEL_image.h"
-int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode);
 extern Image smiley;
 extern MEL_Camera camera;
 extern MEL_Window win;
@@ -34,7 +33,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 					break;
 				case GLFW_KEY_F11:
 					/* Fullscreen the game */
-					toggleFullscreen(window, win.mode);
+					toggleFullscreen(win);
 					break;
 				case GLFW_KEY_SPACE:
 					if (smiley.rect.color[0] == 1.0f){

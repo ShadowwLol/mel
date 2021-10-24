@@ -71,11 +71,11 @@ int main(void){
 
 	/* Images  */
 	MEL_Renderer2D Rend = MEL_Renderer2D_init();
-	smiley = img_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
+	smiley = MEL_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
 	smiley.rect.color[3] = 0.5f;
-	Image crate = img_load_image(Rend, "resources/images/container.jpg", GL_RGB);
+	Image crate = MEL_load_image(Rend, "resources/images/container.jpg", GL_RGB);
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;

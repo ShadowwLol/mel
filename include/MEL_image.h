@@ -74,14 +74,7 @@ typedef struct {
 	glDeleteTextures(1, &image.texture);\
 }
 
-#if __WIN32
-Image image_load_image(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer, GLchar * path, GLenum channels);
-#define img_load_image(Rend, path, channels) image_load_image(hConsole, saved_attributes, Rend, path, channels);
-#else
-Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels);
-#define img_load_image(Rend, path, channels) image_load_image(Rend, path, channels);
-#endif
-
+Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels);
 struct rect image_update_image(Image source);
 
 #endif

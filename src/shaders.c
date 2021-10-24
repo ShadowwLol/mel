@@ -7,10 +7,12 @@
 #include <assert.h>
 
 #if __WIN32
-GLchar * read_from_file(HANDLE hConsole, WORD saved_attributes, const GLchar * path){
-#else
-GLchar * read_from_file(const GLchar * path){
+#include <windows.h>
+extern HANDLE hConsole;
+extern WORD saved_attributes;
 #endif
+
+GLchar * MEL_read_from_file(const GLchar * path){
 	FILE *f = fopen(path, "rt");
 	assert(f);
 	fseek(f, 0, SEEK_END);
@@ -23,11 +25,7 @@ GLchar * read_from_file(const GLchar * path){
 	return buffer;
 }
 
-#if __WIN32
-GLuint create_shader_program(HANDLE hConsole, WORD saved_attributes, const char * vert_path, const char * frag_path){
-#else
-GLuint create_shader_program(const char * vert_path, const char * frag_path){
-#endif
+GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path){
 	const GLchar * vertex_source = MEL_read_from_file(vert_path);
     const GLchar * fragment_source = MEL_read_from_file(frag_path);
 

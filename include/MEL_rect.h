@@ -44,15 +44,7 @@ typedef struct{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
+MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer);
 MEL_Rect rect_update_rect(MEL_Rect rect);
-
-#if __WIN32
-#include <windows.h>
-MEL_Rect rect_load_rect(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer);
-#define MEL_load_rect(Renderer) rect_load_rect(hConsole, saved_attributes, Renderer);
-#else
-MEL_Rect rect_load_rect(MEL_Renderer2D Renderer);
-#define MEL_load_rect(Renderer) rect_load_rect(Renderer);
-#endif
 
 #endif

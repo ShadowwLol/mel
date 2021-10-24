@@ -4,10 +4,12 @@
 #include <cglm/util.h>
 
 #if __WIN32
-Image image_load_image(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
-#else
-Image image_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
+#include <windows.h>
+extern HANDLE hConsole;
+extern WORD saved_attributes;
 #endif
+
+Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels){
 	stbi_set_flip_vertically_on_load(true);
 	GLint w, h, c;
 	Image img = {

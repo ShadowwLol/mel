@@ -1,10 +1,12 @@
 #include "../include/MEL_rect.h"
 
 #if __WIN32
-MEL_Rect rect_load_rect(HANDLE hConsole, WORD saved_attributes, MEL_Renderer2D Renderer){
-#else
-MEL_Rect rect_load_rect(MEL_Renderer2D Renderer){
+#include <windows.h>
+extern HANDLE hConsole;
+extern WORD saved_attributes;
 #endif
+
+MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer){
 	MEL_Rect r = {
 		.pos[0] = 0.0f,
 		.pos[1] = 0.0f,

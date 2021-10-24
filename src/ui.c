@@ -2,13 +2,13 @@
 #include "../include/MEL_def.h"
 #include <stdio.h>
 
-int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode){
-    if (!glfwGetWindowMonitor(window)){
+int toggleFullscreen(MEL_Window window){
+    if (!glfwGetWindowMonitor(window.window)){
         /* Currently windowed */
-        glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), (((float)win_mode->width/2) - (WINDOW_WIDTH/2)), (((float)win_mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, win_mode->refreshRate);
+        glfwSetWindowMonitor(window.window, glfwGetPrimaryMonitor(), (((float)window.mode->width/2) - (WINDOW_WIDTH/2)), (((float)window.mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, window.mode->refreshRate);
     }else{
         /* Currently fullscreen */
-        glfwSetWindowMonitor(window, NULL, (((float)win_mode->width/2) - (WINDOW_WIDTH/2)), (((float)win_mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, win_mode->refreshRate);
+        glfwSetWindowMonitor(window.window, NULL, (((float)window.mode->width/2) - (WINDOW_WIDTH/2)), (((float)window.mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, window.mode->refreshRate);
     }
     return 0;
 }
