@@ -129,6 +129,126 @@ mel/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/build
 .PHONY : mel/fast
 
+src/MEL_error_callback.o: src/MEL_error_callback.c.o
+.PHONY : src/MEL_error_callback.o
+
+# target to build an object file
+src/MEL_error_callback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_error_callback.c.o
+.PHONY : src/MEL_error_callback.c.o
+
+src/MEL_error_callback.i: src/MEL_error_callback.c.i
+.PHONY : src/MEL_error_callback.i
+
+# target to preprocess a source file
+src/MEL_error_callback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_error_callback.c.i
+.PHONY : src/MEL_error_callback.c.i
+
+src/MEL_error_callback.s: src/MEL_error_callback.c.s
+.PHONY : src/MEL_error_callback.s
+
+# target to generate assembly for a file
+src/MEL_error_callback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_error_callback.c.s
+.PHONY : src/MEL_error_callback.c.s
+
+src/MEL_joystick_callback.o: src/MEL_joystick_callback.c.o
+.PHONY : src/MEL_joystick_callback.o
+
+# target to build an object file
+src/MEL_joystick_callback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_joystick_callback.c.o
+.PHONY : src/MEL_joystick_callback.c.o
+
+src/MEL_joystick_callback.i: src/MEL_joystick_callback.c.i
+.PHONY : src/MEL_joystick_callback.i
+
+# target to preprocess a source file
+src/MEL_joystick_callback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_joystick_callback.c.i
+.PHONY : src/MEL_joystick_callback.c.i
+
+src/MEL_joystick_callback.s: src/MEL_joystick_callback.c.s
+.PHONY : src/MEL_joystick_callback.s
+
+# target to generate assembly for a file
+src/MEL_joystick_callback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_joystick_callback.c.s
+.PHONY : src/MEL_joystick_callback.c.s
+
+src/MEL_key_callback.o: src/MEL_key_callback.c.o
+.PHONY : src/MEL_key_callback.o
+
+# target to build an object file
+src/MEL_key_callback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_key_callback.c.o
+.PHONY : src/MEL_key_callback.c.o
+
+src/MEL_key_callback.i: src/MEL_key_callback.c.i
+.PHONY : src/MEL_key_callback.i
+
+# target to preprocess a source file
+src/MEL_key_callback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_key_callback.c.i
+.PHONY : src/MEL_key_callback.c.i
+
+src/MEL_key_callback.s: src/MEL_key_callback.c.s
+.PHONY : src/MEL_key_callback.s
+
+# target to generate assembly for a file
+src/MEL_key_callback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_key_callback.c.s
+.PHONY : src/MEL_key_callback.c.s
+
+src/MEL_scroll_callback.o: src/MEL_scroll_callback.c.o
+.PHONY : src/MEL_scroll_callback.o
+
+# target to build an object file
+src/MEL_scroll_callback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_scroll_callback.c.o
+.PHONY : src/MEL_scroll_callback.c.o
+
+src/MEL_scroll_callback.i: src/MEL_scroll_callback.c.i
+.PHONY : src/MEL_scroll_callback.i
+
+# target to preprocess a source file
+src/MEL_scroll_callback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_scroll_callback.c.i
+.PHONY : src/MEL_scroll_callback.c.i
+
+src/MEL_scroll_callback.s: src/MEL_scroll_callback.c.s
+.PHONY : src/MEL_scroll_callback.s
+
+# target to generate assembly for a file
+src/MEL_scroll_callback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_scroll_callback.c.s
+.PHONY : src/MEL_scroll_callback.c.s
+
+src/MEL_window_size_callback.o: src/MEL_window_size_callback.c.o
+.PHONY : src/MEL_window_size_callback.o
+
+# target to build an object file
+src/MEL_window_size_callback.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_window_size_callback.c.o
+.PHONY : src/MEL_window_size_callback.c.o
+
+src/MEL_window_size_callback.i: src/MEL_window_size_callback.c.i
+.PHONY : src/MEL_window_size_callback.i
+
+# target to preprocess a source file
+src/MEL_window_size_callback.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_window_size_callback.c.i
+.PHONY : src/MEL_window_size_callback.c.i
+
+src/MEL_window_size_callback.s: src/MEL_window_size_callback.c.s
+.PHONY : src/MEL_window_size_callback.s
+
+# target to generate assembly for a file
+src/MEL_window_size_callback.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/MEL_window_size_callback.c.s
+.PHONY : src/MEL_window_size_callback.c.s
+
 src/glad.o: src/glad.c.o
 .PHONY : src/glad.o
 
@@ -330,6 +450,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... mel"
+	@echo "... src/MEL_error_callback.o"
+	@echo "... src/MEL_error_callback.i"
+	@echo "... src/MEL_error_callback.s"
+	@echo "... src/MEL_joystick_callback.o"
+	@echo "... src/MEL_joystick_callback.i"
+	@echo "... src/MEL_joystick_callback.s"
+	@echo "... src/MEL_key_callback.o"
+	@echo "... src/MEL_key_callback.i"
+	@echo "... src/MEL_key_callback.s"
+	@echo "... src/MEL_scroll_callback.o"
+	@echo "... src/MEL_scroll_callback.i"
+	@echo "... src/MEL_scroll_callback.s"
+	@echo "... src/MEL_window_size_callback.o"
+	@echo "... src/MEL_window_size_callback.i"
+	@echo "... src/MEL_window_size_callback.s"
 	@echo "... src/glad.o"
 	@echo "... src/glad.i"
 	@echo "... src/glad.s"

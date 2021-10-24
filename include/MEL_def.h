@@ -29,4 +29,11 @@ typedef struct{
 	GLFWvidmode* mode;
 } MEL_Window;
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void joystick_callback(int jid, int event);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void window_size_callback(GLFWwindow * window, int width, int height);
+void error_callback(int error, const char* description);
+int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode);
+
 #endif

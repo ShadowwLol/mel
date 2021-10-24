@@ -6,23 +6,18 @@
 #include "../include/MEL_image.h"  /* for images  */
 #include "../include/MEL_rect.h"   /* for rects   */
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void error_callback(int error, const char* description);
-void window_size_callback(GLFWwindow * window, int width, int height);
-int toggleFullscreen(GLFWwindow * window, GLFWvidmode * win_mode);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
 MEL_Window win;
-static Image smiley;
+Image smiley;
 MEL_Camera camera;
 
 #if __WIN32
 #include <windows.h>
+HANDLE hConsole;
+WORD saved_attributes;
+
 int main(void){
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	WORD saved_attributes;
-	/* Save current attributes */
 	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
 	saved_attributes = consoleInfo.wAttributes;
 #else
@@ -59,19 +54,19 @@ int main(void){
 	glfwMakeContextCurrent(win.window);
 	/* * * * * * * * * * * * * * * * * * */
 
-	/* OPENGL configuration */
+	/* OPENGL configuration  */
 	gladLoadGL();
 	glfwSwapInterval(0);
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	/* * * * * * * * * * * * */
 
-	/* Setting callbacks */
+	/* Setting callbacks  */
 	glfwSetErrorCallback(error_callback);
+	glfwSetJoystickCallback(joystick_callback);
 	glfwSetKeyCallback(win.window, key_callback);
 	glfwSetWindowSizeCallback(win.window, window_size_callback);
 	glfwSetWindowSizeLimits(win.window, (win.mode->width/2), (win.mode->height/2), win.mode->width, win.mode->height);
-	//glfwSetWindowAspectRatio(win, ASPECT_RATIO_W, ASPECT_RATIO_H);
-
 	glfwSetScrollCallback(win.window, scroll_callback);
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	/* * * * * * * * * * */
 
 	/* Images  */
@@ -113,16 +108,13 @@ int main(void){
 		glfwPollEvents();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
-		smiley.rect.src[2] = smiley.rect.size[0];
-		smiley.rect.src[3] = smiley.rect.size[1];
 
 		/* Drawing */
 		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
-		//r.color[3] += 0.001;
-
 		/* * * * * */
+
 		MEL_currt = glfwGetTime();
 		MEL_tdiff = MEL_currt - MEL_prevt;
 		++MEL_cter;
@@ -136,93 +128,15 @@ int main(void){
 		glfwSwapBuffers(win.window);
 	}
 
-		/* * * * * * */
+	/* * * * * * */
 
-		/* Terminating */
-		MEL_destroy_image(smiley);
-		MEL_destroy_image(crate);
-		MEL_Renderer2D_destroy(Rend);
-		glfwDestroyWindow(win.window);
-		glfwTerminate();
-		/* * * * * * * */
+	/* Terminating */
+	MEL_destroy_image(smiley);
+	MEL_destroy_image(crate);
+	MEL_Renderer2D_destroy(Rend);
+	glfwDestroyWindow(win.window);
+	glfwTerminate();
+	/* * * * * * * */
 
-		return 0;
-	}
-
-	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-		switch(action){
-			case GLFW_RELEASE:
-				switch(key){
-					case GLFW_KEY_ESCAPE:
-						/* Close the game */
-						glfwSetWindowShouldClose(window, GLFW_TRUE);
-						break;
-					case GLFW_KEY_F11:
-						/* Fullscreen the game */
-						toggleFullscreen(window, win.mode);
-						break;
-					case GLFW_KEY_SPACE:
-						if (smiley.rect.color[0] == 1.0f){
-							smiley.rect.color[0] = 0.0f;
-						}else{
-							smiley.rect.color[0] = 1.0;
-						}
-						break;
-					default:
-						break;
-				}
-				break;
-			case GLFW_REPEAT:
-				switch(key){
-					case GLFW_KEY_W:
-						camera[1] -= 10;
-						//smiley.rect.pos[1] -= 10;
-						break;
-					case GLFW_KEY_A:
-						camera[0] -= 10;
-						//smiley.rect.pos[0] -= 10;
-						break;
-					case GLFW_KEY_S:
-						camera[1] += 10;
-						//smiley.rect.pos[1] += 10;
-						break;
-					case GLFW_KEY_D:
-						camera[0] += 10;
-						//smiley.rect.pos[0] += 10;
-						break;
-					case GLFW_KEY_RIGHT:
-						smiley.rect.rotation += 1.0f;
-						break;
-					case GLFW_KEY_LEFT:
-						smiley.rect.rotation -= 1.0f;
-						break;
-					default:
-						break;
-				}
-			default:
-				break;
-		}
-	}
-
-	void error_callback(int error, const char* description){
-		fprintf(stderr, "[-] Error: %s\n", description);
-	}
-
-	void window_size_callback(GLFWwindow * window, int width, int height){
-		glViewport(0, 0, width, height);
-	}
-
-	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-		switch((int)yoffset){
-			case -1:
-				smiley.rect.size[0] -= 10;
-				smiley.rect.size[1] -= 10;
-				break;
-			case 1:
-				smiley.rect.size[0] += 10;
-				smiley.rect.size[1] += 10;
-				break;
-			default:
-				break;
-		}
-	}
+	return 0;
+}

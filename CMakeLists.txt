@@ -13,6 +13,9 @@ endif()
 # Project Name
 project(mel VERSION 1.0)
 
+# CFLAGS
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3 -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fstack-clash-protection -Wshadow -Wformat=2 -Wformat-truncation -Wformat-overflow -fno-common -fstack-usage")
+
 # Source files
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 
