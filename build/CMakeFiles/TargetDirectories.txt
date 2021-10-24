@@ -1,3 +1,0 @@
-/home/shadoww/opengl-stuff/build/CMakeFiles/rebuild_cache.dir
-/home/shadoww/opengl-stuff/build/CMakeFiles/edit_cache.dir
-/home/shadoww/opengl-stuff/build/CMakeFiles/mel.dir

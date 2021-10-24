@@ -20,6 +20,8 @@ typedef uint8_t MEL_bool;
 #define MEL_TRUE (1)
 #define MEL_FALSE (0)
 
+typedef vec3 MEL_Camera;
+
 #define SINGLETON(t, inst, init) t* GET_SINGLETON_##t_##inst() { static t inst = init; return &inst; }
 
 typedef struct{

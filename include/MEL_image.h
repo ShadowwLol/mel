@@ -33,7 +33,7 @@ typedef struct {
 	GLuint indices[6];
 } Image;
 
-#define MEL_update_image(MELW, Renderer, Img, Config){\
+#define MEL_update_image(MELW, Renderer, Img, Camera, Config){\
 	glBindVertexArray(Renderer.image_items.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
@@ -52,6 +52,8 @@ typedef struct {
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f};\
 			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);\
+			vec3 v = {Camera[0]*-1, Camera[1]*-1, Camera[2]*-1};\
+			glm_translate(Renderer.projection, v);\
 			glm_rotate_at(Renderer.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\

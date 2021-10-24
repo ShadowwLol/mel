@@ -14,6 +14,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 MEL_Window win;
 static Image smiley;
+MEL_Camera camera;
 
 #if __WIN32
 #include <windows.h>
@@ -106,6 +107,7 @@ int main(void){
 	double MEL_tdiff = 0.0f;
 	uint32_t MEL_cter = 0;
 
+	MEL_Camera default_camera = {0, 0, 0};
 	/* Main loop */
 	while (!glfwWindowShouldClose(win.window)){
 		glfwPollEvents();
@@ -115,9 +117,9 @@ int main(void){
 		smiley.rect.src[3] = smiley.rect.size[1];
 
 		/* Drawing */
-		MEL_update_rect(win, Rend, r, MEL_IMAGE_STATIC);
-		MEL_update_image(win, Rend, crate, MEL_IMAGE_STATIC);
-		MEL_update_image(win, Rend, smiley, MEL_IMAGE_DYNAMIC);
+		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
+		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
+		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
 		//r.color[3] += 0.001;
 
 		/* * * * * */
@@ -173,16 +175,20 @@ int main(void){
 			case GLFW_REPEAT:
 				switch(key){
 					case GLFW_KEY_W:
-						smiley.rect.pos[1] -= 10;
+						camera[1] -= 10;
+						//smiley.rect.pos[1] -= 10;
 						break;
 					case GLFW_KEY_A:
-						smiley.rect.pos[0] -= 10;
+						camera[0] -= 10;
+						//smiley.rect.pos[0] -= 10;
 						break;
 					case GLFW_KEY_S:
-						smiley.rect.pos[1] += 10;
+						camera[1] += 10;
+						//smiley.rect.pos[1] += 10;
 						break;
 					case GLFW_KEY_D:
-						smiley.rect.pos[0] += 10;
+						camera[0] += 10;
+						//smiley.rect.pos[0] += 10;
 						break;
 					case GLFW_KEY_RIGHT:
 						smiley.rect.rotation += 1.0f;
