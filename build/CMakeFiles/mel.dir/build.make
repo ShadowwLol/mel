@@ -73,113 +73,113 @@ CMakeFiles/mel.dir/src/glad.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/glad.c.o: ../src/glad.c
 CMakeFiles/mel.dir/src/glad.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/mel.dir/src/glad.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/glad.c.o -MF CMakeFiles/mel.dir/src/glad.c.o.d -o CMakeFiles/mel.dir/src/glad.c.o -c /home/shadoww/opengl-stuff/src/glad.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/glad.c.o -MF CMakeFiles/mel.dir/src/glad.c.o.d -o CMakeFiles/mel.dir/src/glad.c.o -c /home/shadoww/opengl-stuff/src/glad.c
 
 CMakeFiles/mel.dir/src/glad.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/glad.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/glad.c > CMakeFiles/mel.dir/src/glad.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/glad.c > CMakeFiles/mel.dir/src/glad.c.i
 
 CMakeFiles/mel.dir/src/glad.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/glad.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/glad.c -o CMakeFiles/mel.dir/src/glad.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/glad.c -o CMakeFiles/mel.dir/src/glad.c.s
 
 CMakeFiles/mel.dir/src/image.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/image.c.o: ../src/image.c
 CMakeFiles/mel.dir/src/image.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/mel.dir/src/image.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/image.c.o -MF CMakeFiles/mel.dir/src/image.c.o.d -o CMakeFiles/mel.dir/src/image.c.o -c /home/shadoww/opengl-stuff/src/image.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/image.c.o -MF CMakeFiles/mel.dir/src/image.c.o.d -o CMakeFiles/mel.dir/src/image.c.o -c /home/shadoww/opengl-stuff/src/image.c
 
 CMakeFiles/mel.dir/src/image.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/image.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/image.c > CMakeFiles/mel.dir/src/image.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/image.c > CMakeFiles/mel.dir/src/image.c.i
 
 CMakeFiles/mel.dir/src/image.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/image.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/image.c -o CMakeFiles/mel.dir/src/image.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/image.c -o CMakeFiles/mel.dir/src/image.c.s
 
 CMakeFiles/mel.dir/src/logs.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/logs.c.o: ../src/logs.c
 CMakeFiles/mel.dir/src/logs.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/mel.dir/src/logs.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/logs.c.o -MF CMakeFiles/mel.dir/src/logs.c.o.d -o CMakeFiles/mel.dir/src/logs.c.o -c /home/shadoww/opengl-stuff/src/logs.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/logs.c.o -MF CMakeFiles/mel.dir/src/logs.c.o.d -o CMakeFiles/mel.dir/src/logs.c.o -c /home/shadoww/opengl-stuff/src/logs.c
 
 CMakeFiles/mel.dir/src/logs.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/logs.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/logs.c > CMakeFiles/mel.dir/src/logs.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/logs.c > CMakeFiles/mel.dir/src/logs.c.i
 
 CMakeFiles/mel.dir/src/logs.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/logs.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/logs.c -o CMakeFiles/mel.dir/src/logs.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/logs.c -o CMakeFiles/mel.dir/src/logs.c.s
 
 CMakeFiles/mel.dir/src/main.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/main.c.o: ../src/main.c
 CMakeFiles/mel.dir/src/main.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/mel.dir/src/main.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/main.c.o -MF CMakeFiles/mel.dir/src/main.c.o.d -o CMakeFiles/mel.dir/src/main.c.o -c /home/shadoww/opengl-stuff/src/main.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/main.c.o -MF CMakeFiles/mel.dir/src/main.c.o.d -o CMakeFiles/mel.dir/src/main.c.o -c /home/shadoww/opengl-stuff/src/main.c
 
 CMakeFiles/mel.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/main.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/main.c > CMakeFiles/mel.dir/src/main.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/main.c > CMakeFiles/mel.dir/src/main.c.i
 
 CMakeFiles/mel.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/main.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/main.c -o CMakeFiles/mel.dir/src/main.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/main.c -o CMakeFiles/mel.dir/src/main.c.s
 
 CMakeFiles/mel.dir/src/rect.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/rect.c.o: ../src/rect.c
 CMakeFiles/mel.dir/src/rect.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/mel.dir/src/rect.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/rect.c.o -MF CMakeFiles/mel.dir/src/rect.c.o.d -o CMakeFiles/mel.dir/src/rect.c.o -c /home/shadoww/opengl-stuff/src/rect.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/rect.c.o -MF CMakeFiles/mel.dir/src/rect.c.o.d -o CMakeFiles/mel.dir/src/rect.c.o -c /home/shadoww/opengl-stuff/src/rect.c
 
 CMakeFiles/mel.dir/src/rect.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/rect.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/rect.c > CMakeFiles/mel.dir/src/rect.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/rect.c > CMakeFiles/mel.dir/src/rect.c.i
 
 CMakeFiles/mel.dir/src/rect.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/rect.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/rect.c -o CMakeFiles/mel.dir/src/rect.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/rect.c -o CMakeFiles/mel.dir/src/rect.c.s
 
 CMakeFiles/mel.dir/src/render.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/render.c.o: ../src/render.c
 CMakeFiles/mel.dir/src/render.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/mel.dir/src/render.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/render.c.o -MF CMakeFiles/mel.dir/src/render.c.o.d -o CMakeFiles/mel.dir/src/render.c.o -c /home/shadoww/opengl-stuff/src/render.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/render.c.o -MF CMakeFiles/mel.dir/src/render.c.o.d -o CMakeFiles/mel.dir/src/render.c.o -c /home/shadoww/opengl-stuff/src/render.c
 
 CMakeFiles/mel.dir/src/render.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/render.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/render.c > CMakeFiles/mel.dir/src/render.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/render.c > CMakeFiles/mel.dir/src/render.c.i
 
 CMakeFiles/mel.dir/src/render.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/render.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/render.c -o CMakeFiles/mel.dir/src/render.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/render.c -o CMakeFiles/mel.dir/src/render.c.s
 
 CMakeFiles/mel.dir/src/shaders.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/shaders.c.o: ../src/shaders.c
 CMakeFiles/mel.dir/src/shaders.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/mel.dir/src/shaders.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/shaders.c.o -MF CMakeFiles/mel.dir/src/shaders.c.o.d -o CMakeFiles/mel.dir/src/shaders.c.o -c /home/shadoww/opengl-stuff/src/shaders.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/shaders.c.o -MF CMakeFiles/mel.dir/src/shaders.c.o.d -o CMakeFiles/mel.dir/src/shaders.c.o -c /home/shadoww/opengl-stuff/src/shaders.c
 
 CMakeFiles/mel.dir/src/shaders.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/shaders.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/shaders.c > CMakeFiles/mel.dir/src/shaders.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/shaders.c > CMakeFiles/mel.dir/src/shaders.c.i
 
 CMakeFiles/mel.dir/src/shaders.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/shaders.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/shaders.c -o CMakeFiles/mel.dir/src/shaders.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/shaders.c -o CMakeFiles/mel.dir/src/shaders.c.s
 
 CMakeFiles/mel.dir/src/ui.c.o: CMakeFiles/mel.dir/flags.make
 CMakeFiles/mel.dir/src/ui.c.o: ../src/ui.c
 CMakeFiles/mel.dir/src/ui.c.o: CMakeFiles/mel.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/mel.dir/src/ui.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/ui.c.o -MF CMakeFiles/mel.dir/src/ui.c.o.d -o CMakeFiles/mel.dir/src/ui.c.o -c /home/shadoww/opengl-stuff/src/ui.c
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mel.dir/src/ui.c.o -MF CMakeFiles/mel.dir/src/ui.c.o.d -o CMakeFiles/mel.dir/src/ui.c.o -c /home/shadoww/opengl-stuff/src/ui.c
 
 CMakeFiles/mel.dir/src/ui.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/mel.dir/src/ui.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/ui.c > CMakeFiles/mel.dir/src/ui.c.i
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/shadoww/opengl-stuff/src/ui.c > CMakeFiles/mel.dir/src/ui.c.i
 
 CMakeFiles/mel.dir/src/ui.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/mel.dir/src/ui.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/ui.c -o CMakeFiles/mel.dir/src/ui.c.s
+	/usr/bin/i686-w64-mingw32-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/shadoww/opengl-stuff/src/ui.c -o CMakeFiles/mel.dir/src/ui.c.s
 
 # Object files for target mel
 mel_OBJECTS = \
@@ -204,11 +204,6 @@ mel: CMakeFiles/mel.dir/src/render.c.o
 mel: CMakeFiles/mel.dir/src/shaders.c.o
 mel: CMakeFiles/mel.dir/src/ui.c.o
 mel: CMakeFiles/mel.dir/build.make
-mel: /usr/lib/libdl.so
-mel: /usr/lib/libglfw.so
-mel: /usr/lib/libpthread.so
-mel: /usr/lib/libGL.so
-mel: /usr/lib/libm.so
 mel: CMakeFiles/mel.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/shadoww/opengl-stuff/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable mel"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mel.dir/link.txt --verbose=$(VERBOSE)

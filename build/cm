@@ -1,0 +1,12 @@
+#!/bin/bash
+case "$1" in
+"windows"|"win")
+PLATFORM=WINDOWS cmake .. -D CMAKE_C_COMPILER=i686-w64-mingw32-gcc
+;;
+"linux"|"lin")
+PLATFORM=LINUX cmake .. -D CMAKE_C_COMPILER=gcc
+;;
+"clean"|"c")
+rm -f mel*
+;;
+esac
