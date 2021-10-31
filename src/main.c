@@ -1,5 +1,5 @@
 #include "../include/MEL_opengl.h" /* for gl defs */
-#include "../include/MEL_io.h"     /* for i/o     */
+#include "../include/MEL_IO.h"     /* for i/o     */
 #include "../include/MEL_def.h"    /* for configs */
 #include "../include/MEL_shader.h" /* for shaders */
 #include "../include/MEL_logs.h"   /* for logging */
@@ -23,6 +23,8 @@ int main(void){
 #else
 int main(void){
 #endif
+	const char * str = "Hello World";
+	printf("String: `%s`, size: `%d`\n", str, (int)MEL_strlen(str));
 	/* Initializing the library  */
 	if (!glfwInit()){
 		log_log(LOG_ERROR, "Failed initializing GLFW");

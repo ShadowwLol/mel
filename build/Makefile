@@ -297,6 +297,30 @@ src/image.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/image.c.s
 .PHONY : src/image.c.s
 
+src/io.o: src/io.c.o
+.PHONY : src/io.o
+
+# target to build an object file
+src/io.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/io.c.o
+.PHONY : src/io.c.o
+
+src/io.i: src/io.c.i
+.PHONY : src/io.i
+
+# target to preprocess a source file
+src/io.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/io.c.i
+.PHONY : src/io.c.i
+
+src/io.s: src/io.c.s
+.PHONY : src/io.s
+
+# target to generate assembly for a file
+src/io.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/io.c.s
+.PHONY : src/io.c.s
+
 src/logs.o: src/logs.c.o
 .PHONY : src/logs.o
 
@@ -471,6 +495,9 @@ help:
 	@echo "... src/image.o"
 	@echo "... src/image.i"
 	@echo "... src/image.s"
+	@echo "... src/io.o"
+	@echo "... src/io.i"
+	@echo "... src/io.s"
 	@echo "... src/logs.o"
 	@echo "... src/logs.i"
 	@echo "... src/logs.s"
