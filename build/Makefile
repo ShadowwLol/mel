@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/shadoww/opengl-stuff
+CMAKE_SOURCE_DIR = /home/shadoww/Documents/opengl-stuff
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/shadoww/opengl-stuff/build
+CMAKE_BINARY_DIR = /home/shadoww/Documents/opengl-stuff/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/shadoww/opengl-stuff/build/CMakeFiles /home/shadoww/opengl-stuff/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shadoww/Documents/opengl-stuff/build/CMakeFiles /home/shadoww/Documents/opengl-stuff/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/shadoww/opengl-stuff/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/shadoww/Documents/opengl-stuff/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -369,6 +369,30 @@ src/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/main.c.s
 .PHONY : src/main.c.s
 
+src/misc.o: src/misc.c.o
+.PHONY : src/misc.o
+
+# target to build an object file
+src/misc.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/misc.c.o
+.PHONY : src/misc.c.o
+
+src/misc.i: src/misc.c.i
+.PHONY : src/misc.i
+
+# target to preprocess a source file
+src/misc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/misc.c.i
+.PHONY : src/misc.c.i
+
+src/misc.s: src/misc.c.s
+.PHONY : src/misc.s
+
+# target to generate assembly for a file
+src/misc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mel.dir/build.make CMakeFiles/mel.dir/src/misc.c.s
+.PHONY : src/misc.c.s
+
 src/rect.o: src/rect.c.o
 .PHONY : src/rect.o
 
@@ -504,6 +528,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/misc.o"
+	@echo "... src/misc.i"
+	@echo "... src/misc.s"
 	@echo "... src/rect.o"
 	@echo "... src/rect.i"
 	@echo "... src/rect.s"

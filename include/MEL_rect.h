@@ -1,5 +1,5 @@
-#ifndef MEL_RECT_H
-#define MEL_RECT_H
+#ifndef _MEL_RECT_H
+#define _MEL_RECT_H
 
 #include "MEL_opengl.h"
 #include "MEL_render.h"
@@ -44,7 +44,7 @@ typedef struct{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
-MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer);
-MEL_Rect rect_update_rect(MEL_Rect rect);
+MEL_Rect MEL_load_rect(MEL_Renderer2D);
+MEL_Rect rect_update_rect(MEL_Rect);
 
 #endif

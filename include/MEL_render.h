@@ -1,5 +1,5 @@
-#ifndef MEL_RENDER_H
-#define MEL_RENDER_H
+#ifndef _MEL_RENDER_H
+#define _MEL_RENDER_H
 
 #include "MEL_opengl.h"
 

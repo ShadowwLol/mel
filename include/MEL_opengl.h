@@ -1,5 +1,5 @@
-#ifndef OPENGL_H
-#define OPENGL_H
+#ifndef _MEL_OPENGL_H
+#define _MEL_OPENGL_H
 
 #include "glad.h"
 #include <GL/gl.h>

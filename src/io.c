@@ -23,11 +23,12 @@ char * MEL_strlcpy(char * dest, char * src, size_t n){
 /* Append string `src` to buffer `dest` which has size `n` */
 char * MEL_strlcat(char * dest, char * src, size_t n){
 	size_t dest_len = MEL_strlen(dest);
+	size_t src_len = MEL_strlen(src);
 	size_t i;
 	for (i = 0; i < n && src[i] != '\0'; ++i){
 		dest[dest_len+i] = src[i];
 	}
-	dest[++dest_len] = '\0';
+	dest[1+(dest_len+src_len)] = '\0';
 	dest[--n] = '\0';
 	return dest;
 }

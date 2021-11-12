@@ -1,10 +1,5 @@
+#include "../include/MEL_def.h"
 #include "../include/MEL_rect.h"
-
-#if __WIN32
-#include <windows.h>
-extern HANDLE hConsole;
-extern WORD saved_attributes;
-#endif
 
 MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer){
 	MEL_Rect r = {

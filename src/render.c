@@ -1,12 +1,7 @@
+#include "../include/MEL_def.h"
 #include "../include/MEL_render.h"
 #include "../include/MEL_image.h"
 #include "../include/MEL_rect.h"
-
-#if __WIN32
-#include <windows.h>
-extern HANDLE hConsole;
-extern WORD saved_attributes;
-#endif
 
 MEL_Renderer2D MEL_Renderer2D_init(){
 	MEL_Renderer2D tmp;

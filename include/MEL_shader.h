@@ -1,9 +1,9 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef _MEL_SHADER_H
+#define _MEL_SHADER_H
 
-#include "../include/MEL_def.h"
+#include "MEL_def.h"
 
-GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path);
-GLchar * MEL_read_from_file(const GLchar * path);
+GLuint MEL_create_shader_program(const char *, const char *);
+GLchar * MEL_read_from_file(const GLchar *);
 
 #endif

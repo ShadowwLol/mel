@@ -5,13 +5,13 @@
 #include "../include/MEL_logs.h"   /* for logging */
 #include "../include/MEL_image.h"  /* for images  */
 #include "../include/MEL_rect.h"   /* for rects   */
+#include "../include/MEL_misc.h"   /* for misc    */
 
 MEL_Window win;
 Image smiley;
 MEL_Camera camera;
 
 #if __WIN32
-#include <windows.h>
 HANDLE hConsole;
 WORD saved_attributes;
 
@@ -23,8 +23,6 @@ int main(void){
 #else
 int main(void){
 #endif
-	const char * str = "Hello World";
-	printf("String: `%s`, size: `%d`\n", str, (int)MEL_strlen(str));
 	/* Initializing the library  */
 	if (!glfwInit()){
 		log_log(LOG_ERROR, "Failed initializing GLFW");
@@ -73,11 +71,11 @@ int main(void){
 
 	/* Images  */
 	MEL_Renderer2D Rend = MEL_Renderer2D_init();
-	smiley = MEL_load_image(Rend, "resources/images/smiley.png", GL_RGBA);
+	smiley = MEL_load_image(Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
 	smiley.rect.color[3] = 0.5f;
-	Image crate = MEL_load_image(Rend, "resources/images/container.jpg", GL_RGB);
+	Image crate = MEL_load_image(Rend, "resources/images/container.jpg", GL_RGB, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
@@ -108,6 +106,8 @@ int main(void){
 	/* Main loop */
 	while (!glfwWindowShouldClose(win.window)){
 		glfwPollEvents();
+		MEL_calculate_delta();
+		MEL_calculate_FPS();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -117,16 +117,7 @@ int main(void){
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
 		/* * * * * */
 
-		MEL_currt = glfwGetTime();
-		MEL_tdiff = MEL_currt - MEL_prevt;
-		++MEL_cter;
-		if (MEL_tdiff >= (1.0f / 30.0f)){
-			double MEL_fps = (1.0f/MEL_tdiff) * MEL_cter;
-			MEL_prevt = MEL_currt;
-			MEL_cter = 0;
-			//printf("%ffps\n", MEL_fps);
-		}
-
+		printf("%d\n", MEL_fps());
 		glfwSwapBuffers(win.window);
 	}
 

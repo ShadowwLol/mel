@@ -1,5 +1,6 @@
 #include "../include/MEL_def.h"
 #include "../include/MEL_opengl.h"
+#include "../include/MEL_misc.h"
 
 #include "../include/MEL_image.h"
 extern Image smiley;
@@ -49,26 +50,26 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		case GLFW_REPEAT:
 			switch(key){
 				case GLFW_KEY_W:
-					camera[1] -= 10;
+					camera[1] -= 800 * MEL_delta();
 					//smiley.rect.pos[1] -= 10;
 					break;
 				case GLFW_KEY_A:
-					camera[0] -= 10;
+					camera[0] -= 800 * MEL_delta();
 					//smiley.rect.pos[0] -= 10;
 					break;
 				case GLFW_KEY_S:
-					camera[1] += 10;
+					camera[1] += 800 * MEL_delta();
 					//smiley.rect.pos[1] += 10;
 					break;
 				case GLFW_KEY_D:
-					camera[0] += 10;
+					camera[0] += 800 * MEL_delta();
 					//smiley.rect.pos[0] += 10;
 					break;
 				case GLFW_KEY_RIGHT:
-					smiley.rect.rotation += 1.0f;
+					smiley.rect.rotation += 80.0f * MEL_delta();
 					break;
 				case GLFW_KEY_LEFT:
-					smiley.rect.rotation -= 1.0f;
+					smiley.rect.rotation -= 80.0f * MEL_delta();
 					break;
 				default:
 					break;

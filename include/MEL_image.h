@@ -1,5 +1,5 @@
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef _MEL_IMAGE_H
+#define _MEL_IMAGE_H
 
 #include "MEL_opengl.h"
 #include "MEL_render.h"
@@ -12,8 +12,6 @@
 
 #define MEL_IMAGE_STATIC  GL_STATIC_DRAW
 #define MEL_IMAGE_DYNAMIC GL_DYNAMIC_DRAW
-#define MEL_TYPE_IMAGE (0x00000001)
-#define MEL_TYPE_SPRITESHEET (0x00000010)
 
 static struct rect{
 	vec2 pos;             /* Image position         [x,y]     */
@@ -25,10 +23,13 @@ static struct rect{
 } rect;
 
 typedef struct {
-    stbi_uc * data;
+	stbi_uc * data;
+	mat4 model;
+	mat4 view;
+	mat4 projection;
+	mat4 mvp;
 	GLuint id;
-	GLint type;
-    GLuint texture;
+	GLuint texture;
 	struct rect rect;
 	GLuint indices[6];
 } Image;
@@ -51,15 +52,20 @@ typedef struct {
    			glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, Config);\
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f};\
-			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);\
+			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Img.projection);\
 			vec3 v = {Camera[0]*-1, Camera[1]*-1, Camera[2]*-1};\
-			glm_translate(Renderer.projection, v);\
-			glm_rotate_at(Renderer.projection, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
+			glm_mat4_identity(Img.view);\
+			glm_translate(Img.view, v);\
+			glm_mat4_identity(Img.model);\
+			glm_translate(Img.view, v);\
+			glm_rotate_at(Img.model, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
+			glm_mat4_mul(Img.projection, Img.view, Img.mvp);\
+			glm_mat4_mul(Img.mvp, Img.model, Img.mvp);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\
 		glUseProgram(Renderer.image_items.shader);\
-		glUniform1i(glGetUniformLocation(Renderer.image_items.shader, "texture1"), Img.id);\
-		glUniformMatrix4fv(glGetUniformLocation(Renderer.image_items.shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
+		glUniform1i(glGetUniformLocation(Renderer.image_items.shader, "sampler"), Img.id);\
+		glUniformMatrix4fv(glGetUniformLocation(Renderer.image_items.shader, "mvp"), 1, GL_FALSE, (const GLfloat *)Img.mvp);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\
@@ -74,7 +80,7 @@ typedef struct {
 	glDeleteTextures(1, &image.texture);\
 }
 
-Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels);
-struct rect image_update_image(Image source);
+Image MEL_load_image(MEL_Renderer2D, GLchar *, GLenum, GLenum, GLenum);
+struct rect image_update_image(Image);
 
 #endif

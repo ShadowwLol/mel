@@ -1,14 +1,15 @@
-#ifndef LOGS_H
-#define LOGS_H
+#ifndef _MEL_LOGS_H
+#define _MEL_LOGS_H
+
+#include <stdarg.h>
+#include "MEL_def.h"
 
 typedef enum {
 	LOG_WARNING, LOG_SUCCESS, LOG_ERROR, LOG_INFORMATION
 } logging;
 
 #if __WIN32
-#include <windows.h>
-
-void logs(HANDLE hConsole, WORD saved_attributes, int l, const char  * format, ...);
+void logs(HANDLE, WORD, int, const char *, ...);
 
 #define TERM_GREEN FOREGROUND_GREEN
 #define TERM_YELLOW (FOREGROUND_RED | FOREGROUND_GREEN)
@@ -26,7 +27,7 @@ void logs(HANDLE hConsole, WORD saved_attributes, int l, const char  * format, .
 #define log_log(...){logs(hConsole, saved_attributes, ##__VA_ARGS__);}
 
 #else
-void logs(int l, const char  * format, ...);
+void logs(int, const char *, ...);
 
 #define TERM_GREEN "\033[32m"
 #define TERM_YELLOW "\033[33m"

@@ -1,11 +1,17 @@
-#ifndef MISC_H
-#define MISC_H
+#ifndef _MEL_MISC_H
+#define _MEL_MISC_H
 
-#ifdef MISC_RANDOM
-#include <stdlib.h>
+#include "../include/MEL_def.h"
+
+/* Randomness */
 #include <time.h>
 #define randomize(){srand(time(NULL));}
 #define rand_range(minv, maxv) ((rand() % (maxv - minv + 1)) + minv)
-#endif
+/* * * * * * * */
 
+void MEL_calculate_FPS();
+uint32_t MEL_fps();
+
+void MEL_calculate_delta();
+double MEL_delta();
 #endif
