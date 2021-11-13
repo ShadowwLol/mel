@@ -51,6 +51,7 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
 
 	if (img.data){
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.rect.size[0], img.rect.size[1], 0, channels, GL_UNSIGNED_BYTE, img.data);
 	    glGenerateMipmap(GL_TEXTURE_2D);
 	    log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", path);

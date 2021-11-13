@@ -20,7 +20,6 @@ typedef struct{
 } MEL_Renderer2D_rect_items;
 
 typedef struct {
-	mat4 projection;
 	MEL_Renderer2D_image_items image_items;
 	MEL_Renderer2D_rect_items rect_items;
 } MEL_Renderer2D;

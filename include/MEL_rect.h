@@ -8,6 +8,10 @@ typedef struct{
 	vec2 pos;
 	vec2 size;
 	vec4 color;
+	mat4 model;
+	mat4 view;
+	mat4 projection;
+	mat4 mvp;
 	GLfloat rotation;
 	GLfloat vertices[32];
 	GLuint indices[6];
@@ -28,13 +32,17 @@ typedef struct{
    			glBufferData(GL_ARRAY_BUFFER, sizeof(Rect.vertices), Rect.vertices, Config);\
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f};\
-			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);\
+			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Rect.projection);\
 			vec3 v = {Camera[0]*-1, Camera[1]*-1, Camera[2]*-1};\
-			glm_translate(Renderer.projection, v);\
-			glm_rotate_at(Renderer.projection, pivot, glm_rad(Rect.rotation), rotation_axis);\
+			glm_mat4_identity(Rect.view);\
+			glm_translate(Rect.view, v);\
+			glm_mat4_identity(Rect.model);\
+			glm_rotate_at(Rect.model, pivot, glm_rad(Rect.rotation), rotation_axis);\
+			glm_mat4_mul(Rect.projection, Rect.view, Rect.mvp);\
+			glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
 		}\
 		glUseProgram(Renderer.rect_items.shader);\
-		glUniformMatrix4fv(glGetUniformLocation(Renderer.rect_items.shader, "projection"), 1, GL_FALSE, (const GLfloat *)Renderer.projection);\
+		glUniformMatrix4fv(glGetUniformLocation(Renderer.rect_items.shader, "mvp"), 1, GL_FALSE, (const GLfloat *)Rect.mvp);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\

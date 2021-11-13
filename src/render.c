@@ -4,12 +4,12 @@
 #include "../include/MEL_rect.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(){
-	MEL_Renderer2D tmp;
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &tmp.image_items.MAX_TEXTURES);\
+	int MT;
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MT);\
 	MEL_Renderer2D Renderer = {
 		/* Image */
 		.image_items.tex_count = 0,
-		.image_items.MAX_TEXTURES = tmp.image_items.MAX_TEXTURES,
+		.image_items.MAX_TEXTURES = MT,
 		.image_items.shader = MEL_create_shader_program(IMAGE_VERT_SHADER_PATH, IMAGE_FRAG_SHADER_PATH),
 		.image_items.indices = {
 			0, 1, 3,

@@ -3,6 +3,8 @@
 
 MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer){
 	MEL_Rect r = {
+		.view = GLM_MAT4_IDENTITY_INIT,
+		.model = GLM_MAT4_IDENTITY_INIT,
 		.pos[0] = 0.0f,
 		.pos[1] = 0.0f,
 		.color[0] = 1.0f,
