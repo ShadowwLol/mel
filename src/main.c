@@ -102,11 +102,14 @@ int main(void){
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
+		MEL_TIMER_START();
 		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
+		MEL_TIMER_END();
 		/* * * * * */
 
+		printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
 		//printf("%d\n", MEL_fps());
 		glfwSwapBuffers(win.window);
 	}
