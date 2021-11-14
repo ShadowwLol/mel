@@ -29,7 +29,7 @@ typedef struct{
 	}else{\
 		{\
 			Rect = rect_update_rect(Rect);\
-   			glBufferData(GL_ARRAY_BUFFER, sizeof(Rect.vertices), Rect.vertices, Config);\
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Rect.vertices), Rect.vertices);\
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f};\
 			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Rect.projection);\

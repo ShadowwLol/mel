@@ -24,7 +24,7 @@ MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer){
 	};
 	glBindVertexArray(Renderer.rect_items.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.rect_items.VBO);\
-	glBufferData(GL_ARRAY_BUFFER, sizeof(r.vertices), r.vertices, GL_STATIC_DRAW);\
+	glBufferData(GL_ARRAY_BUFFER, sizeof(r.vertices), NULL, GL_DYNAMIC_DRAW);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.rect_items.EBO);\
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.rect_items.indices), Renderer.rect_items.indices, GL_STATIC_DRAW);\
 

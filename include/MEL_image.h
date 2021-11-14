@@ -48,7 +48,7 @@ typedef struct {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);\
 		{\
 			Img.rect = image_update_image(Img);\
-   			glBufferData(GL_ARRAY_BUFFER, sizeof(Img.rect.vertices), Img.rect.vertices, Config);\
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Img.rect.vertices), Img.rect.vertices);\
 			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
 			vec3 pivot = {(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f};\
 			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Img.projection);\

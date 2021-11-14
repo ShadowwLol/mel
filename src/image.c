@@ -63,7 +63,7 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 
 	glBindVertexArray(Renderer.image_items.VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), img.rect.vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.image_items.indices), Renderer.image_items.indices, GL_STATIC_DRAW);
 
