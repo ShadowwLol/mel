@@ -9,27 +9,25 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	GLint w, h, c;
 	Image img = {
 		.data = stbi_load(path, &w, &h, &c, 0),
+		.mvp = GLM_MAT4_IDENTITY_INIT,
+		.projection = GLM_MAT4_IDENTITY_INIT,
 		.view = GLM_MAT4_IDENTITY_INIT,
 		.model = GLM_MAT4_IDENTITY_INIT,
 		.rect.pos[0] = 0.0f,
 		.rect.pos[1] = 0.0f,
 		.rect.size[0] = w,
 		.rect.size[1] = h,
-		.rect.src[0] = 0.0f,
-		.rect.src[1] = 0.0f,
-		.rect.src[2] = w,
-		.rect.src[3] = h,
 		.rect.color[0] = 1.0f,
 		.rect.color[1] = 1.0f,
 		.rect.color[2] = 1.0f,
 		.rect.color[3] = 1.0f,
 		.rect.rotation = 0.0f,
 		.rect.vertices = {
-		    // positions                                                               // colors                                                                  // texture coords
-		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 1.0f, // top right
-		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f, // bottom right
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f, // bottom left
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f, // top left <-- anchor point
+		    // positions                                                               colors                                                                      tex coords    sampler
+		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 1.0f,   img.id, // top right
+		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f,   img.id, // bottom right
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f,   img.id, // bottom left
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f,   img.id, // top left <-- anchor point
 		}
 	};
 	if (Renderer.image_items.tex_count < Renderer.image_items.MAX_TEXTURES){
@@ -70,14 +68,17 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.image_items.indices), Renderer.image_items.indices, GL_STATIC_DRAW);
 
 	/* Position Attribute [x,y,z] */
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	/* Color Attribute [R,G,B,A] */
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	/* Texture Coords Attribute */
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
+	/* Texture Coords Attribute [x, y] */
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(7 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+	/* Sampler Attribute [i] */
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(9 * sizeof(float)));
+	glEnableVertexAttribArray(3);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -92,21 +93,17 @@ struct rect image_update_image(Image source){
 		.pos[1] = source.rect.pos[1],
 		.size[0] = source.rect.size[0],
 		.size[1] = source.rect.size[1],
-		.src[0] = source.rect.src[0],
-		.src[1] = source.rect.src[1],
-		.src[2] = source.rect.src[2],
-		.src[3] = source.rect.src[3],
 		.color[0] = source.rect.color[0],
 		.color[1] = source.rect.color[1],
 		.color[2] = source.rect.color[2],
 		.color[3] = source.rect.color[3],
 		.rotation = source.rect.rotation,
     	.vertices = {
-    	    // positions                                                                 // colors                                                                                         // texture coords
-    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, // bottom left
-    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, // top left <-- anchor point
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 1.0f, // top right
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, // bottom right
+    	    // positions                                                                           colors                                                                                  tex coords  sampler
+    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, source.id, // bottom left
+    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, source.id, // top left <-- anchor point
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 1.0f, source.id, // top right
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, source.id, // bottom right
 		}
 	};
 	return img;

@@ -9,7 +9,7 @@
 #define rand_range(minv, maxv) ((rand() % (maxv - minv + 1)) + minv)
 /* * * * * * * */
 
-void MEL_calculate_FPS();
+void MEL_calculate_fps();
 uint32_t MEL_fps();
 
 void MEL_calculate_delta();

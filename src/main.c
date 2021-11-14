@@ -89,25 +89,15 @@ int main(void){
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
-	crate.rect.src[0] = 750/2.0f;
-	crate.rect.src[1] = (crate.rect.size[1])/2;
-	crate.rect.src[2] = 200/2.0f;
-	crate.rect.src[3] = crate.rect.size[1]/2;
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	double MEL_prevt = 0.0f;
-	double MEL_currt = 0.0f;
-	double MEL_tdiff = 0.0f;
-	uint32_t MEL_cter = 0;
 
 	MEL_Camera default_camera = {0, 0, 0};
 	/* Main loop */
 	while (!glfwWindowShouldClose(win.window)){
 		glfwPollEvents();
 		MEL_calculate_delta();
-		MEL_calculate_FPS();
+		MEL_calculate_fps();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -117,7 +107,7 @@ int main(void){
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
 		/* * * * * */
 
-		printf("%d\n", MEL_fps());
+		//printf("%d\n", MEL_fps());
 		glfwSwapBuffers(win.window);
 	}
 

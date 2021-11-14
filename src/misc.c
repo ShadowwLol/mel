@@ -28,7 +28,7 @@ static uint32_t MEL_fps_counter;
 static uint32_t MEL_FPS;
 static double   MEL_frame_time;
 
-void MEL_calculate_FPS(){
+void MEL_calculate_fps(){
 	MEL_current_time = glfwGetTime();
 	MEL_time_diff = MEL_current_time - MEL_previous_time;
 	MEL_fps_counter++;

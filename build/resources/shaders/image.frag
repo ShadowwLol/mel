@@ -1,11 +1,11 @@
 #version 330 core
-out vec4 FragColor;
+#extension GL_ARB_explicit_uniform_location : require
+layout (location = 3) uniform sampler2D sampler;
 
 in vec4 ourColor;
 in vec2 TexCoord;
 
-// texture sampler
-uniform sampler2D sampler;
+out vec4 FragColor;
 
 void main()
 {
