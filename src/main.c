@@ -6,10 +6,20 @@
 #include "../include/MEL_image.h"  /* for images  */
 #include "../include/MEL_rect.h"   /* for rects   */
 #include "../include/MEL_misc.h"   /* for misc    */
+#include "../include/MEL_thread.h"
 
 MEL_Window win;
 Image smiley;
 MEL_Camera camera;
+
+void * test_function(void * args){
+		printf("HELLO!\n");
+	return 0;
+}
+void * test_function2(void * args){
+	printf("GOODBYE!\n");
+	return 0;
+}
 
 #if __WIN32
 HANDLE hConsole;
@@ -92,6 +102,7 @@ int main(void){
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	MEL_Thread threads[2];
 	MEL_Camera default_camera = {0, 0, 0};
 	/* Main loop */
 	while (!glfwWindowShouldClose(win.window)){
@@ -101,6 +112,18 @@ int main(void){
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
+			switch(i){
+				case 0:
+					MEL_thread_create(&threads[i], test_function, NULL);
+					break;
+				case 1:
+					MEL_thread_create(&threads[i], test_function2, NULL);
+					break;
+				default:
+					break;
+			}
+		}
 		/* Drawing */
 		MEL_TIMER_START();
 		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
@@ -109,8 +132,11 @@ int main(void){
 		MEL_TIMER_END();
 		/* * * * * */
 
-		printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
+		//printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
 		//printf("%d\n", MEL_fps());
+		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
+			MEL_thread_join(threads[i]);
+		}
 		glfwSwapBuffers(win.window);
 	}
 
