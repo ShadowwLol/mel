@@ -1,6 +1,4 @@
-// FIXME: stbir_resize_uint8() segfault
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -22,20 +20,35 @@ int32_t closest_power_of_2(int32_t number);
 int main(int argc, char * argv[]){
 	if (argc < 2){return -1;}
 	Texture tex = load_texture(argv[1]);
+	if (!tex.data){
+		return -1;
+	}
 	int32_t w, h, s, c;
 	stbi_info(argv[1], &w, &h, &c);
 	printf("[%s] : [%dx%d, %d]\n", argv[1], w, h, c);
-	if (closest_power_of_2(w) == w && closest_power_of_2(h) == h){
+	int32_t target_w = closest_power_of_2(w);
+	int32_t target_h = closest_power_of_2(h);
+	if (target_w == w && target_h == h){
 		printf("Image is already power of 2\n");
-		return 0;
+		return -1;
 	}
-	printf("%dx%d => %dx%d\n", w, h, closest_power_of_2(w), closest_power_of_2(h));
-	unsigned char * data;
-	stbir_resize_uint8(tex.data, tex.w, tex.h, 0, data, closest_power_of_2(w), closest_power_of_2(h), 0, c);
-	stbi_write_png("out.png", closest_power_of_2(w), closest_power_of_2(h), c, data, closest_power_of_2(w) * c);
+	printf("%dx%d => %dx%d\n", w, h, target_w, target_h);
+	int stride_bytes_input = tex.w * c;
+	int stride_bytes_output = target_w * c;
+	Texture resized_tex;
+	size_t size = target_w * target_h * c;
+	resized_tex.data = calloc(size, 1);
+	resized_tex.w = target_w;
+	resized_tex.h = target_h;
+	resized_tex.c = tex.c;
+	stbir_resize_uint8(tex.data, tex.w, tex.h, stride_bytes_input, resized_tex.data, target_w, target_h, stride_bytes_output, c);
+	printf("[+] Successfully resized texture\n");
+	stbi_write_png("out.png", target_w, target_h, c, resized_tex.data, target_w * c);
+	printf("[+] Successfully outputted texture\n");
 	stbi_info("out.png", &w, &h, &c);
 	printf("[out.png] : [%dx%d, %d]\n", w, h, c);
 	stbi_image_free(tex.data);
+	stbi_image_free(resized_tex.data);
 	return 0;
 }
 
@@ -48,10 +61,9 @@ Texture load_texture(const char * filename){
 		.c = c
 	};
 	if (tex.data){
-		printf("Successfully loaded [%s]\n", filename);
+		printf("[+] Successfully loaded [%s]\n", filename);
 	}else{
-		printf("Failed loading [%s]\n", filename);
-		exit(-1);
+		printf("[-] Failed loading [%s]\n", filename);
 	}
 	return tex;
 }
