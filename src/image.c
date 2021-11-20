@@ -23,11 +23,11 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 		.rect.color[3] = 1.0f,
 		.rect.rotation = 0.0f,
 		.rect.vertices = {
-		    // positions                                                               colors                                                                      tex coords    sampler
-		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 1.0f,   img.id, // top right
-		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f,   img.id, // bottom right
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f,   img.id, // bottom left
-		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f,   img.id, // top left <-- anchor point
+		    // positions                                                               colors                                                                      tex coords    sampler   mvp **                                                  **  **                                                      **  **                                                       ** **                                                       **
+		    img.rect.pos[0],                  img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 1.0f,   img.id,   img.mvp[0][0], img.mvp[0][1], img.mvp[0][2], img.mvp[0][3], img.mvp[1][0], img.mvp[1][1], img.mvp[1][2], img.mvp[1][3], img.mvp[2][0], img.mvp[2][1], img.mvp[2][2], img.mvp[2][3], img.mvp[3][0], img.mvp[3][1], img.mvp[3][2], img.mvp[3][3], // top right
+		    img.rect.pos[0],                  img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 1.0f, 0.0f,   img.id,   img.mvp[0][0], img.mvp[0][1], img.mvp[0][2], img.mvp[0][3], img.mvp[1][0], img.mvp[1][1], img.mvp[1][2], img.mvp[1][3], img.mvp[2][0], img.mvp[2][1], img.mvp[2][2], img.mvp[2][3], img.mvp[3][0], img.mvp[3][1], img.mvp[3][2], img.mvp[3][3], // bottom right
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1]+img.rect.size[1], 0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 0.0f,   img.id,   img.mvp[0][0], img.mvp[0][1], img.mvp[0][2], img.mvp[0][3], img.mvp[1][0], img.mvp[1][1], img.mvp[1][2], img.mvp[1][3], img.mvp[2][0], img.mvp[2][1], img.mvp[2][2], img.mvp[2][3], img.mvp[3][0], img.mvp[3][1], img.mvp[3][2], img.mvp[3][3], // bottom left
+		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f,   img.id,   img.mvp[0][0], img.mvp[0][1], img.mvp[0][2], img.mvp[0][3], img.mvp[1][0], img.mvp[1][1], img.mvp[1][2], img.mvp[1][3], img.mvp[2][0], img.mvp[2][1], img.mvp[2][2], img.mvp[2][3], img.mvp[3][0], img.mvp[3][1], img.mvp[3][2], img.mvp[3][3], // top left <-- anchor point
 		}
 	};
 	if (Renderer.image_items.tex_count < Renderer.image_items.MAX_TEXTURES){
@@ -68,17 +68,31 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.image_items.indices), Renderer.image_items.indices, GL_STATIC_DRAW);
 
 	/* Position Attribute [x,y,z] */
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	/* Color Attribute [R,G,B,A] */
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	/* Texture Coords Attribute [x, y] */
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(7 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(7 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	/* Sampler Attribute [i] */
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 10 * sizeof(float), (void*)(9 * sizeof(float)));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(9 * sizeof(float)));
 	glEnableVertexAttribArray(3);
+	/* MVP Attribute [4][4] */
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(10 * sizeof(float)));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(14 * sizeof(float)));
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(18 * sizeof(float)));
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(22 * sizeof(float)));
+	glEnableVertexAttribArray(7);
+
+	//glVertexAttribDivisor(4, 0);
+    //glVertexAttribDivisor(5, 0);
+    //glVertexAttribDivisor(6, 0);
+    //glVertexAttribDivisor(7, 0);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -100,10 +114,10 @@ struct rect image_update_image(Image source){
 		.rotation = source.rect.rotation,
     	.vertices = {
     	    // positions                                                                           colors                                                                                  tex coords  sampler
-    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, source.id, // bottom left
-    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, source.id, // top left <-- anchor point
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 1.0f, source.id, // top right
-    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, source.id, // bottom right
+    	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, source.id, source.mvp[0][0], source.mvp[0][1], source.mvp[0][2], source.mvp[0][3], source.mvp[1][0], source.mvp[1][1], source.mvp[1][2], source.mvp[1][3], source.mvp[2][0], source.mvp[2][1], source.mvp[2][2], source.mvp[2][3], source.mvp[3][0], source.mvp[3][1], source.mvp[3][2], source.mvp[3][3],  // bottom left
+    	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, source.id, source.mvp[0][0], source.mvp[0][1], source.mvp[0][2], source.mvp[0][3], source.mvp[1][0], source.mvp[1][1], source.mvp[1][2], source.mvp[1][3], source.mvp[2][0], source.mvp[2][1], source.mvp[2][2], source.mvp[2][3], source.mvp[3][0], source.mvp[3][1], source.mvp[3][2], source.mvp[3][3],  // top left <-- anchor point
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 1.0f, source.id, source.mvp[0][0], source.mvp[0][1], source.mvp[0][2], source.mvp[0][3], source.mvp[1][0], source.mvp[1][1], source.mvp[1][2], source.mvp[1][3], source.mvp[2][0], source.mvp[2][1], source.mvp[2][2], source.mvp[2][3], source.mvp[3][0], source.mvp[3][1], source.mvp[3][2], source.mvp[3][3],  // top right
+    	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, source.id, source.mvp[0][0], source.mvp[0][1], source.mvp[0][2], source.mvp[0][3], source.mvp[1][0], source.mvp[1][1], source.mvp[1][2], source.mvp[1][3], source.mvp[2][0], source.mvp[2][1], source.mvp[2][2], source.mvp[2][3], source.mvp[3][0], source.mvp[3][1], source.mvp[3][2], source.mvp[3][3],  // bottom right
 		}
 	};
 	return img;

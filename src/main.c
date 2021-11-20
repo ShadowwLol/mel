@@ -13,11 +13,11 @@ Image smiley;
 MEL_Camera camera;
 
 void * test_function(void * args){
-		printf("HELLO!\n");
+	/* Do something related to threading */
 	return 0;
 }
 void * test_function2(void * args){
-	printf("GOODBYE!\n");
+	/* Do something related to threading */
 	return 0;
 }
 

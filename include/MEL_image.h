@@ -18,7 +18,7 @@ static struct rect{
 	vec2 size;            /* Image size             [w,h]     */
 	vec4 color;           /* Image color modulation [r,g,b]   */
 	GLfloat rotation;     /* Image rotation deg               */
-	GLfloat vertices[40]; /* Image vertices                   */
+	GLfloat vertices[104]; /* Image vertices                   */
 } rect;
 
 typedef struct {
@@ -49,21 +49,16 @@ typedef struct {
 		{\
 			Img.rect = image_update_image(Img);\
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Img.rect.vertices), Img.rect.vertices);\
-			vec3 rotation_axis = {0.0f, 0.0f, 1.0f};\
-			vec3 pivot = {(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f};\
 			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Img.projection);\
-			vec3 v = {Camera[0]*-1, Camera[1]*-1, Camera[2]*-1};\
 			glm_mat4_identity(Img.view);\
-			glm_translate(Img.view, v);\
+			glm_translate(Img.view, (vec3){Camera[0]*-1, Camera[1]*-1, Camera[2]*-1});\
 			glm_mat4_identity(Img.model);\
-			glm_translate(Img.view, v);\
-			glm_rotate_at(Img.model, pivot, glm_rad(Img.rect.rotation), rotation_axis);\
+			glm_rotate_at(Img.model, (vec3){(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f}, glm_rad(Img.rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
 			glm_mat4_mul(Img.projection, Img.view, Img.mvp);\
 			glm_mat4_mul(Img.mvp, Img.model, Img.mvp);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\
 		glUseProgram(Renderer.image_items.shader);\
-		glUniformMatrix4fv(glGetUniformLocation(Renderer.image_items.shader, "mvp"), 1, GL_FALSE, (const GLfloat *)Img.mvp);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 		glUseProgram(0);\
 		glBindTexture(GL_TEXTURE_2D, 0);\
