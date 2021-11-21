@@ -2,6 +2,7 @@
 #define _MEL_RENDER_H
 
 #include "MEL_opengl.h"
+#include "MEL_def.h"
 
 #define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
@@ -22,6 +23,7 @@ typedef struct{
 typedef struct {
 	MEL_Renderer2D_image_items image_items;
 	MEL_Renderer2D_rect_items rect_items;
+	mat4 projection;
 } MEL_Renderer2D;
 
 #define MEL_Renderer2D_destroy(Renderer){\
@@ -38,6 +40,6 @@ typedef struct {
 	glDeleteProgram(Renderer.rect_items.shader);\
 }
 
-MEL_Renderer2D MEL_Renderer2D_init();
+MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);
 
 #endif

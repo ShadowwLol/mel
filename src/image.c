@@ -10,7 +10,6 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	Image img = {
 		.data = stbi_load(path, &w, &h, &c, 0),
 		.mvp = GLM_MAT4_IDENTITY_INIT,
-		.projection = GLM_MAT4_IDENTITY_INIT,
 		.view = GLM_MAT4_IDENTITY_INIT,
 		.model = GLM_MAT4_IDENTITY_INIT,
 		.rect.pos[0] = 0.0f,

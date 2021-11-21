@@ -25,12 +25,10 @@ typedef struct {
 	stbi_uc * data;
 	mat4 model;
 	mat4 view;
-	mat4 projection;
 	mat4 mvp;
 	GLuint id;
 	GLuint texture;
 	struct rect rect;
-	GLuint indices[6];
 } Image;
 
 #define MEL_update_image(MELW, Renderer, Img, Camera, Config){\
@@ -49,12 +47,11 @@ typedef struct {
 		{\
 			Img.rect = image_update_image(Img);\
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Img.rect.vertices), Img.rect.vertices);\
-			glm_ortho(0.0f, (float)MELW.mode->width, (float)MELW.mode->height, 0.0f, -1.0f, 1.0f, Img.projection);\
 			glm_mat4_identity(Img.view);\
 			glm_translate(Img.view, (vec3){Camera[0]*-1, Camera[1]*-1, Camera[2]*-1});\
 			glm_mat4_identity(Img.model);\
 			glm_rotate_at(Img.model, (vec3){(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f}, glm_rad(Img.rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
-			glm_mat4_mul(Img.projection, Img.view, Img.mvp);\
+			glm_mat4_mul(Renderer.projection, Img.view, Img.mvp);\
 			glm_mat4_mul(Img.mvp, Img.model, Img.mvp);\
 		}\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\

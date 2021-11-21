@@ -11,6 +11,7 @@
 MEL_Window win;
 Image smiley;
 MEL_Camera camera;
+MEL_Renderer2D Rend;
 
 void * test_function(void * args){
 	/* Do something related to threading */
@@ -80,7 +81,7 @@ int main(void){
 	/* * * * * * * * * * */
 
 	/* Images  */
-	MEL_Renderer2D Rend = MEL_Renderer2D_init();
+	Rend = MEL_Renderer2D_init(win);
 	smiley = MEL_load_image(Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
@@ -98,6 +99,17 @@ int main(void){
 
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
+
+	MEL_Rect r2 = MEL_load_rect(Rend);
+	r2.color[0] = 0.0f;
+	r2.color[1] = 1.0f;
+	r2.color[2] = 0.07f;
+	r2.color[3] = 1.0f;
+	r2.pos[0] = 150.0f;
+	r2.pos[1] = 150.0f;
+	r2.size[0] = 240.0f;
+	r2.size[1] = 240.0f;
+	r2.rotation = 45;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -128,6 +140,7 @@ int main(void){
 		MEL_TIMER_START();
 		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
+		MEL_update_rect(win, Rend, r2, camera, MEL_IMAGE_DYNAMIC);
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
 		MEL_TIMER_END();
 		/* * * * * */

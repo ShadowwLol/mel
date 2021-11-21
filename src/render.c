@@ -3,8 +3,8 @@
 #include "../include/MEL_image.h"
 #include "../include/MEL_rect.h"
 
-MEL_Renderer2D MEL_Renderer2D_init(){
-	int MT;
+MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
+	GLint MT;
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MT);\
 	MEL_Renderer2D Renderer = {
 		/* Image */
@@ -22,6 +22,7 @@ MEL_Renderer2D MEL_Renderer2D_init(){
 			1, 2, 3
 		},
 	};
+	glm_ortho(0.0f, (float)win.mode->width, (float)win.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);
 	/* Image */
 	glGenVertexArrays(1, &Renderer.image_items.VAO);
 	glGenBuffers(1, &Renderer.image_items.VBO);
