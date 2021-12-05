@@ -1,7 +1,7 @@
 #include "../include/MEL_def.h"
-#include "../include/MEL_render.h"
-#include "../include/MEL_image.h"
-#include "../include/MEL_rect.h"
+#include "../include/MEL_Renderer2D.h"
+#include "../include/MEL_Texture.h"
+#include "../include/MEL_Rect.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	GLint MT;

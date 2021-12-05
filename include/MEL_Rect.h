@@ -2,7 +2,7 @@
 #define _MEL_RECT_H
 
 #include "MEL_opengl.h"
-#include "MEL_render.h"
+#include "MEL_Renderer2D.h"
 
 typedef struct{
 	vec2 pos;
@@ -15,6 +15,8 @@ typedef struct{
 	GLfloat rotation;
 	GLfloat vertices[96];
 } MEL_Rect;
+
+/* FIXME: Add deps such as Camera.h ... to this file.h */
 
 #define MEL_update_rect(MELW, Renderer, Rect, Camera, Config){\
 	glBindVertexArray(Renderer.rect_items.VAO);\
@@ -29,11 +31,10 @@ typedef struct{
 		{\
 			Rect = rect_update_rect(Rect);\
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Rect.vertices), Rect.vertices);\
-			glm_mat4_identity(Rect.view);\
-			glm_translate(Rect.view, (vec3){Camera[0]*-1, Camera[1]*-1, Camera[2]*-1});\
+			MEL_update_camera(Camera);\
 			glm_mat4_identity(Rect.model);\
 			glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
-			glm_mat4_mul(Renderer.projection, Rect.view, Rect.mvp);\
+			glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
 			glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
 		}\
 		glUseProgram(Renderer.rect_items.shader);\

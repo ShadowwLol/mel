@@ -25,8 +25,6 @@ typedef uint8_t MEL_bool;
 #define MEL_TRUE (1)
 #define MEL_FALSE (0)
 
-typedef vec3 MEL_Camera;
-
 #define MEL_SINGLETON(t, inst, init) t* MEL_S_##t_##inst() { static t inst = init; return &inst; }
 
 typedef struct{

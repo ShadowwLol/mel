@@ -2,14 +2,15 @@
 #include "../include/MEL_IO.h"     /* for i/o     */
 #include "../include/MEL_def.h"    /* for configs */
 #include "../include/MEL_shader.h" /* for shaders */
+#include "../include/MEL_Camera.h" /* for cameras */
 #include "../include/MEL_logs.h"   /* for logging */
-#include "../include/MEL_image.h"  /* for images  */
-#include "../include/MEL_rect.h"   /* for rects   */
+#include "../include/MEL_Texture.h"  /* for images  */
+#include "../include/MEL_Rect.h"   /* for rects   */
 #include "../include/MEL_misc.h"   /* for misc    */
 #include "../include/MEL_thread.h"
 
 MEL_Window win;
-Image smiley;
+MEL_Texture smiley;
 MEL_Camera camera;
 MEL_Renderer2D Rend;
 
@@ -82,11 +83,15 @@ int main(void){
 
 	/* Images  */
 	Rend = MEL_Renderer2D_init(win);
-	smiley = MEL_load_image(Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	smiley = MEL_load_image(&Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	printf("SMILEY ID: %d\n", smiley.id);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
 	smiley.rect.color[3] = 0.5f;
-	Image crate = MEL_load_image(Rend, "resources/images/container.jpg", GL_RGB, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	MEL_Texture crate = MEL_load_image(&Rend, "resources/images/container.jpg", GL_RGB, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	printf("CRATE ID: %d\n", crate.id);
+	printf("GL_TEXTURE0+1 : %d, GL_TEXTURE1 : %d\n", GL_TEXTURE0+1, GL_TEXTURE1);
+	smiley.rect.pos[0] = 640.0f;
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
@@ -115,27 +120,21 @@ int main(void){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	MEL_Thread threads[2];
-	MEL_Camera default_camera = {0, 0, 0};
+	MEL_Camera default_camera;
+	MEL_init_camera(default_camera);
+	MEL_init_camera(camera);
 	/* Main loop */
 	while (!glfwWindowShouldClose(win.window)){
+		MEL_update_camera(camera);
 		glfwPollEvents();
 		MEL_calculate_delta();
 		MEL_calculate_fps();
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
-			switch(i){
-				case 0:
-					MEL_thread_create(&threads[i], test_function, NULL);
-					break;
-				case 1:
-					MEL_thread_create(&threads[i], test_function2, NULL);
-					break;
-				default:
-					break;
-			}
-		}
+		MEL_thread_create(&threads[0], test_function, NULL);
+		MEL_thread_create(&threads[1], test_function2, NULL);
+
 		/* Drawing */
 		MEL_TIMER_START();
 		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);

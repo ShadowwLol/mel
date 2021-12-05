@@ -1,17 +1,22 @@
 #include "../include/MEL_def.h"
 #include "../include/MEL_logs.h"
-#include "../include/MEL_image.h"
+#include "../include/MEL_Texture.h"
 #include <cglm/affine.h>
 #include <cglm/util.h>
 
-Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GLenum min_filter, GLenum max_filter){
+MEL_Texture MEL_load_image(MEL_Renderer2D * Renderer, GLchar * path, GLenum channels, GLenum min_filter, GLenum max_filter){
+	if (Renderer->image_items.tex_count < Renderer->image_items.MAX_TEXTURES){
+		++Renderer->image_items.tex_count;
+	}else{
+		Renderer->image_items.tex_count = 1;
+	}
 	stbi_set_flip_vertically_on_load(true);
 	GLint w, h, c;
-	Image img = {
-		.data = stbi_load(path, &w, &h, &c, 0),
+	stbi_uc * data = stbi_load(path, &w, &h, &c, 0);
+	MEL_Texture img = {
 		.mvp = GLM_MAT4_IDENTITY_INIT,
-		.view = GLM_MAT4_IDENTITY_INIT,
 		.model = GLM_MAT4_IDENTITY_INIT,
+		.id = Renderer->image_items.tex_count-1,
 		.rect.pos[0] = 0.0f,
 		.rect.pos[1] = 0.0f,
 		.rect.size[0] = w,
@@ -29,12 +34,7 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 		    img.rect.pos[0]+img.rect.size[0], img.rect.pos[1],                  0.0f,  img.rect.color[0], img.rect.color[1], img.rect.color[2], img.rect.color[3], 0.0f, 1.0f,   img.id,   img.mvp[0][0], img.mvp[0][1], img.mvp[0][2], img.mvp[0][3], img.mvp[1][0], img.mvp[1][1], img.mvp[1][2], img.mvp[1][3], img.mvp[2][0], img.mvp[2][1], img.mvp[2][2], img.mvp[2][3], img.mvp[3][0], img.mvp[3][1], img.mvp[3][2], img.mvp[3][3], // top left <-- anchor point
 		}
 	};
-	if (Renderer.image_items.tex_count < Renderer.image_items.MAX_TEXTURES){
-		++Renderer.image_items.tex_count;
-	}else{
-		Renderer.image_items.tex_count = 1;
-	}
-	glActiveTexture(GL_TEXTURE0+(Renderer.image_items.tex_count-1));
+	/* glActiveTexture(GL_TEXTURE0+img.id); <= Only when batching */
 	glGenTextures(1, &img.texture);
 	glBindTexture(GL_TEXTURE_2D, img.texture);
 
@@ -44,27 +44,24 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, max_filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	GLfloat border_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_color);
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, (vec4){0.0f, 0.0f, 0.0f, 1.0f});
 
-	if (img.data){
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.rect.size[0], img.rect.size[1], 0, channels, GL_UNSIGNED_BYTE, img.data);
+	if (data){
+		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	    glTexImage2D(GL_TEXTURE_2D, 0, channels, img.rect.size[0], img.rect.size[1], 0, channels, GL_UNSIGNED_BYTE, data);
 	    glGenerateMipmap(GL_TEXTURE_2D);
 	    log_log(LOG_SUCCESS, "Successfully loaded image : {%s}", path);
 	}else{
 	    log_log(LOG_ERROR, "Failed loading image : {%s}", path);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
-	stbi_image_free(img.data);
+	stbi_image_free(data);
 
-	img.id = Renderer.image_items.tex_count-1;
-
-	glBindVertexArray(Renderer.image_items.VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.image_items.VBO);
+	glBindVertexArray(Renderer->image_items.VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer->image_items.VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), NULL, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.image_items.EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.image_items.indices), Renderer.image_items.indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer->image_items.EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer->image_items.indices), Renderer->image_items.indices, GL_STATIC_DRAW);
 
 	/* Position Attribute [x,y,z] */
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)0);
@@ -100,8 +97,8 @@ Image MEL_load_image(MEL_Renderer2D Renderer, GLchar * path, GLenum channels, GL
 	return img;
 }
 
-struct rect image_update_image(Image source){
-	struct rect img = {
+rect image_update_image(MEL_Texture source){
+	rect img = {
 		.pos[0] = source.rect.pos[0],
 		.pos[1] = source.rect.pos[1],
 		.size[0] = source.rect.size[0],

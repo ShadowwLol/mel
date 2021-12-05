@@ -1,7 +1,7 @@
 #include "../include/MEL_opengl.h"
-#include "../include/MEL_image.h"
+#include "../include/MEL_Texture.h"
 
-extern Image smiley;
+extern MEL_Texture smiley;
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	switch((int)yoffset){

@@ -132,21 +132,11 @@ int32_t closest_power_of_2(int32_t number){
 	if (is_power_of_2(number) == 0){
 		return number;
 	}
-	int32_t min = number-1;
 	int32_t max = number+1;
-	for (; min > 0; --min){
-		if (is_power_of_2(min) == 0){
-			break;
-		}
-	}
 	for (; max < 10000; ++max){
 		if (is_power_of_2(max) == 0){
 			break;
 		}
 	}
-	if (abs((max - number)) < abs((min - number))){
-		return max;
-	}else{
-		return min;
-	}
+	return max;
 }

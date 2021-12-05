@@ -1,5 +1,5 @@
 #include "../include/MEL_def.h"
-#include "../include/MEL_rect.h"
+#include "../include/MEL_Rect.h"
 
 MEL_Rect MEL_load_rect(MEL_Renderer2D Renderer){
 	MEL_Rect r = {

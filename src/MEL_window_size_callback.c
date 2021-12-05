@@ -1,6 +1,6 @@
 #include "../include/MEL_opengl.h"
 #include "../include/MEL_def.h"
-#include "../include/MEL_render.h"
+#include "../include/MEL_Renderer2D.h"
 
 extern MEL_Window win;
 extern MEL_Renderer2D Rend;
