@@ -53,13 +53,6 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 		.color[2] = 1.0f,
 		.color[3] = 1.0f,
 		.rotation = 0.0f,
-		.vertices = {
-		    // positions                                                               colors                                 tex coords  sampler   mvp **                                                  **  **                                                      **  **                                                   ** **                                                       **
-		    cr.pos[0],            cr.pos[1],            0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 1.0f, 1.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // top right
-		    cr.pos[0],            cr.pos[1]+cr.size[1], 0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 1.0f, 0.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // bottom right
-		    cr.pos[0]+cr.size[0], cr.pos[1]+cr.size[1], 0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 0.0f, 0.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // bottom left
-		    cr.pos[0]+cr.size[0], cr.pos[1],            0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 0.0f, 1.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // top left <-- anchor point
-		}
 	};
 
 	glBindVertexArray(Renderer->VAO);
