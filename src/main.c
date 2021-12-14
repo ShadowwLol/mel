@@ -5,23 +5,24 @@
 #include "../include/MEL_Camera.h" /* for cameras */
 #include "../include/MEL_logs.h"   /* for logging */
 #include "../include/MEL_Texture.h"  /* for images  */
-#include "../include/MEL_Rect.h"   /* for rects   */
 #include "../include/MEL_misc.h"   /* for misc    */
-#include "../include/MEL_thread.h"
+//#include "../include/MEL_thread.h"
 
 MEL_Window win;
 MEL_Texture smiley;
 MEL_Camera camera;
 MEL_Renderer2D Rend;
 
-void * test_function(void * args){
+#if 0
+MEL_THREADED_FUNCTION test_function(void * args){
 	/* Do something related to threading */
-	return 0;
+	return;
 }
-void * test_function2(void * args){
+MEL_THREADED_FUNCTION test_function2(void * args){
 	/* Do something related to threading */
-	return 0;
+	return;
 }
+#endif
 
 #if __WIN32
 HANDLE hConsole;
@@ -37,10 +38,10 @@ int main(void){
 #endif
 	/* Initializing the library  */
 	if (!glfwInit()){
-		log_log(LOG_ERROR, "Failed initializing GLFW");
+		MEL_log(LOG_ERROR, "Failed initializing GLFW");
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully initialized GLFW");
+		MEL_log(LOG_SUCCESS, "Successfully initialized GLFW");
 	}
 	/* * * * * * * * * * * * * * */
 
@@ -54,11 +55,11 @@ int main(void){
 	win.mode = (GLFWvidmode *)glfwGetVideoMode(glfwGetPrimaryMonitor());
 	win.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
 	if (!win.window){
-		log_log(LOG_ERROR, "Failed creating window");
+		MEL_log(LOG_ERROR, "Failed creating window");
 		glfwTerminate();
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully created window");
+		MEL_log(LOG_SUCCESS, "Successfully created window");
 	}
 	/* * * * * * * * * * * */
 
@@ -83,15 +84,21 @@ int main(void){
 
 	/* Images  */
 	Rend = MEL_Renderer2D_init(win);
+	MEL_ColorRect rectangle = MEL_init_rect(&Rend);
+	rectangle.size[0] = 200;
+	rectangle.size[1] = 400;
+	rectangle.color[0] = 0.8f;
+	rectangle.color[1] = 0.0f;
+	rectangle.color[2] = 0.2f;
+	rectangle.color[3] = 1.0f;
+	rectangle.rotation = 70;
 	smiley = MEL_load_image(&Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	printf("SMILEY ID: %d\n", smiley.id);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
 	smiley.rect.color[3] = 0.5f;
 	MEL_Texture crate = MEL_load_image(&Rend, "resources/images/container.jpg", GL_RGB, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	printf("CRATE ID: %d\n", crate.id);
-	printf("GL_TEXTURE0+1 : %d, GL_TEXTURE1 : %d\n", GL_TEXTURE0+1, GL_TEXTURE1);
 	smiley.rect.pos[0] = 640.0f;
+#if 0
 	MEL_Rect r = MEL_load_rect(Rend);
 	r.color[0] = 1.0f;
 	r.color[1] = 0.0f;
@@ -101,10 +108,12 @@ int main(void){
 	r.pos[1] = 70.0f;
 	r.size[0] = 500.0f;
 	r.size[1] = 500.0f;
+#endif
 
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
+#if 0
 	MEL_Rect r2 = MEL_load_rect(Rend);
 	r2.color[0] = 0.0f;
 	r2.color[1] = 1.0f;
@@ -116,10 +125,22 @@ int main(void){
 	r2.size[1] = 240.0f;
 	r2.rotation = 45;
 
+	MEL_Rect bg = MEL_load_rect(Rend);
+	bg.color[0] = 0.5;
+	bg.color[1] = 0.2;
+	bg.color[2] = 0.8;
+	bg.color[3] = 1.0f;
+	bg.pos[0] = 0.0f;
+	bg.pos[1] = 0.0f;
+	bg.size[0] = win.mode->width;
+	bg.size[1] = win.mode->height;
+	bg.rotation = 0;
+#endif
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	MEL_Thread threads[2];
+	//MEL_Thread threads[2];
 	MEL_Camera default_camera;
 	MEL_init_camera(default_camera);
 	MEL_init_camera(camera);
@@ -132,23 +153,25 @@ int main(void){
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		MEL_thread_create(&threads[0], test_function, NULL);
-		MEL_thread_create(&threads[1], test_function2, NULL);
+		//MEL_thread_create(threads[0], test_function, NULL);
+		//MEL_thread_create(threads[1], test_function2, NULL);
 
 		/* Drawing */
 		MEL_TIMER_START();
-		MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
+		//MEL_update_rect(win, Rend, bg, default_camera, MEL_IMAGE_STATIC);
+		//MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
 		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
-		MEL_update_rect(win, Rend, r2, camera, MEL_IMAGE_DYNAMIC);
+		//MEL_update_rect(win, Rend, r2, camera, MEL_IMAGE_DYNAMIC);
 		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
+		MEL_draw_rect(win, Rend, rectangle, camera);
 		MEL_TIMER_END();
 		/* * * * * */
 
 		//printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
 		//printf("%d\n", MEL_fps());
-		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
-			MEL_thread_join(threads[i]);
-		}
+		//for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
+		//	MEL_thread_join(threads[i]);
+		//}
 		glfwSwapBuffers(win.window);
 	}
 
