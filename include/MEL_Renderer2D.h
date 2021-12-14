@@ -4,42 +4,78 @@
 #include "MEL_opengl.h"
 #include "MEL_def.h"
 
-#define IMAGE_VERT_SHADER_PATH "resources/shaders/image.vert"
-#define IMAGE_FRAG_SHADER_PATH "resources/shaders/image.frag"
-#define RECT_VERT_SHADER_PATH  "resources/shaders/basic.vert"
-#define RECT_FRAG_SHADER_PATH  "resources/shaders/basic.frag"
+#define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
+#define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
 
 typedef struct{
-	GLuint VAO, VBO, EBO, shader;
-	GLint tex_count, MAX_TEXTURES;
-	GLuint indices[6];
-} MEL_Renderer2D_image_items;
+	vec2 pos;
+	vec2 size;
+	vec4 color;
+	mat4 model;
+	mat4 mvp;
+	GLfloat rotation;
+	GLfloat vertices[104];
+} MEL_Rect;
 
-typedef struct{
-	GLuint VAO, VBO, EBO, shader;
-	GLuint indices[6];
-} MEL_Renderer2D_rect_items;
+typedef MEL_Rect MEL_ColorRect;
 
 typedef struct {
-	MEL_Renderer2D_image_items image_items;
-	MEL_Renderer2D_rect_items rect_items;
 	mat4 projection;
+	GLuint * default_texture;
+
+	GLuint VAO, VBO, EBO, shader;
+	GLint TEXTURE_COUNT, MAX_TEXTURES;
+	GLuint indices[6];
 } MEL_Renderer2D;
 
 #define MEL_Renderer2D_destroy(Renderer){\
 	glBindVertexArray(0);\
 	glBindBuffer(GL_ARRAY_BUFFER, 0);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
-	glDeleteVertexArrays(1, &Renderer.image_items.VAO);\
-	glDeleteBuffers(1, &Renderer.image_items.VBO);\
-	glDeleteBuffers(1, &Renderer.image_items.EBO);\
-	glDeleteProgram(Renderer.image_items.shader);\
-	glDeleteVertexArrays(1, &Renderer.rect_items.VAO);\
-	glDeleteBuffers(1, &Renderer.rect_items.VBO);\
-	glDeleteBuffers(1, &Renderer.rect_items.EBO);\
-	glDeleteProgram(Renderer.rect_items.shader);\
+	glDeleteVertexArrays(1, &Renderer.VAO);\
+	glDeleteBuffers(1, &Renderer.VBO);\
+	glDeleteBuffers(1, &Renderer.EBO);\
+	glDeleteProgram(Renderer.shader);\
+	glDeleteVertexArrays(1, &Renderer.VAO);\
+	glDeleteBuffers(1, &Renderer.VBO);\
+	glDeleteBuffers(1, &Renderer.EBO);\
+	glDeleteProgram(Renderer.shader);\
+}
+
+#define MEL_draw_rect(MELW, Renderer, Rect, Camera){\
+	glBindVertexArray(Renderer.VAO);\
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	if (((Rect.pos[0] > MELW.mode->width) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
+	((Rect.pos[1] > MELW.mode->height) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
+		{\
+			Rect = MEL_update_rect(Rect);\
+		}\
+	}else{\
+		glBindVertexArray(Renderer.VAO);\
+		glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+		{\
+			Rect = MEL_update_rect(Rect);\
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Rect.vertices), Rect.vertices);\
+			glm_mat4_identity(Rect.model);\
+			glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
+			glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
+			glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
+		}\
+		glBindTexture(GL_TEXTURE_2D, *Renderer.default_texture);\
+		glUseProgram(Renderer.shader);\
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
+		glUseProgram(0);\
+		glBindTexture(GL_TEXTURE_2D, 0);\
+	}\
+	glBindVertexArray(0);\
+	glBindBuffer(GL_ARRAY_BUFFER, 0);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);
+MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
+MEL_ColorRect MEL_update_rect(MEL_ColorRect);
 
 #endif
