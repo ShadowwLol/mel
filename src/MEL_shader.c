@@ -34,11 +34,11 @@ GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path)
 	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE){
 		glGetShaderInfoLog(vertex_shader, 1024, NULL, errnoo);
-		log_log(LOG_ERROR, "Failed compiling vertex shader : {%s}\n[%s]", vert_path, errnoo);
+		MEL_log(LOG_ERROR, "Failed compiling vertex shader : {%s}\n[%s]", vert_path, errnoo);
 		glDeleteShader(vertex_shader);
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully compiled vertex shader : {%s}", vert_path);
+		MEL_log(LOG_SUCCESS, "Successfully compiled vertex shader : {%s}", vert_path);
 	}
 
     /* Create vertex shader object and its reference */
@@ -51,12 +51,12 @@ GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path)
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE){
 		glGetShaderInfoLog(fragment_shader, 1024, NULL, errnoo);
-		log_log(LOG_ERROR, "Failed compiling fragment shader : {%s}\n[%s]", frag_path, errnoo);
+		MEL_log(LOG_ERROR, "Failed compiling fragment shader : {%s}\n[%s]", frag_path, errnoo);
 		glDeleteShader(vertex_shader);
 		glDeleteShader(fragment_shader);
 		return -1;
 	}else{
-		log_log(LOG_SUCCESS, "Successfully compiled fragment shader : {%s}", frag_path);
+		MEL_log(LOG_SUCCESS, "Successfully compiled fragment shader : {%s}", frag_path);
 	}
 
     /* Create shader program object and its reference */

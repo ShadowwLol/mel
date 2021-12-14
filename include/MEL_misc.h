@@ -10,11 +10,11 @@
 /* * * * * * * */
 static clock_t startm, stopm;
 #define MEL_TIMER_START(){\
-	if ((startm = clock()) < 0){log_log(LOG_ERROR, "Failed starting timer"); return -1;}\
+	if ((startm = clock()) < 0){MEL_log(LOG_ERROR, "Failed starting timer"); return -1;}\
 }
 
 #define MEL_TIMER_END(){\
-	if ((stopm = clock()) < 0){log_log(LOG_ERROR, "Failed ending timer"); return -1;}\
+	if ((stopm = clock()) < 0){MEL_log(LOG_ERROR, "Failed ending timer"); return -1;}\
 }
 
 #define MEL_TIME_ELAPSED() (((double)stopm-startm)/CLOCKS_PER_SEC)
