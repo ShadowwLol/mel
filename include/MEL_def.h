@@ -4,7 +4,6 @@
 #include "MEL_logs.h"
 #include "MEL_IO.h"
 
-//static char _title[1024];
 static String _title;
 static double_t _width, _height;
 static MEL_bool _vsync;
@@ -20,7 +19,7 @@ void input(GLFWwindow *, int, int, int, int);
 void window_size_callback(GLFWwindow *, int, int);
 void error_callback(int, const char *);
 void joystick_callback(int, int);
-int MEL_toggle_fullscreen(MEL_ctx ctx);
+char MEL_toggle_fullscreen(MEL_ctx ctx);
 
 inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t height, MEL_bool vsync){
 	//MEL_strlcpy(_title, title, MEL_strlen(title));
