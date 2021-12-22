@@ -1,151 +1,74 @@
 #include "../include/MEL_opengl.h" /* for gl defs */
 #include "../include/MEL_IO.h"     /* for i/o     */
 #include "../include/MEL_def.h"    /* for configs */
+#include "../include/MEL_common.h"
 #include "../include/MEL_shader.h" /* for shaders */
 #include "../include/MEL_Camera.h" /* for cameras */
 #include "../include/MEL_logs.h"   /* for logging */
 #include "../include/MEL_Texture.h"  /* for images  */
 #include "../include/MEL_misc.h"   /* for misc    */
-//#include "../include/MEL_thread.h"
+#include "../include/MEL_thread.h"
 
-MEL_Window win;
+MEL_ctx ctx;
 MEL_Texture smiley;
 MEL_Camera camera;
 MEL_Renderer2D Rend;
 
-#if 0
 MEL_THREADED_FUNCTION test_function(void * args){
 	/* Do something related to threading */
-	return;
+	printf("Hello\n");
+	return 0;
 }
 MEL_THREADED_FUNCTION test_function2(void * args){
 	/* Do something related to threading */
-	return;
+	printf("World\n");
+	return 0;
 }
-#endif
-
-#if __WIN32
-HANDLE hConsole;
-WORD saved_attributes;
 
 int main(void){
-	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
-	saved_attributes = consoleInfo.wAttributes;
-#else
-int main(void){
-#endif
-	/* Initializing the library  */
-	if (!glfwInit()){
-		MEL_log(LOG_ERROR, "Failed initializing GLFW");
-		return -1;
-	}else{
-		MEL_log(LOG_SUCCESS, "Successfully initialized GLFW");
-	}
-	/* * * * * * * * * * * * * * */
+	ctx = MEL_ctx_init("Shadowws Game", 1280, 720, MEL_TRUE);
+	Rend = MEL_Renderer2D_init(ctx.window_ctx);
 
-	/* Window hints  */
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
-	/* * * * * * * * * * * */
-
-	/* Creating the window */
-	win.mode = (GLFWvidmode *)glfwGetVideoMode(glfwGetPrimaryMonitor());
-	win.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, glfwGetPrimaryMonitor(), NULL);
-	if (!win.window){
-		MEL_log(LOG_ERROR, "Failed creating window");
-		glfwTerminate();
-		return -1;
-	}else{
-		MEL_log(LOG_SUCCESS, "Successfully created window");
-	}
-	/* * * * * * * * * * * */
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(win.window);
-	/* * * * * * * * * * * * * * * * * * */
-
-	/* OPENGL configuration  */
-	gladLoadGL();
-	glfwSwapInterval(0);
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-	/* * * * * * * * * * * * */
-
-	/* Setting callbacks  */
-	glfwSetErrorCallback(error_callback);
-	glfwSetJoystickCallback(joystick_callback);
-	glfwSetKeyCallback(win.window, key_callback);
-	glfwSetWindowSizeCallback(win.window, window_size_callback);
-	glfwSetWindowSizeLimits(win.window, (win.mode->width/2), (win.mode->height/2), win.mode->width, win.mode->height);
-	glfwSetScrollCallback(win.window, scroll_callback);
-	/* * * * * * * * * * */
-
-	/* Images  */
-	Rend = MEL_Renderer2D_init(win);
+	/* Textures && Rects  */
 	MEL_ColorRect rectangle = MEL_init_rect(&Rend);
 	rectangle.size[0] = 200;
 	rectangle.size[1] = 400;
 	rectangle.color[0] = 0.8f;
 	rectangle.color[1] = 0.0f;
 	rectangle.color[2] = 0.2f;
-	rectangle.color[3] = 1.0f;
 	rectangle.rotation = 70;
+
+	MEL_ColorRect bg = MEL_init_rect(&Rend);
+	bg.size[0] = ctx.width;
+	bg.size[1] = ctx.height;
+	bg.color[0] = 0.2f;
+	bg.color[1] = 0.0f;
+	bg.color[2] = 0.8;
+
 	smiley = MEL_load_image(&Rend, "resources/images/smiley.png", GL_RGBA, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	smiley.rect.pos[0] = 640.0f;
 	smiley.rect.pos[1] = 360.0f;
 	smiley.rect.color[3] = 0.5f;
 	MEL_Texture crate = MEL_load_image(&Rend, "resources/images/container.jpg", GL_RGB, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
 	smiley.rect.pos[0] = 640.0f;
-#if 0
-	MEL_Rect r = MEL_load_rect(Rend);
-	r.color[0] = 1.0f;
-	r.color[1] = 0.0f;
-	r.color[2] = 0.0f;
-	r.color[3] = 1.0f;
-	r.pos[0] = 200.0f;
-	r.pos[1] = 70.0f;
-	r.size[0] = 500.0f;
-	r.size[1] = 500.0f;
-#endif
 
 	crate.rect.size[0] /= 2;
 	crate.rect.size[1] /= 2;
 
-#if 0
-	MEL_Rect r2 = MEL_load_rect(Rend);
-	r2.color[0] = 0.0f;
-	r2.color[1] = 1.0f;
-	r2.color[2] = 0.07f;
-	r2.color[3] = 1.0f;
-	r2.pos[0] = 150.0f;
-	r2.pos[1] = 150.0f;
-	r2.size[0] = 240.0f;
-	r2.size[1] = 240.0f;
-	r2.rotation = 45;
-
-	MEL_Rect bg = MEL_load_rect(Rend);
-	bg.color[0] = 0.5;
-	bg.color[1] = 0.2;
-	bg.color[2] = 0.8;
-	bg.color[3] = 1.0f;
-	bg.pos[0] = 0.0f;
-	bg.pos[1] = 0.0f;
-	bg.size[0] = win.mode->width;
-	bg.size[1] = win.mode->height;
-	bg.rotation = 0;
-#endif
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//MEL_Thread threads[2];
+	MEL_Thread threads[2] = {0};
+
 	MEL_Camera default_camera;
 	MEL_init_camera(default_camera);
 	MEL_init_camera(camera);
+
+	char c = 0;
+
 	/* Main loop */
-	while (!glfwWindowShouldClose(win.window)){
+	while (!glfwWindowShouldClose(ctx.window_ctx.window)){
+		update_window(ctx);
 		MEL_update_camera(camera);
 		glfwPollEvents();
 		MEL_calculate_delta();
@@ -153,26 +76,32 @@ int main(void){
 		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//MEL_thread_create(threads[0], test_function, NULL);
-		//MEL_thread_create(threads[1], test_function2, NULL);
+		MEL_thread_create(threads[0], test_function, NULL);
+		MEL_thread_create(threads[1], test_function2, NULL);
+		c = !c;
+		set_str(&ctx.title, (c == 0) ? "test1" : "test2");
 
 		/* Drawing */
 		MEL_TIMER_START();
-		//MEL_update_rect(win, Rend, bg, default_camera, MEL_IMAGE_STATIC);
-		//MEL_update_rect(win, Rend, r, default_camera, MEL_IMAGE_STATIC);
-		MEL_update_image(win, Rend, crate,  camera, MEL_IMAGE_STATIC);
-		//MEL_update_rect(win, Rend, r2, camera, MEL_IMAGE_DYNAMIC);
-		MEL_update_image(win, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
-		MEL_draw_rect(win, Rend, rectangle, camera);
+
+		MEL_begin_rendering2D(Rend);
+
+		MEL_draw_rect(ctx.window_ctx, Rend, bg, default_camera);
+		MEL_update_image(ctx.window_ctx, Rend, crate,  camera, MEL_IMAGE_STATIC);
+		MEL_update_image(ctx.window_ctx, Rend, smiley, camera, MEL_IMAGE_DYNAMIC);
+		MEL_draw_rect(ctx.window_ctx, Rend, rectangle, camera);
+
+		MEL_end_rendering2D();
+
 		MEL_TIMER_END();
 		/* * * * * */
 
 		//printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
-		//printf("%d\n", MEL_fps());
-		//for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
-		//	MEL_thread_join(threads[i]);
-		//}
-		glfwSwapBuffers(win.window);
+		printf("%d\n", MEL_fps());
+		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
+			MEL_thread_join(threads[i]);
+		}
+		glfwSwapBuffers(ctx.window_ctx.window);
 	}
 
 	/* * * * * * */
@@ -181,9 +110,68 @@ int main(void){
 	MEL_destroy_image(smiley);
 	MEL_destroy_image(crate);
 	MEL_Renderer2D_destroy(Rend);
-	glfwDestroyWindow(win.window);
-	glfwTerminate();
+	MEL_quit(&ctx);
 	/* * * * * * * */
 
 	return 0;
+}
+
+/* FIXME: Become keycallback with hashmap for every key */
+void input(GLFWwindow* window, int key, int scancode, int action, int mods){
+		switch(action){
+		case GLFW_RELEASE:
+			switch(key){
+				case GLFW_KEY_ESCAPE:
+					/* Close the game */
+					glfwSetWindowShouldClose(window, GLFW_TRUE);
+					break;
+				case GLFW_KEY_F11:
+					/* Fullscreen the game */
+					MEL_toggle_fullscreen(ctx);
+					break;
+				case GLFW_KEY_SPACE:
+					if (smiley.rect.color[0] == 1.0f){
+						smiley.rect.color[0] = 0.0f;
+					}else{
+						smiley.rect.color[0] = 1.0;
+					}
+					break;
+				case GLFW_KEY_E:
+					ctx.vsync = !ctx.vsync;
+					break;
+				default:
+					break;
+			}
+			break;
+		case GLFW_REPEAT:
+			switch(key){
+				case GLFW_KEY_W:
+					camera.pos[1] -= 800 * MEL_delta();
+					//smiley.rect.pos[1] -= 10;
+					break;
+				case GLFW_KEY_A:
+					camera.pos[0] -= 800 * MEL_delta();
+					//smiley.rect.pos[0] -= 10;
+					break;
+				case GLFW_KEY_S:
+					camera.pos[1] += 800 * MEL_delta();
+					//smiley.rect.pos[1] += 10;
+					break;
+				case GLFW_KEY_D:
+					camera.pos[0] += 800 * MEL_delta();
+					//smiley.rect.pos[0] += 10;
+					break;
+				case GLFW_KEY_RIGHT:
+					smiley.rect.rotation += 80.0f * MEL_delta();
+					break;
+				case GLFW_KEY_LEFT:
+					smiley.rect.rotation -= 80.0f * MEL_delta();
+					break;
+				default:
+					break;
+			}
+		default:
+			break;
+	}
+	return;
 }

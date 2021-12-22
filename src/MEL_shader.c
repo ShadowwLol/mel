@@ -1,36 +1,24 @@
-#include "../include/MEL_opengl.h"
-#include "../include/MEL_def.h"
 #include "../include/MEL_shader.h"
-#include "../include/MEL_logs.h"
-
-GLchar * MEL_read_from_file(const GLchar * path){
-	FILE *f = fopen(path, "rt");
-	if (!f){return (void *)-1;}
-	fseek(f, 0, SEEK_END);
-	long length = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	char *buffer = (char *) malloc(length + 1);
-	buffer[length] = '\0';
-	fread(buffer, 1, length, f);
-	fclose(f);
-	return buffer;
-}
+#include "../include/MEL_common.h"
 
 GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path){
-	const GLchar * vertex_source = MEL_read_from_file(vert_path);
-    const GLchar * fragment_source = MEL_read_from_file(frag_path);
+	GLint success = 0;
+	GLchar errnoo[1025] = "\0";
+	String vertex_source = MEL_read_file(vert_path);
+	String fragment_source = MEL_read_file(frag_path);
 
-	if ((void *)-1 == vertex_source || (void *)-1 == fragment_source){return -1;}
+	if (!vertex_source.length || !fragment_source.length){
+		MEL_log(LOG_ERROR, MEL_get_error_description());
+		return -1;
+	}
 
     /* Create vertex shader object and its reference */
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     /* Attach vertex shader source to the vertex shader object */
-    glShaderSource(vertex_shader, 1, &vertex_source, NULL);
+    glShaderSource(vertex_shader, 1, (const GLchar * const *)&vertex_source.buffer, NULL);
     /* Compile the vertex shader */
     glCompileShader(vertex_shader);
 
-	GLint success = 0;
-	GLchar errnoo[1025] = "\0";
 	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE){
 		glGetShaderInfoLog(vertex_shader, 1024, NULL, errnoo);
@@ -44,7 +32,7 @@ GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path)
     /* Create vertex shader object and its reference */
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     /* Attach vertex shader source to the vertex shader object */
-    glShaderSource(fragment_shader, 1, &fragment_source, NULL);
+    glShaderSource(fragment_shader, 1, (const GLchar * const *)&fragment_source.buffer, NULL);
     /* Compile the vertex shader */
     glCompileShader(fragment_shader);
 
@@ -70,8 +58,8 @@ GLuint MEL_create_shader_program(const char * vert_path, const char * frag_path)
     /* Free vertex and fragment shader objects */
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-    free((void*)vertex_source);
-    free((void*)fragment_source);
+	remove_str(&vertex_source);
+	remove_str(&fragment_source);
 
     return shader_program;
 }

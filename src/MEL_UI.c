@@ -1,13 +1,13 @@
 #include "../include/MEL_opengl.h"
 #include "../include/MEL_def.h"
 
-int toggleFullscreen(MEL_Window window){
-    if (!glfwGetWindowMonitor(window.window)){
+int MEL_toggle_fullscreen(MEL_ctx ctx){
+    if (!glfwGetWindowMonitor(ctx.window_ctx.window)){
         /* Currently windowed */
-        glfwSetWindowMonitor(window.window, glfwGetPrimaryMonitor(), (((float)window.mode->width/2) - (WINDOW_WIDTH/2)), (((float)window.mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, window.mode->refreshRate);
+        glfwSetWindowMonitor(ctx.window_ctx.window, glfwGetPrimaryMonitor(), (((float)ctx.window_ctx.mode->width/2.0f) - (ctx.width/2.0f)), (((float)ctx.window_ctx.mode->height/2.0f) - (ctx.height/2.0f)), ctx.width, ctx.height, ctx.window_ctx.mode->refreshRate);
     }else{
         /* Currently fullscreen */
-        glfwSetWindowMonitor(window.window, NULL, (((float)window.mode->width/2) - (WINDOW_WIDTH/2)), (((float)window.mode->height/2) - (WINDOW_HEIGHT/2)), WINDOW_WIDTH, WINDOW_HEIGHT, window.mode->refreshRate);
+        glfwSetWindowMonitor(ctx.window_ctx.window, NULL, (((float)ctx.window_ctx.mode->width/2.0f) - (ctx.height/2.0f)), (((float)ctx.window_ctx.mode->height/2.0f) - (ctx.height/2.0f)), ctx.width, ctx.height, ctx.window_ctx.mode->refreshRate);
     }
     return 0;
 }

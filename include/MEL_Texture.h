@@ -20,9 +20,6 @@ typedef struct {
 } MEL_Texture;
 
 #define MEL_update_image(MELW, Renderer, Img, Camera, Config){\
-	glBindVertexArray(Renderer.VAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 	if (((Img.rect.pos[0] > MELW.mode->width) || ((Img.rect.pos[0]+Img.rect.size[0]) < 0)) ||\
 	((Img.rect.pos[1] > MELW.mode->height) || ((Img.rect.pos[1]+Img.rect.size[1]) < 0))){\
 		{\
@@ -45,12 +42,7 @@ typedef struct {
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\
 		glUseProgram(Renderer.shader);\
 		glDrawElements(GL_TRIANGLES, (sizeof(Img.rect.vertices)/sizeof(Img.rect.vertices[0])), GL_UNSIGNED_INT, 0);\
-		glUseProgram(0);\
-		glBindTexture(GL_TEXTURE_2D, 0);\
 	}\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
 #define MEL_destroy_image(image){\

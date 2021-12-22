@@ -3,6 +3,7 @@
 
 #include "MEL_opengl.h"
 #include "MEL_def.h"
+#include "MEL_shader.h"
 
 #define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
@@ -42,10 +43,21 @@ typedef struct {
 	glDeleteProgram(Renderer.shader);\
 }
 
-#define MEL_draw_rect(MELW, Renderer, Rect, Camera){\
+#define MEL_begin_rendering2D(Renderer){\
 	glBindVertexArray(Renderer.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+}
+
+#define MEL_end_rendering2D(){\
+	glUseProgram(0);\
+	glBindTexture(GL_TEXTURE_2D, 0);\
+	glBindVertexArray(0);\
+	glBindBuffer(GL_ARRAY_BUFFER, 0);\
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
+}
+
+#define MEL_draw_rect(MELW, Renderer, Rect, Camera){\
 	if (((Rect.pos[0] > MELW.mode->width) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
 	((Rect.pos[1] > MELW.mode->height) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
 		{\
@@ -66,12 +78,7 @@ typedef struct {
 		glBindTexture(GL_TEXTURE_2D, *Renderer.default_texture);\
 		glUseProgram(Renderer.shader);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
-		glUseProgram(0);\
-		glBindTexture(GL_TEXTURE_2D, 0);\
 	}\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
 }
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);

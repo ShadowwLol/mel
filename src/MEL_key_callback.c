@@ -1,3 +1,4 @@
+#if 0
 #include "../include/MEL_def.h"
 #include "../include/MEL_opengl.h"
 #include "../include/MEL_misc.h"
@@ -79,3 +80,4 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			break;
 	}
 }
+#endif

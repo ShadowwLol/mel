@@ -5,7 +5,7 @@
 #include <processthreadsapi.h>
 #include <synchapi.h>
 
-#define MEL_THREADED_FUNCTION LPTHREAD_START_ROUTINE
+#define MEL_THREADED_FUNCTION DWORD WINAPI
 
 #define MEL_Thread LPDWORD
 #define MEL_thread_create(thread_obj, function, args) CreateThread(NULL, 0, function, args, 0, thread_obj)
@@ -15,10 +15,11 @@
 #define MEL_MUTEX_INIT CreateMutex(NULL, FALSE, NULL)
 #define MEL_mutex_lock(lock) WaitForSingleObject(lock, INFINITE)
 #define MEL_mutex_unlock(lock)
+
 #else
 #include <pthread.h>
 
-#define MEL_THREADED_FUNCTION void
+#define MEL_THREADED_FUNCTION void *
 
 #define MEL_Thread pthread_t
 #define MEL_thread_create(thread_obj, function, args) pthread_create(&thread_obj, NULL, function, args)

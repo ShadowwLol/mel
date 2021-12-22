@@ -1,21 +1,18 @@
-#include "../include/MEL_def.h"
 #include "../include/MEL_Renderer2D.h"
 #include "../include/MEL_Texture.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
-	GLint MT;
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &MT);\
 	MEL_Renderer2D Renderer = {
 		.default_texture = (GLuint *)calloc(1, sizeof(GLuint)),
 		/* Image */
 		.TEXTURE_COUNT = 1,
-		.MAX_TEXTURES = MT,
 		.shader = MEL_create_shader_program(TEXTURE_VERT_SHADER_PATH, TEXTURE_FRAG_SHADER_PATH),
 		.indices = {
 			0, 1, 3,
 			1, 2, 3
 		},
 	};
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.MAX_TEXTURES);
 	glm_ortho(0.0f, (float)win.mode->width, (float)win.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);
 
 	glGenTextures(1, Renderer.default_texture);
