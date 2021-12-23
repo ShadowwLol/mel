@@ -1,7 +1,7 @@
 #ifndef _MEL_MISC_H
 #define _MEL_MISC_H
 
-#include "../include/MEL_def.h"
+#include "MEL_opengl.h"
 
 /* Randomness */
 #include <time.h>

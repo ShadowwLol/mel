@@ -32,11 +32,11 @@ typedef struct{
 } MEL_Window;
 
 typedef struct{
-	MEL_Window window_ctx;
-	//char title[1024];
-	String title;
-	double_t width, height;
-	MEL_bool vsync;
+	MEL_Window window_ctx;  /* Window context                                     */
+	String title;           /* Window title                                       */
+	double_t width, height; /* Window dimensions       => [widthxheight]          */
+	MEL_bool vsync;         /* Vertical Syncronization => Prevents screen tearing */
+	GLint aa_samples;       /* Antialiasing samples < MEL_get_max_aa_samples()    */
 } MEL_ctx;
 
 #endif
