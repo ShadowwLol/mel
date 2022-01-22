@@ -1,15 +1,14 @@
 #ifndef _MEL_LOGS_H
 #define _MEL_LOGS_H
 
+#include <stdio.h>
 #include <stdarg.h>
-#include "MEL_common.h"
 
 typedef enum {
 	LOG_WARNING, LOG_SUCCESS, LOG_ERROR, LOG_INFORMATION
 } logging;
 
 #if __WIN32
-
 #define TERM_GREEN FOREGROUND_GREEN
 #define TERM_YELLOW (FOREGROUND_RED | FOREGROUND_GREEN)
 #define TERM_RED FOREGROUND_RED
@@ -30,7 +29,7 @@ typedef enum {
 static void MEL_log(int, const char *, ...);
 
 #if __WIN32
-static MEL_bool dirty = MEL_FALSE;
+static bool dirty = MEL_FALSE;
 static HANDLE hConsole;
 static WORD saved_attributes;
 #endif
@@ -42,7 +41,7 @@ inline static void MEL_log(int l, const char * format, ...){
 		CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
 		GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
 		saved_attributes = consoleInfo.wAttributes;
-		dirty = MEL_TRUE;
+		dirty = true;
 	}
 #endif
     switch(l){

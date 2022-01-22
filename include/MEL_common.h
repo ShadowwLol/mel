@@ -16,15 +16,16 @@
 #include <wincon.h>
 #endif
 
-//#define WINDOW_WIDTH (1280.0f)
-//#define WINDOW_HEIGHT (720.0f)
-//#define WINDOW_TITLE "Game"
+#define MEL_FN unsigned char
+#define EX_S (0)
+#define EX_F (255)
 
-typedef char MEL_bool;
-#define MEL_TRUE (1)
-#define MEL_FALSE (0)
+#define MEL_KEY unsigned char
 
 #define MEL_SINGLETON(t, inst, init) t* MEL_S_##t_##inst() { static t inst = init; return &inst; }
+
+#define MEL_set_clear_color(r, g, b, a) glClearColor(r/255.0f, g/255.0f, b/255.0f, a/255.0f);
+#define MEL_clear(buffer) glClear(buffer);
 
 typedef struct{
 	GLFWwindow * window;
@@ -35,7 +36,7 @@ typedef struct{
 	MEL_Window window_ctx;  /* Window context                                     */
 	String title;           /* Window title                                       */
 	double_t width, height; /* Window dimensions       => [widthxheight]          */
-	MEL_bool vsync;         /* Vertical Syncronization => Prevents screen tearing */
+	bool vsync;         /* Vertical Syncronization => Prevents screen tearing */
 	GLint aa_samples;       /* Antialiasing samples < MEL_get_max_aa_samples()    */
 } MEL_ctx;
 

@@ -1,5 +1,5 @@
 #include "../include/MEL_opengl.h"
-#include "../include/MEL_def.h"
+#include "../include/MEL_common.h"
 
 char MEL_toggle_fullscreen(MEL_ctx ctx){
     if (!glfwGetWindowMonitor(ctx.window_ctx.window)){

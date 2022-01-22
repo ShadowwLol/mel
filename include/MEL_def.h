@@ -1,21 +1,19 @@
 #ifndef _MEL_DEF_H
 #define _MEL_DEF_H
 
+#include "MEL_common.h"
 #include "MEL_logs.h"
 #include "MEL_IO.h"
 #include "MEL_misc.h"
 
 static String _title;
 static double_t _width, _height;
-static MEL_bool _vsync;
+static bool _vsync;
 static GLint _aa_samples;
 static GLint _max_aa_samples;
 
-static char * MEL_get_error_description();
-static int32_t MEL_get_error_id();
-
 static GLint MEL_get_max_aa_samples();
-static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t height, MEL_bool vsync);
+static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t height, bool vsync);
 static void update_window(MEL_ctx * ctx);
 static void MEL_quit(MEL_ctx * ctx);
 
@@ -49,7 +47,7 @@ char MEL_toggle_fullscreen(MEL_ctx ctx);
 
 inline static GLint MEL_get_max_aa_samples(){return _max_aa_samples;}
 
-inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t height, MEL_bool vsync){
+inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t height, bool vsync){
 	_width = width;
 	_height = height;
 	_vsync = vsync;
@@ -69,7 +67,7 @@ inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t 
 	/* Initializing the library  */
 	if (!glfwInit()){
 		MEL_log(LOG_ERROR, "Failed initializing GLFW");
-		return ctx;
+		exit(EX_F);
 	}else{
 		MEL_log(LOG_SUCCESS, "Successfully initialized GLFW");
 	}
@@ -88,7 +86,7 @@ inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t 
 	if (!ctx.window_ctx.window){
 		MEL_log(LOG_ERROR, "Failed creating window");
 		glfwTerminate();
-		return ctx;
+        exit(EX_F);
 	}else{
 		MEL_log(LOG_SUCCESS, "Successfully created window");
 	}

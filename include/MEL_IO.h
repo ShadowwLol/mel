@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "MEL_opengl.h"
+#include "MEL_logs.h"
 
 #define GLColor32(col) ((float)col/255)
 
@@ -40,27 +41,6 @@ static String_View set_strv(char *);
 static String_View substr_to_strv(char *, size_t, size_t);
 static String MEL_read_file(const char *);
 /* * * * * * * * * * * * * */
-
-/* MEL_get_error_id() && MEL_get_error_description()  */
-static int32_t MEL_ERROR;
-static char MEL_ERROR_DESCRIPTION[1024];
-
-static void MEL_set_error(const char * err, int32_t id);
-static int32_t MEL_get_error_id();
-static char * MEL_get_error_description();
-
-inline static void MEL_set_error(const char * err, int32_t id){
-	MEL_ERROR = id;
-	MEL_strlcpy(MEL_ERROR_DESCRIPTION, err, 1024);
-}
-
-inline static int32_t MEL_get_error_id(){return MEL_ERROR;}
-inline static char * MEL_get_error_description(){return MEL_ERROR_DESCRIPTION;}
-
-#define FILE_NOT_EXIST  0x00000010
-#define FILE_TOO_LARGE  0x00000100
-#define FILE_READ_ERROR 0x00001000
-/* * * * * * * * * * * * * *  * * * * * * * * * * * * */
 
 /* Return length of `src` string */
 inline static size_t MEL_strlen(const char * src){
@@ -203,8 +183,9 @@ inline static String MEL_read_file(const char * f_name) {
 
         /* 1 GiB; best not to load a whole large file in one string */
         if (str.length > 1073741824) {
-			MEL_set_error("File too large", FILE_TOO_LARGE);
-            return (String){NULL, 0, 0};
+            remove_str(&str);
+            MEL_log(LOG_WARNING, "File {%s} too large", f_name);
+            return (String){NULL};
         }
 
 		realloc_str(&str, str.length+1);
@@ -214,8 +195,8 @@ inline static String MEL_read_file(const char * f_name) {
 
             if (str.length != read_length) {
 				remove_str(&str);
-				MEL_set_error("File read error", FILE_READ_ERROR);
-				return (String){NULL, 0, 0};
+                MEL_log(LOG_WARNING, "Failed reading file {%s}", f_name);
+				return (String){NULL};
             }
         }
 
@@ -224,8 +205,9 @@ inline static String MEL_read_file(const char * f_name) {
 		str.buffer[str.length] = '\0';
     }
     else {
-		MEL_set_error("File does not exist", FILE_NOT_EXIST);
-        return (String){NULL, 0, 0};
+        remove_str(&str);
+        MEL_log(LOG_WARNING, "File does not exist {%s}", f_name);
+        return (String){NULL};
     }
 
     return str;

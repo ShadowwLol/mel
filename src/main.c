@@ -11,22 +11,8 @@ MEL_Texture smiley;
 MEL_Camera camera;
 MEL_Renderer2D Rend;
 
-MEL_THREADED_FUNCTION test_function(void * args){
-	/* Do something related to threading */
-	//printf("Hello\n");
-	return 0;
-}
-MEL_THREADED_FUNCTION test_function2(void * args){
-	/* Do something related to threading */
-	//printf("World\n");
-	return 0;
-}
-
 int main(void){
-	ctx = MEL_ctx_init("Shadowws Game", 1280, 720, MEL_TRUE);
-
-	//printf("%d => max samples\n", MEL_get_max_aa_samples());
-
+	ctx = MEL_ctx_init("Shadowws Game", 1280, 720, true);
 	Rend = MEL_Renderer2D_init(ctx.window_ctx);
 
 	/* Textures && Rects  */
@@ -64,21 +50,14 @@ int main(void){
 	MEL_init_camera(default_camera);
 	MEL_init_camera(camera);
 
-	char c = 0;
-
 	/* Main loop */
 	while (!glfwWindowShouldClose(ctx.window_ctx.window)){
 		MEL_update_camera(camera);
 
 		MEL_poll_events(&ctx);
 
-		glClearColor(GLColor32(20), GLColor32(20), GLColor32(20), GLColor32(255));
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		MEL_thread_create(threads[0], test_function, NULL);
-		MEL_thread_create(threads[1], test_function2, NULL);
-		c = !c;
-		set_str(&ctx.title, (c == 0) ? "test1" : "test2");
+        MEL_set_clear_color(20, 20, 20, 255);
+        MEL_clear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
 		MEL_TIMER_START();
@@ -97,9 +76,6 @@ int main(void){
 
 		//printf("%lf secs elapsed\n", MEL_TIME_ELAPSED());
 		//printf("%d\n", MEL_fps());
-		for (size_t i = 0; i < (sizeof(threads)/sizeof(threads[0])); ++i){
-			MEL_thread_join(threads[i]);
-		}
 		glfwSwapBuffers(ctx.window_ctx.window);
 	}
 
@@ -115,9 +91,26 @@ int main(void){
 	return 0;
 }
 
+/*
+    input() controls main input of the program
+    example:
+        MEL_KEY <var> = MEL_get_key(GLFW_KEY_...);
+
+    you can do:
+        if (<var> == MEL_KEY_NONE)
+    or:
+        if (!<var>)
+
+    and you can do:
+        if (<var> == MEL_KEY_PRESS)
+        if (<var> == MEL_KEY_REPEAT)
+        if (<var> == MEL_KEY_RELEASE)
+    or:
+        if (<var>)
+*/
 void input(){
-	int8_t KEY_ESCAPE = MEL_get_key(GLFW_KEY_ESCAPE);
-	int8_t KEY_F11 = MEL_get_key(GLFW_KEY_F11);
+	MEL_KEY KEY_ESCAPE = MEL_get_key(GLFW_KEY_ESCAPE);
+	MEL_KEY KEY_F11 = MEL_get_key(GLFW_KEY_F11);
 
 	if (KEY_ESCAPE == MEL_KEY_RELEASE){
 		/* Close the game */
@@ -129,16 +122,18 @@ void input(){
 		MEL_toggle_fullscreen(ctx);
 	}
 
-	int8_t KEY_SPACE = MEL_get_key(GLFW_KEY_SPACE);
-	int8_t KEY_E = MEL_get_key(GLFW_KEY_E);
+	MEL_KEY KEY_SPACE = MEL_get_key(GLFW_KEY_SPACE);
+	MEL_KEY KEY_E = MEL_get_key(GLFW_KEY_E);
 
-	int8_t KEY_W = MEL_get_key(GLFW_KEY_W);
-	int8_t KEY_A = MEL_get_key(GLFW_KEY_A);
-	int8_t KEY_S = MEL_get_key(GLFW_KEY_S);
-	int8_t KEY_D = MEL_get_key(GLFW_KEY_D);
+	MEL_KEY KEY_W = MEL_get_key(GLFW_KEY_W);
+	MEL_KEY KEY_A = MEL_get_key(GLFW_KEY_A);
+	MEL_KEY KEY_S = MEL_get_key(GLFW_KEY_S);
+	MEL_KEY KEY_D = MEL_get_key(GLFW_KEY_D);
 
-	int8_t KEY_LEFT = MEL_get_key(GLFW_KEY_LEFT);
-	int8_t KEY_RIGHT = MEL_get_key(GLFW_KEY_RIGHT);
+	MEL_KEY KEY_LEFT = MEL_get_key(GLFW_KEY_LEFT);
+	MEL_KEY KEY_RIGHT = MEL_get_key(GLFW_KEY_RIGHT);
+
+    MEL_KEY KEY_L = MEL_get_key(GLFW_KEY_L);
 
 	/* Testing */
 	if (KEY_SPACE == MEL_KEY_RELEASE){
@@ -149,14 +144,10 @@ void input(){
 		ctx.vsync = !ctx.vsync;
 	}
 
-	//printf("W => %d && S => %d\n", keyboard[GLFW_KEY_W], keyboard[GLFW_KEY_S]);
 	if (KEY_W && !KEY_S){
 		camera.pos[1] -= 800 * MEL_delta();
 	}else if (KEY_S && !KEY_W){
 		camera.pos[1] += 800 * MEL_delta();
-	}else{
-		// FIXME: MEL_KEY_NONE MUST BE 0 && GLFW_KEY_RELEASE must be > 0
-		// if var == 1; !var = 0 and MEL_KEY_NONE = -1
 	}
 
 	if (KEY_A && !KEY_D){
@@ -170,5 +161,12 @@ void input(){
 	}else if (KEY_LEFT && !KEY_RIGHT){
 		smiley.rect.rotation -= 80.0f * MEL_delta();
 	}
+
+    if (KEY_L == MEL_KEY_RELEASE){
+        const char * t1 = "A Game!";
+        const char * t2 = "Not a Game!";
+        strcmp(ctx.title.buffer, t1) == 0 ? set_str(&ctx.title, t2) : set_str(&ctx.title, t1);
+
+    }
 	/* * * * * */
 }
