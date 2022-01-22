@@ -37,10 +37,6 @@ typedef struct {
 	glDeleteBuffers(1, &Renderer.VBO);\
 	glDeleteBuffers(1, &Renderer.EBO);\
 	glDeleteProgram(Renderer.shader);\
-	glDeleteVertexArrays(1, &Renderer.VAO);\
-	glDeleteBuffers(1, &Renderer.VBO);\
-	glDeleteBuffers(1, &Renderer.EBO);\
-	glDeleteProgram(Renderer.shader);\
 }
 
 #define MEL_begin_rendering2D(Renderer){\
