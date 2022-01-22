@@ -13,8 +13,18 @@ endif()
 # Project Name
 project(mel VERSION 1.0)
 
+#${CMAKE_C_FLAGS}
+
 # CFLAGS
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -O3 -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fstack-clash-protection -Wshadow -Wformat=2 -Wformat-truncation -Wformat-overflow -fno-common -fstack-usage")
+if ($ENV{C_DEBUG} MATCHES "YES")
+    set(DEBUG TRUE)
+    message(STATUS "[#] Mode: DEBUG")
+    set(CMAKE_C_FLAGS "-O -g -std=c99 -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fstack-clash-protection -Wshadow -Wformat=2 -Wformat-truncation -Wformat-overflow -fno-common -fstack-usage")
+else()
+    set(DEBUG FALSE)
+    message(STATUS "[#] Mode: RELEASE")
+    set(CMAKE_C_FLAGS "-static-libgcc -std=c99 -O3 -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fstack-clash-protection -Wshadow -Wformat=2 -Wformat-truncation -Wformat-overflow -fno-common -fstack-usage")
+endif()
 
 # Source files
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
@@ -32,13 +42,12 @@ message(STATUS ${CMAKE_C_COMPILER})
 if(LINUX)
 	message(STATUS "Current Platform: LINUX")
 
-	find_library(LDL dl REQUIRED)
-	find_library(LGLFW glfw REQUIRED)
-	find_library(LPTHREAD pthread REQUIRED)
-	find_library(LGL GL REQUIRED)
-	find_library(LM m REQUIRED)
+if (DEBUG)
+	target_link_libraries(${PROJECT_NAME} -l:libdl.so -l:libglfw.so -l:libpthread.so -l:libGL.so -l:libm.so)
+else()
+	target_link_libraries(${PROJECT_NAME} -l:libdl.so -l:libglfw3.a -l:libpthread.so -l:libGL.a -l:libm.so)
+endif()
 
-	target_link_libraries(${PROJECT_NAME} ${LDL} ${LGLFW} ${LPTHREAD} ${LGL} ${LM})
 else()
 	message(STATUS "Current Platform: UNKNOWN")
 	message(STATUS "Building For: WINDOWS")
