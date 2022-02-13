@@ -43,6 +43,8 @@ typedef struct {
 	glBindVertexArray(Renderer.VAO);\
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
+	glEnable(GL_BLEND);\
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\
 }
 
 #define MEL_end_rendering2D(){\
@@ -51,6 +53,7 @@ typedef struct {
 	glBindVertexArray(0);\
 	glBindBuffer(GL_ARRAY_BUFFER, 0);\
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
+	glfwSwapBuffers(mctx.window_ctx.window);\
 }
 
 #define MEL_draw_rect(MELW, Renderer, Rect, Camera){\

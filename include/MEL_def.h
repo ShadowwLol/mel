@@ -38,12 +38,15 @@ inline static void k_input(GLFWwindow* window, int key, int scancode, int action
 static int8_t MEL_get_key(int16_t key);
 inline static int8_t MEL_get_key(int16_t key){return keyboard[key];}
 
-void input();
+void input(void);
+void MEL_render(void);
 /* * * * */
 void window_size_callback(GLFWwindow *, int, int);
 void error_callback(int, const char *);
 void joystick_callback(int, int);
-char MEL_toggle_fullscreen(MEL_ctx ctx);
+void MEL_toggle_fullscreen(MEL_ctx ctx);
+void MEL_global_mouse_pos(MEL_ctx ctx, double * x, double * y);
+void MEL_local_mouse_pos(MEL_ctx ctx, double * x, double * y);
 
 inline static GLint MEL_get_max_aa_samples(){return _max_aa_samples;}
 
@@ -138,7 +141,6 @@ inline static void update_window(MEL_ctx * ctx){
 
 	if (ctx->vsync != _vsync){
 		_vsync = ctx->vsync;
-		MEL_log(LOG_INFORMATION, "Vsync: [%d]", _vsync);
 		glfwSwapInterval(_vsync);
 	}
 

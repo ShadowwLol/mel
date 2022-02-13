@@ -4,7 +4,7 @@
 #include <cglm/affine.h>
 #include <cglm/util.h>
 
-MEL_Texture MEL_load_image(MEL_Renderer2D * Renderer, GLchar * path, GLenum channels, GLenum min_filter, GLenum max_filter){
+MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channels, GLenum min_filter, GLenum max_filter){
 	if (Renderer->TEXTURE_COUNT < Renderer->MAX_TEXTURES){
 		++Renderer->TEXTURE_COUNT;
 	}else{
@@ -90,7 +90,7 @@ MEL_Texture MEL_load_image(MEL_Renderer2D * Renderer, GLchar * path, GLenum chan
 	return img;
 }
 
-MEL_Rect image_update_image(MEL_Texture source){
+MEL_Rect MEL_update_tex(MEL_Texture source){
 	MEL_Rect img = {
 		.pos[0] = source.rect.pos[0],
 		.pos[1] = source.rect.pos[1],

@@ -2,7 +2,6 @@
 #define _MEL_LOGS_H
 
 #include <stdio.h>
-#include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
 
@@ -34,7 +33,7 @@ typedef enum {
 #define clear_term_color() printf("\033[0m")
 #endif
 
-static void MEL_log(uint8_t, const char *, ...);
+static void MEL_log(int, const char *, ...);
 
 #if __WIN32
 static bool dirty = false;
@@ -42,7 +41,7 @@ static HANDLE hConsole;
 static WORD saved_attributes;
 #endif
 
-inline static void MEL_log(uint8_t l, const char * format, ...){
+inline static void MEL_log(int l, const char * format, ...){
 #if __WIN32
 	if (!dirty){
 		hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -53,68 +52,68 @@ inline static void MEL_log(uint8_t l, const char * format, ...){
 	}
 #endif
 #if __WIN32
-	switch(l){
-		case LOG_WARNING:
-			set_term_color(hConsole, TERM_YELLOW);
-			fprintf(stdout, "[!] ");
-			break;
-		case LOG_SUCCESS:
-			set_term_color(hConsole, TERM_GREEN);
-			fprintf(stdout, "[+] ");
-			break;
-		case LOG_ERROR:
-			set_term_color(hConsole, TERM_RED);
-			fprintf(stdout, "[-] ");
-			break;
-		case LOG_INFORMATION:
-			set_term_color(hConsole, TERM_BLUE);
-			fprintf(stdout, "[#] ");
-			break;
-		default:
-			break;
-	}
-	clear_term_color(hConsole, saved_attributes);
+    switch(l){
+        case LOG_WARNING:
+            set_term_color(hConsole, TERM_YELLOW);
+            fprintf(stdout, "[!] ");
+            break;
+        case LOG_SUCCESS:
+            set_term_color(hConsole, TERM_GREEN);
+            fprintf(stdout, "[+] ");
+            break;
+        case LOG_ERROR:
+            set_term_color(hConsole, TERM_RED);
+            fprintf(stdout, "[-] ");
+            break;
+        case LOG_INFORMATION:
+            set_term_color(hConsole, TERM_BLUE);
+            fprintf(stdout, "[#] ");
+            break;
+        default:
+            break;
+    }
+    clear_term_color(hConsole, saved_attributes);
 #else
-	if (isatty(STDOUT_FILENO)){
+    if (isatty(STDOUT_FILENO)){
 		switch(l){
-			case LOG_WARNING:
-				set_term_color(TERM_YELLOW);
-				fprintf(stdout, "[!] ");
-				break;
-			case LOG_SUCCESS:
-				set_term_color(TERM_GREEN);
-				fprintf(stdout, "[+] ");
-				break;
-			case LOG_ERROR:
-				set_term_color(TERM_RED);
-				fprintf(stdout, "[-] ");
-				break;
-			case LOG_INFORMATION:
-				set_term_color(TERM_BLUE);
-				fprintf(stdout, "[#] ");
-				break;
-			default:
-				break;
-		}
-	clear_term_color();
-
+    	    case LOG_WARNING:
+    	        set_term_color(TERM_YELLOW);
+    	        fprintf(stdout, "[!] ");
+    	        break;
+    	    case LOG_SUCCESS:
+    	        set_term_color(TERM_GREEN);
+    	        fprintf(stdout, "[+] ");
+    	        break;
+    	    case LOG_ERROR:
+    	        set_term_color(TERM_RED);
+    	        fprintf(stdout, "[-] ");
+    	        break;
+    	    case LOG_INFORMATION:
+    	        set_term_color(TERM_BLUE);
+    	        fprintf(stdout, "[#] ");
+    	        break;
+    	    default:
+    	        break;
+    	}
+        clear_term_color();
 	}else{
 		switch(l){
-			case LOG_WARNING:
-				fprintf(stdout, "[!] ");
+    	    case LOG_WARNING:
+    	        fprintf(stdout, "[!] ");
+    	        break;
+    	    case LOG_SUCCESS:
+    	        fprintf(stdout, "[+] ");
+    	        break;
+    	    case LOG_ERROR:
+    	        fprintf(stdout, "[-] ");
 				break;
-			case LOG_SUCCESS:
-				fprintf(stdout, "[+] ");
-				break;
-			case LOG_ERROR:
-				fprintf(stdout, "[-] ");
-				break;
-			case LOG_INFORMATION:
-				fprintf(stdout, "[#] ");
-				break;
-			default:
-				break;
-		}
+    	    case LOG_INFORMATION:
+                set_term_color(TERM_BLUE);
+    	        fprintf(stdout, "[#] ");
+    	        break;
+    	    default:
+    	        break;
+    	}
 	}
 #endif
 	va_list args;

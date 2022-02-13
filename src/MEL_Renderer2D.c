@@ -6,7 +6,7 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 		.default_texture = (GLuint *)calloc(1, sizeof(GLuint)),
 		/* Image */
 		.TEXTURE_COUNT = 1,
-		.shader = MEL_create_shader_program(TEXTURE_VERT_SHADER_PATH, TEXTURE_FRAG_SHADER_PATH),
+		.shader = MEL_shader(TEXTURE_VERT_SHADER_PATH, TEXTURE_FRAG_SHADER_PATH),
 		.indices = {
 			0, 1, 3,
 			1, 2, 3
