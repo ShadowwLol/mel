@@ -15,10 +15,13 @@ typedef struct{
 	mat4 model;
 	mat4 mvp;
 	GLfloat rotation;
-	GLfloat vertices[104];
 } MEL_Rect;
 
 typedef MEL_Rect MEL_ColorRect;
+
+typedef struct{
+	GLfloat vertices[104];
+} MEL_geometry;
 
 typedef struct {
 	mat4 projection;
@@ -27,6 +30,7 @@ typedef struct {
 	GLuint VAO, VBO, EBO, shader;
 	GLint TEXTURE_COUNT, MAX_TEXTURES;
 	GLuint indices[6];
+	MEL_geometry geometry;
 } MEL_Renderer2D;
 
 #define MEL_Renderer2D_destroy(Renderer){\
@@ -60,15 +64,15 @@ typedef struct {
 	if (((Rect.pos[0] > MELW.mode->width) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
 	((Rect.pos[1] > MELW.mode->height) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
 		{\
-			Rect = MEL_update_rect(Rect);\
+			MEL_update_rect(&Renderer, Rect);\
 		}\
 	}else{\
 		glBindVertexArray(Renderer.VAO);\
 		glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 		{\
-			Rect = MEL_update_rect(Rect);\
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Rect.vertices), Rect.vertices);\
+			MEL_update_rect(&Renderer, Rect);\
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer.geometry.vertices), Renderer.geometry.vertices);\
 			glm_mat4_identity(Rect.model);\
 			glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
 			glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
@@ -82,6 +86,6 @@ typedef struct {
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);
 MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
-MEL_ColorRect MEL_update_rect(MEL_ColorRect);
+void MEL_update_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr);
 
 #endif

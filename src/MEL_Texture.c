@@ -52,7 +52,7 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 
 	glBindVertexArray(Renderer->VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer->VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(img.rect.vertices), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Renderer->geometry.vertices), NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer->indices), Renderer->indices, GL_STATIC_DRAW);
 
@@ -90,18 +90,9 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 	return img;
 }
 
-MEL_Rect MEL_update_tex(MEL_Texture source){
-	MEL_Rect img = {
-		.pos[0] = source.rect.pos[0],
-		.pos[1] = source.rect.pos[1],
-		.size[0] = source.rect.size[0],
-		.size[1] = source.rect.size[1],
-		.color[0] = source.rect.color[0],
-		.color[1] = source.rect.color[1],
-		.color[2] = source.rect.color[2],
-		.color[3] = source.rect.color[3],
-		.rotation = source.rect.rotation,
-    	.vertices = {
+void MEL_update_tex(MEL_Renderer2D * Renderer, MEL_Texture source){
+	MEL_geometry geometry = {
+		.vertices = {
     	    // positions                                                                           colors                                                                                  tex coords  sampler
     	    source.rect.pos[0],                     source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 0.0f, source.id, source.rect.mvp[0][0], source.rect.mvp[0][1], source.rect.mvp[0][2], source.rect.mvp[0][3], source.rect.mvp[1][0], source.rect.mvp[1][1], source.rect.mvp[1][2], source.rect.mvp[1][3], source.rect.mvp[2][0], source.rect.mvp[2][1], source.rect.mvp[2][2], source.rect.mvp[2][3], source.rect.mvp[3][0], source.rect.mvp[3][1], source.rect.mvp[3][2], source.rect.mvp[3][3],  // bottom left
     	    source.rect.pos[0],                     source.rect.pos[1],                     0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 0.0f, 1.0f, source.id, source.rect.mvp[0][0], source.rect.mvp[0][1], source.rect.mvp[0][2], source.rect.mvp[0][3], source.rect.mvp[1][0], source.rect.mvp[1][1], source.rect.mvp[1][2], source.rect.mvp[1][3], source.rect.mvp[2][0], source.rect.mvp[2][1], source.rect.mvp[2][2], source.rect.mvp[2][3], source.rect.mvp[3][0], source.rect.mvp[3][1], source.rect.mvp[3][2], source.rect.mvp[3][3],  // top left <-- anchor point
@@ -109,7 +100,6 @@ MEL_Rect MEL_update_tex(MEL_Texture source){
     	    source.rect.pos[0]+source.rect.size[0], source.rect.pos[1]+source.rect.size[1], 0.0f,  source.rect.color[0], source.rect.color[1], source.rect.color[2], source.rect.color[3], 1.0f, 0.0f, source.id, source.rect.mvp[0][0], source.rect.mvp[0][1], source.rect.mvp[0][2], source.rect.mvp[0][3], source.rect.mvp[1][0], source.rect.mvp[1][1], source.rect.mvp[1][2], source.rect.mvp[1][3], source.rect.mvp[2][0], source.rect.mvp[2][1], source.rect.mvp[2][2], source.rect.mvp[2][3], source.rect.mvp[3][0], source.rect.mvp[3][1], source.rect.mvp[3][2], source.rect.mvp[3][3],  // bottom right
 		}
 	};
-	glm_mat4_copy(source.rect.mvp, img.mvp);
-	glm_mat4_copy(source.rect.model, img.model);
-	return img;
+
+	Renderer->geometry = geometry;
 }

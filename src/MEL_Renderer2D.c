@@ -54,7 +54,7 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 
 	glBindVertexArray(Renderer->VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, Renderer->VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cr.vertices), NULL, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Renderer->geometry.vertices), NULL, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer->indices), Renderer->indices, GL_STATIC_DRAW);
 
@@ -85,17 +85,9 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	return cr;
 }
-MEL_ColorRect MEL_update_rect(MEL_ColorRect cr){
-	MEL_ColorRect r = {
-		.pos[0]   = cr.pos[0],
-		.pos[1]   = cr.pos[1],
-		.size[0]  = cr.size[0],
-		.size[1]  = cr.size[1],
-		.color[0] = cr.color[0],
-		.color[1] = cr.color[1],
-		.color[2] = cr.color[2],
-		.color[3] = cr.color[3],
-		.rotation = cr.rotation,
+
+void MEL_update_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr){
+	MEL_geometry geometry = {
 		.vertices = {
 		    // positions                                                               colors                                 tex coords  sampler   mvp **                                                  **  **                                                      **  **                                                   ** **                                                       **
 		    cr.pos[0],            cr.pos[1],            0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 1.0f, 1.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // top right
@@ -104,8 +96,6 @@ MEL_ColorRect MEL_update_rect(MEL_ColorRect cr){
 		    cr.pos[0]+cr.size[0], cr.pos[1],            0.0f,  cr.color[0], cr.color[1], cr.color[2], cr.color[3], 0.0f, 1.0f,  0,  cr.mvp[0][0], cr.mvp[0][1], cr.mvp[0][2], cr.mvp[0][3], cr.mvp[1][0], cr.mvp[1][1], cr.mvp[1][2], cr.mvp[1][3], cr.mvp[2][0], cr.mvp[2][1], cr.mvp[2][2], cr.mvp[2][3], cr.mvp[3][0], cr.mvp[3][1], cr.mvp[3][2], cr.mvp[3][3], // top left <-- anchor point
 		}
 	};
-	glm_mat4_copy(cr.mvp,   r.mvp);
-	glm_mat4_copy(cr.model, r.model);
 
-	return r;
+	Renderer->geometry = geometry;
 }

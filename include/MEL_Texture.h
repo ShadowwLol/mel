@@ -20,15 +20,15 @@ typedef struct {
 	if (((Img.rect.pos[0] > MELW.mode->width) || ((Img.rect.pos[0]+Img.rect.size[0]) < 0)) ||\
 	((Img.rect.pos[1] > MELW.mode->height) || ((Img.rect.pos[1]+Img.rect.size[1]) < 0))){\
 		{\
-			Img.rect = MEL_update_tex(Img);\
+			MEL_update_tex(&Renderer, Img);\
 		}\
 	}else{\
 		glBindVertexArray(Renderer.VAO);\
 		glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 		{\
-			Img.rect = MEL_update_tex(Img);\
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Img.rect.vertices), Img.rect.vertices);\
+			MEL_update_tex(&Renderer, Img);\
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer.geometry.vertices), Renderer.geometry.vertices);\
 			glm_mat4_identity(Img.rect.model);\
 			glm_rotate_at(Img.rect.model, (vec3){(float)(Img.rect.pos[0] + Img.rect.size[0]/2.0f), (float)(Img.rect.pos[1] + Img.rect.size[1]/2.0f), 0.0f}, glm_rad(Img.rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
 			glm_mat4_mul(Renderer.projection, Camera.view, Img.rect.mvp);\
@@ -38,7 +38,7 @@ typedef struct {
 		/* glActiveTexture(GL_TEXTURE0+Img.id); <= Only when batching */\
 		glBindTexture(GL_TEXTURE_2D, Img.texture);\
 		glUseProgram(Renderer.shader);\
-		glDrawElements(GL_TRIANGLES, (sizeof(Img.rect.vertices)/sizeof(Img.rect.vertices[0])), GL_UNSIGNED_INT, 0);\
+		glDrawElements(GL_TRIANGLES, (sizeof(Renderer.geometry.vertices)/sizeof(Renderer.geometry.vertices[0])), GL_UNSIGNED_INT, 0);\
 	}\
 }
 
@@ -48,6 +48,6 @@ typedef struct {
 }
 
 MEL_Texture MEL_load_tex(MEL_Renderer2D *, GLchar *, GLenum, GLenum, GLenum);
-MEL_Rect MEL_update_tex(MEL_Texture);
+void MEL_update_tex(MEL_Renderer2D * Renderer, MEL_Texture source);
 
 #endif
