@@ -28,7 +28,7 @@ typedef struct {
 	GLuint * default_texture;
 
 	GLuint VAO, VBO, EBO, shader;
-	GLint TEXTURE_COUNT, MAX_TEXTURES;
+	GLint MAX_TEXTURES;
 	GLuint indices[6];
 	MEL_geometry geometry;
 } MEL_Renderer2D;
@@ -49,6 +49,7 @@ typedef struct {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
 	glEnable(GL_BLEND);\
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\
+	glUseProgram(Renderer.shader);\
 }
 
 #define MEL_end_rendering2D(){\
@@ -61,25 +62,16 @@ typedef struct {
 }
 
 #define MEL_draw_rect(MELW, Renderer, Rect, Camera){\
-	if (((Rect.pos[0] > MELW.mode->width) || ((Rect.pos[0]+Rect.size[0]) < 0)) ||\
-	((Rect.pos[1] > MELW.mode->height) || ((Rect.pos[1]+Rect.size[1]) < 0))){\
-		{\
-			MEL_update_rect(&Renderer, Rect);\
-		}\
-	}else{\
-		glBindVertexArray(Renderer.VAO);\
-		glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
-		{\
-			MEL_update_rect(&Renderer, Rect);\
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer.geometry.vertices), Renderer.geometry.vertices);\
-			glm_mat4_identity(Rect.model);\
-			glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
-			glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
-			glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
-		}\
+	if (((Rect.pos[0] < MELW.mode->width) && ((Rect.pos[0]+Rect.size[0]) > 0)) &&\
+	((Rect.pos[1] < MELW.mode->height) && ((Rect.pos[1]+Rect.size[1]) > 0))){\
+		MEL_update_rect(&Renderer, Rect);\
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer.geometry.vertices), Renderer.geometry.vertices);\
+		glm_mat4_identity(Rect.model);\
+		glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
+		glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
+		glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
+		glActiveTexture(GL_TEXTURE0);\
 		glBindTexture(GL_TEXTURE_2D, *Renderer.default_texture);\
-		glUseProgram(Renderer.shader);\
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
 	}\
 }

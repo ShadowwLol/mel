@@ -5,7 +5,6 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	MEL_Renderer2D Renderer = {
 		.default_texture = (GLuint *)calloc(1, sizeof(GLuint)),
 		/* Image */
-		.TEXTURE_COUNT = 1,
 		.shader = MEL_shader(TEXTURE_VERT_SHADER_PATH, TEXTURE_FRAG_SHADER_PATH),
 		.indices = {
 			0, 1, 3,
@@ -22,41 +21,20 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, (vec4){0.0f, 0.0f, 0.0f, 1.0f});
+
 	uint32_t tex_color = 0xffffffff;
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &tex_color);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	/* Image */
 	glGenVertexArrays(1, &Renderer.VAO);
 	glGenBuffers(1, &Renderer.VBO);
 	glGenBuffers(1, &Renderer.EBO);
-	/* Rectangle */
-	glGenVertexArrays(1, &Renderer.VAO);
-	glGenBuffers(1, &Renderer.VBO);
-	glGenBuffers(1, &Renderer.EBO);
-	return Renderer;
-}
 
-MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
-	MEL_ColorRect cr = {
-		.mvp = GLM_MAT4_IDENTITY_INIT,
-		.model = GLM_MAT4_IDENTITY_INIT,
-		.pos[0] = 0.0f,
-		.pos[1] = 0.0f,
-		.size[0] = 1,
-		.size[1] = 1,
-		.color[0] = 1.0f,
-		.color[1] = 1.0f,
-		.color[2] = 1.0f,
-		.color[3] = 1.0f,
-		.rotation = 0.0f,
-	};
-
-	glBindVertexArray(Renderer->VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer->VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Renderer->geometry.vertices), NULL, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer->EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer->indices), Renderer->indices, GL_STATIC_DRAW);
+	glBindVertexArray(Renderer.VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Renderer.geometry.vertices), NULL, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.indices), Renderer.indices, GL_STATIC_DRAW);
 
 	/* Position Attribute [x,y,z] */
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)0);
@@ -83,6 +61,23 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	return Renderer;
+}
+
+MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
+	MEL_ColorRect cr = {
+		.mvp = GLM_MAT4_IDENTITY_INIT,
+		.model = GLM_MAT4_IDENTITY_INIT,
+		.pos[0] = 0.0f,
+		.pos[1] = 0.0f,
+		.size[0] = 1,
+		.size[1] = 1,
+		.color[0] = 1.0f,
+		.color[1] = 1.0f,
+		.color[2] = 1.0f,
+		.color[3] = 1.0f,
+		.rotation = 0.0f,
+	};
 	return cr;
 }
 
