@@ -8,6 +8,13 @@
 #define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
 
+#define VERTEX_COUNT (104)
+#define INDEX_COUNT (6)
+
+#define MAX_QUAD_COUNT  (5)
+#define MAX_VERTEX_COUNT (VERTEX_COUNT * MAX_QUAD_COUNT)
+#define MAX_INDEX_COUNT  (INDEX_COUNT * MAX_QUAD_COUNT)
+
 typedef struct{
 	vec2 pos;
 	vec2 size;
@@ -28,7 +35,7 @@ typedef struct {
 	GLuint * default_texture;
 
 	GLuint VAO, VBO, EBO, shader;
-	GLint MAX_TEXTURES;
+	GLint ID, MAX_TEXTURES;
 	GLuint indices[6];
 	MEL_geometry geometry;
 } MEL_Renderer2D;
@@ -61,23 +68,10 @@ typedef struct {
 	glfwSwapBuffers(mctx.window_ctx.window);\
 }
 
-#define MEL_draw_rect(MELW, Renderer, Rect, Camera){\
-	if (((Rect.pos[0] < MELW.mode->width) && ((Rect.pos[0]+Rect.size[0]) > 0)) &&\
-	((Rect.pos[1] < MELW.mode->height) && ((Rect.pos[1]+Rect.size[1]) > 0))){\
-		MEL_update_rect(&Renderer, Rect);\
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer.geometry.vertices), Renderer.geometry.vertices);\
-		glm_mat4_identity(Rect.model);\
-		glm_rotate_at(Rect.model, (vec3){(float)(Rect.pos[0] + Rect.size[0]/2.0f), (float)(Rect.pos[1] + Rect.size[1]/2.0f), 0.0f}, glm_rad(Rect.rotation), (vec3){0.0f, 0.0f, 1.0f});\
-		glm_mat4_mul(Renderer.projection, Camera.view, Rect.mvp);\
-		glm_mat4_mul(Rect.mvp, Rect.model, Rect.mvp);\
-		glActiveTexture(GL_TEXTURE0);\
-		glBindTexture(GL_TEXTURE_2D, *Renderer.default_texture);\
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);\
-	}\
-}
+#include "MEL_Camera.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);
 MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
-void MEL_update_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr);
+void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera);
 
 #endif

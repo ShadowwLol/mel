@@ -134,6 +134,8 @@ void input(){
 
 	MEL_KEY KEY_LEFT = MEL_get_key(GLFW_KEY_LEFT);
 	MEL_KEY KEY_RIGHT = MEL_get_key(GLFW_KEY_RIGHT);
+	MEL_KEY KEY_UP = MEL_get_key(GLFW_KEY_UP);
+	MEL_KEY KEY_DOWN = MEL_get_key(GLFW_KEY_DOWN);
 
 	MEL_KEY KEY_L = MEL_get_key(GLFW_KEY_L);
 
@@ -154,9 +156,19 @@ void input(){
 	}
 
 	if (KEY_RIGHT && !KEY_LEFT){
-		smiley.rect.rotation += 80.0f * MEL_delta();
+		camera.rotation += 80.0f * MEL_delta();
+		//smiley.rect.rotation += 80.0f * MEL_delta();
 	}else if (KEY_LEFT && !KEY_RIGHT){
-		smiley.rect.rotation -= 80.0f * MEL_delta();
+		camera.rotation -= 80.0f * MEL_delta();
+		//smiley.rect.rotation -= 80.0f * MEL_delta();
+	}
+
+	if (KEY_UP && !KEY_DOWN){
+		camera.scale[0] += 0.1f * MEL_delta();
+		camera.scale[1] += 0.1f * MEL_delta();
+	}else if (KEY_DOWN && !KEY_UP){
+		camera.scale[0] -= 0.1f * MEL_delta();
+		camera.scale[1] -= 0.1f * MEL_delta();
 	}
 
 	if (KEY_L == MEL_KEY_RELEASE){
@@ -173,10 +185,10 @@ void MEL_render(void){
 	MEL_begin_rendering2D(Rend);
 
 #ifdef TESTING
-	MEL_draw_rect(mctx.window_ctx, Rend, bg, default_camera);
-	MEL_draw_tex(mctx.window_ctx, Rend, crate,  camera);
-	MEL_draw_tex(mctx.window_ctx, Rend, smiley, camera);
-	MEL_draw_rect(mctx.window_ctx, Rend, rectangle, camera);
+	MEL_draw_rect(mctx.window_ctx, &Rend, &bg, default_camera);
+	MEL_draw_tex(mctx.window_ctx, &Rend, &crate,  camera);
+	MEL_draw_tex(mctx.window_ctx, &Rend, &smiley, camera);
+	MEL_draw_rect(mctx.window_ctx, &Rend, &rectangle, camera);
 
 	MEL_debug_menu(&mctx);
 #endif
