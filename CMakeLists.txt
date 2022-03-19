@@ -45,7 +45,7 @@ if(LINUX)
 if (DEBUG)
 	target_link_libraries(${PROJECT_NAME} -l:libdl.so -l:libglfw.so -l:libpthread.so -l:libGL.so -l:libm.so)
 else()
-	target_link_libraries(${PROJECT_NAME} -l:libdl.so -l:libglfw3.a -l:libpthread.so -l:libGL.a -l:libm.so)
+	target_link_libraries(${PROJECT_NAME} -ldl -l:libglfw3.a -lpthread -l:libGL.a -l:libm.so)
 endif()
 
 else()
