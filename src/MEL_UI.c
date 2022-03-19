@@ -17,12 +17,13 @@ void MEL_local_mouse_pos(MEL_ctx ctx, double * x, double * y){
 #if 0
 	if (glfwGetWindowMonitor(ctx.window_ctx.window)){
 		/* Fullscreen */
+		printf("fullscreen rn!\n");
 		return;
 	}
 #endif
 
 	vec2 scale = { (ctx.window_ctx.n_width/ctx.width), (ctx.window_ctx.n_height/ctx.height) };
-	vec2 real = { ctx.window_ctx.n_width * scale[1], ctx.window_ctx.n_height * scale[0]};
+	vec2 real = { ctx.width * scale[0], ctx.height * scale[1]};
     vec2 r = {((ctx.window_ctx.n_width/2) - (real[0]/2)), ((ctx.window_ctx.n_height/2) - (real[1]/2))};
     vec2 adjustedMouse = {*x - r[0], *y - r[1]};
 
