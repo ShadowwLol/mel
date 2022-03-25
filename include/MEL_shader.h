@@ -11,8 +11,10 @@ static MEL_FN MEL_shader(const char * vert_path, const char * frag_path);
 inline static MEL_FN MEL_shader(const char * vert_path, const char * frag_path){
 	GLint success = 0;
 	GLchar errnoo[1025] = "\0";
-	String vertex_source = MEL_read_file(vert_path);
-	String fragment_source = MEL_read_file(frag_path);
+	String vertex_source = init_str();
+	String fragment_source = init_str();
+	set_str(&vertex_source, MEL_read_file(vert_path));
+	set_str(&fragment_source, MEL_read_file(frag_path));
 
 	if (!vertex_source.length || !fragment_source.length){
         MEL_log(LOG_WARNING, "Could not create shader program");
@@ -75,7 +77,7 @@ static MEL_FN MEL_str2shader(const char * vert_path, const char * frag_path);
 inline static MEL_FN MEL_str2shader(const char * vert_path, const char * frag_path){
 	GLint success = 0;
 	GLchar errnoo[1025] = "\0";
-	if (!MEL_strlen(vert_path) || !MEL_strlen(frag_path)){
+	if (!strlen(vert_path) || !strlen(frag_path)){
         MEL_log(LOG_WARNING, "Could not create shader program");
 	    return EX_F;
 	}

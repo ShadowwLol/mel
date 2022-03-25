@@ -127,7 +127,8 @@ inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t 
 }
 
 inline static void update_window(MEL_ctx * ctx){
-	if (MEL_strcmp(ctx->title.buffer, _title.buffer) != 0){
+	if (strncmp(ctx->title.buffer, _title.buffer,
+				(_title.length > ctx->title.length ? _title.length : ctx->title.length)) != 0){
 		set_str(&_title, ctx->title.buffer);
 		glfwSetWindowTitle(ctx->window_ctx.window, _title.buffer);
 	}
