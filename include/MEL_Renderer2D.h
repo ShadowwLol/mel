@@ -26,10 +26,6 @@ typedef struct{
 
 typedef MEL_Rect MEL_ColorRect;
 
-typedef struct{
-	GLfloat vertices[104];
-} MEL_geometry;
-
 typedef struct {
 	mat4 projection;
 	GLuint * default_texture;
@@ -37,7 +33,7 @@ typedef struct {
 	GLuint VAO, VBO, EBO, shader;
 	GLint ID, MAX_TEXTURES;
 	GLuint indices[6];
-	MEL_geometry geometry;
+	GLfloat vertices[104];
 } MEL_Renderer2D;
 
 #define MEL_Renderer2D_destroy(Renderer){\
