@@ -1,17 +1,32 @@
 #include "../include/MEL_Renderer2D.h"
 #include "../include/MEL_Texture.h"
 
+extern MEL_ctx mctx;
+
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	MEL_Renderer2D Renderer = {
 		.default_texture = (GLuint *)calloc(1, sizeof(GLuint)),
-		.ID = 0,
+		.tex_count = 0,
+		.ID = 1,
 		.shader = MEL_shader(TEXTURE_VERT_SHADER_PATH, TEXTURE_FRAG_SHADER_PATH),
-		.indices = {
-			0, 1, 3,
-			1, 2, 3
-		},
 	};
-	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.MAX_TEXTURES);
+
+	/* generate_indice_array(&Renderer.indices); */
+	uint32_t offset = 0;
+	for (size_t i = 0; i < MAX_INDEX_COUNT; i += 6, offset += 4){
+		Renderer.indices[i + 0] = 0 + offset;
+		Renderer.indices[i + 1] = 1 + offset;
+		Renderer.indices[i + 2] = 2 + offset;
+
+		Renderer.indices[i + 3] = 2 + offset;
+		Renderer.indices[i + 4] = 3 + offset;
+		Renderer.indices[i + 5] = 0 + offset;
+	}
+
+	/* TODO: */
+	/* Create texture atlas instead of binding multiple textures in different places, just binding the atlas once*/
+
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.max_tex);
 	glm_ortho(0.0f, (float)win.mode->width, (float)win.mode->height, 0.0f, -1.0f, 1.0f, Renderer.projection);
 
 	glGenTextures(1, Renderer.default_texture);
@@ -24,7 +39,6 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 
 	uint32_t tex_color = 0xffffffff;
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &tex_color);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glGenVertexArrays(1, &Renderer.VAO);
 	glGenBuffers(1, &Renderer.VBO);
@@ -66,6 +80,7 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 
 MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 	MEL_ColorRect cr = {
+		.id = (Renderer->tex_count < Renderer->max_tex) ? ++Renderer->tex_count : 1,
 		.mvp = GLM_MAT4_IDENTITY_INIT,
 		.model = GLM_MAT4_IDENTITY_INIT,
 		.pos[0] = 0.0f,
@@ -78,128 +93,134 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 		.color[3] = 1.0f,
 		.rotation = 0.0f,
 	};
+
+	if (Renderer->tex_count >= Renderer->max_tex){
+		Renderer->tex_count = 1;
+	}
+
 	return cr;
 }
 
 static void MEL_send_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr){
-	const uint8_t rect_ID = 0;
+	const uint32_t rect_ID = 0;
 
 	/* bottom left */
-	Renderer->vertices[0] = cr.pos[0];
-	Renderer->vertices[1] = cr.pos[1] + cr.size[1];
-	Renderer->vertices[2] = 0.0f;
-	Renderer->vertices[3] = cr.color[0];
-	Renderer->vertices[4] = cr.color[1];
-	Renderer->vertices[5] = cr.color[2];
-	Renderer->vertices[6] = cr.color[3];
-	Renderer->vertices[7] = 0.0f;
-	Renderer->vertices[8] = 0.0f;
-	Renderer->vertices[9] = rect_ID;
-	Renderer->vertices[10] = cr.mvp[0][0];
-	Renderer->vertices[11] = cr.mvp[0][1];
-	Renderer->vertices[12] = cr.mvp[0][2];
-	Renderer->vertices[13] = cr.mvp[0][3];
-	Renderer->vertices[14] = cr.mvp[1][0];
-	Renderer->vertices[15] = cr.mvp[1][1];
-	Renderer->vertices[16] = cr.mvp[1][2];
-	Renderer->vertices[17] = cr.mvp[1][3];
-	Renderer->vertices[18] = cr.mvp[2][0];
-	Renderer->vertices[19] = cr.mvp[2][1];
-	Renderer->vertices[20] = cr.mvp[2][2];
-	Renderer->vertices[21] = cr.mvp[2][3];
-	Renderer->vertices[22] = cr.mvp[3][0];
-	Renderer->vertices[23] = cr.mvp[3][1];
-	Renderer->vertices[24] = cr.mvp[3][2];
-	Renderer->vertices[25] = cr.mvp[3][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+0] = cr.pos[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+1] = cr.pos[1] + cr.size[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+2] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+3] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+4] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+5] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+6] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+7] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+8] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+9] = rect_ID;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+10] = cr.mvp[0][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+11] = cr.mvp[0][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+12] = cr.mvp[0][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+13] = cr.mvp[0][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+14] = cr.mvp[1][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+15] = cr.mvp[1][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+16] = cr.mvp[1][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+17] = cr.mvp[1][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+18] = cr.mvp[2][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+19] = cr.mvp[2][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+20] = cr.mvp[2][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+21] = cr.mvp[2][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+22] = cr.mvp[3][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+23] = cr.mvp[3][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+24] = cr.mvp[3][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+25] = cr.mvp[3][3];
 	/* * * * * * * */
 
 	/* top left  */
-	Renderer->vertices[26] = cr.pos[0];
-	Renderer->vertices[27] = cr.pos[1];
-	Renderer->vertices[28] = 0.0f;
-	Renderer->vertices[29] = cr.color[0];
-	Renderer->vertices[30] = cr.color[1];
-	Renderer->vertices[31] = cr.color[2];
-	Renderer->vertices[32] = cr.color[3];
-	Renderer->vertices[33] = 0.0f;
-	Renderer->vertices[34] = 1.0f;
-	Renderer->vertices[35] = rect_ID;
-	Renderer->vertices[36] = cr.mvp[0][0];
-	Renderer->vertices[37] = cr.mvp[0][1];
-	Renderer->vertices[38] = cr.mvp[0][2];
-	Renderer->vertices[39] = cr.mvp[0][3];
-	Renderer->vertices[40] = cr.mvp[1][0];
-	Renderer->vertices[41] = cr.mvp[1][1];
-	Renderer->vertices[42] = cr.mvp[1][2];
-	Renderer->vertices[43] = cr.mvp[1][3];
-	Renderer->vertices[44] = cr.mvp[2][0];
-	Renderer->vertices[45] = cr.mvp[2][1];
-	Renderer->vertices[46] = cr.mvp[2][2];
-	Renderer->vertices[47] = cr.mvp[2][3];
-	Renderer->vertices[48] = cr.mvp[3][0];
-	Renderer->vertices[49] = cr.mvp[3][1];
-	Renderer->vertices[50] = cr.mvp[3][2];
-	Renderer->vertices[51] = cr.mvp[3][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+26] = cr.pos[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+27] = cr.pos[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+28] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+29] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+30] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+31] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+32] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+33] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+34] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+35] = rect_ID;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+36] = cr.mvp[0][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+37] = cr.mvp[0][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+38] = cr.mvp[0][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+39] = cr.mvp[0][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+40] = cr.mvp[1][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+41] = cr.mvp[1][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+42] = cr.mvp[1][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+43] = cr.mvp[1][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+44] = cr.mvp[2][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+45] = cr.mvp[2][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+46] = cr.mvp[2][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+47] = cr.mvp[2][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+48] = cr.mvp[3][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+49] = cr.mvp[3][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+50] = cr.mvp[3][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+51] = cr.mvp[3][3];
 	/* * * * * * */
 
 	/* top right */
-	Renderer->vertices[52] = cr.pos[0]+cr.size[0];
-	Renderer->vertices[53] = cr.pos[1];
-	Renderer->vertices[54] = 0.0f;
-	Renderer->vertices[55] = cr.color[0];
-	Renderer->vertices[56] = cr.color[1];
-	Renderer->vertices[57] = cr.color[2];
-	Renderer->vertices[58] = cr.color[3];
-	Renderer->vertices[59] = 1.0f;
-	Renderer->vertices[60] = 1.0f;
-	Renderer->vertices[61] = rect_ID;
-	Renderer->vertices[62] = cr.mvp[0][0];
-	Renderer->vertices[63] = cr.mvp[0][1];
-	Renderer->vertices[64] = cr.mvp[0][2];
-	Renderer->vertices[65] = cr.mvp[0][3];
-	Renderer->vertices[66] = cr.mvp[1][0];
-	Renderer->vertices[67] = cr.mvp[1][1];
-	Renderer->vertices[68] = cr.mvp[1][2];
-	Renderer->vertices[69] = cr.mvp[1][3];
-	Renderer->vertices[70] = cr.mvp[2][0];
-	Renderer->vertices[71] = cr.mvp[2][1];
-	Renderer->vertices[72] = cr.mvp[2][2];
-	Renderer->vertices[73] = cr.mvp[2][3];
-	Renderer->vertices[74] = cr.mvp[3][0];
-	Renderer->vertices[75] = cr.mvp[3][1];
-	Renderer->vertices[76] = cr.mvp[3][2];
-	Renderer->vertices[77] = cr.mvp[3][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+52] = cr.pos[0]+cr.size[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+53] = cr.pos[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+54] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+55] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+56] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+57] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+58] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+59] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+60] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+61] = rect_ID;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+62] = cr.mvp[0][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+63] = cr.mvp[0][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+64] = cr.mvp[0][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+65] = cr.mvp[0][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+66] = cr.mvp[1][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+67] = cr.mvp[1][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+68] = cr.mvp[1][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+69] = cr.mvp[1][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+70] = cr.mvp[2][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+71] = cr.mvp[2][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+72] = cr.mvp[2][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+73] = cr.mvp[2][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+74] = cr.mvp[3][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+75] = cr.mvp[3][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+76] = cr.mvp[3][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+77] = cr.mvp[3][3];
 	/* * * * * * */
 
 	/* bottom right  */
-	Renderer->vertices[78] = cr.pos[0]+cr.size[0];
-	Renderer->vertices[79] = cr.pos[1]+cr.size[1];
-	Renderer->vertices[80] = 0.0f;
-	Renderer->vertices[81] = cr.color[0];
-	Renderer->vertices[82] = cr.color[1];
-	Renderer->vertices[83] = cr.color[2];
-	Renderer->vertices[84] = cr.color[3];
-	Renderer->vertices[85] = 1.0f;
-	Renderer->vertices[86] = 0.0f;
-	Renderer->vertices[87] = rect_ID;
-	Renderer->vertices[88] = cr.mvp[0][0];
-	Renderer->vertices[89] = cr.mvp[0][1];
-	Renderer->vertices[90] = cr.mvp[0][2];
-	Renderer->vertices[91] = cr.mvp[0][3];
-	Renderer->vertices[92] = cr.mvp[1][0];
-	Renderer->vertices[93] = cr.mvp[1][1];
-	Renderer->vertices[94] = cr.mvp[1][2];
-	Renderer->vertices[95] = cr.mvp[1][3];
-	Renderer->vertices[96] = cr.mvp[2][0];
-	Renderer->vertices[97] = cr.mvp[2][1];
-	Renderer->vertices[98] = cr.mvp[2][2];
-	Renderer->vertices[99] = cr.mvp[2][3];
-	Renderer->vertices[100] = cr.mvp[3][0];
-	Renderer->vertices[101] = cr.mvp[3][1];
-	Renderer->vertices[102] = cr.mvp[3][2];
-	Renderer->vertices[103] = cr.mvp[3][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+78] = cr.pos[0]+cr.size[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+79] = cr.pos[1]+cr.size[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+80] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+81] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+82] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+83] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+84] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+85] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+86] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+87] = rect_ID;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+88] = cr.mvp[0][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+89] = cr.mvp[0][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+90] = cr.mvp[0][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+91] = cr.mvp[0][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+92] = cr.mvp[1][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+93] = cr.mvp[1][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+94] = cr.mvp[1][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+95] = cr.mvp[1][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+96] = cr.mvp[2][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+97] = cr.mvp[2][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+98] = cr.mvp[2][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+99] = cr.mvp[2][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+100] = cr.mvp[3][0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+101] = cr.mvp[3][1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+102] = cr.mvp[3][2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+103] = cr.mvp[3][3];
 	/* * * * * * * * */
 
+	++Renderer->ID;
 }
 
 void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera){
@@ -214,7 +235,39 @@ void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * R
 		glm_mat4_mul(Rect->mvp, Rect->model, Rect->mvp);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, *Renderer->default_texture);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 	}
+}
+
+void MEL_begin2D(MEL_Renderer2D * Renderer){
+	glBindVertexArray(Renderer->VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, Renderer->VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer->EBO);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glUseProgram(Renderer->shader);
+}
+
+void MEL_end2D(MEL_Renderer2D * Renderer){
+	GLint loc = glGetUniformLocation(Renderer->shader, "u_Textures");
+	int samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	glUniform1iv(loc, 10, samplers);
+	glDrawElements(GL_TRIANGLES, (sizeof(Renderer->indices) / sizeof(Renderer->indices[0])), GL_UNSIGNED_INT, 0);
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glfwSwapBuffers(mctx.window_ctx.window);
+	Renderer->ID = 1;
+}
+
+void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer){
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glDeleteVertexArrays(1, &Renderer->VAO);
+	glDeleteBuffers(1, &Renderer->VBO);
+	glDeleteBuffers(1, &Renderer->EBO);
+	glDeleteProgram(Renderer->shader);
+
 }

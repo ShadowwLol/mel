@@ -11,6 +11,7 @@
 #include "external/stb_image.h"
 
 typedef struct {
+	GLuint id;      /* Texture ID: [i]   */
 	GLuint texture; /* Texture   : [i]   */
 	MEL_Rect rect;  /* Rect      : [...] */
 } MEL_Texture;

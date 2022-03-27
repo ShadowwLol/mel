@@ -108,6 +108,11 @@ inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t 
 	_aa_samples = _max_aa_samples;
 	ctx.aa_samples = _aa_samples;
 	glfwWindowHint(GLFW_SAMPLES, _aa_samples);
+
+	GLint major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+	MEL_log(LOG_INFORMATION, "OpenGL version: %d.%d", major, minor);
 	/* * * * * * * * * * * * */
 
 	/* Callbacks */

@@ -14,8 +14,6 @@ MEL_Camera default_camera;
 #define TESTING
 
 #ifdef TESTING
-#include "../include/MEL_debug.h"
-
 MEL_Texture smiley;
 MEL_Texture crate;
 MEL_ColorRect bg;
@@ -27,7 +25,6 @@ int main(void){
 	Rend = MEL_Renderer2D_init(mctx.window_ctx);
 
 #ifdef TESTING
-	MEL_init_debug();
 
 	/* Textures && Rects  */
 	rectangle = MEL_init_rect(&Rend);
@@ -61,6 +58,8 @@ int main(void){
 	MEL_init_camera(default_camera);
 	MEL_init_camera(camera);
 
+	mctx.vsync = false;
+
 	/* Main loop */
 	while (!glfwWindowShouldClose(mctx.window_ctx.window)){
 		MEL_update_camera(camera);
@@ -71,11 +70,10 @@ int main(void){
 
 		/* Drawing */
 		MEL_TIMER_START();
-
 		MEL_render();
-
 		MEL_TIMER_END();
 
+		printf("FPS: [%d]\n", MEL_fps());
 	}
 
 	/* * * * * * */
@@ -84,9 +82,8 @@ int main(void){
 #ifdef TESTING
 	MEL_destroy_image(smiley);
 	MEL_destroy_image(crate);
-	MEL_end_debug();
 #endif
-	MEL_Renderer2D_destroy(Rend);
+	MEL_Renderer2D_destroy(&Rend);
 	MEL_quit(&mctx);
 	/* * * * * * * */
 
@@ -175,23 +172,20 @@ void input(){
 		const char * t1 = "A Game!";
 		const char * t2 = "Not a Game!";
 		strcmp(mctx.title.buffer, t1) == 0 ? set_str(&mctx.title, t2) : set_str(&mctx.title, t1);
-
 	}
 	/* * * * * */
 #endif
 }
 
 void MEL_render(void){
-	MEL_begin_rendering2D(Rend);
+	MEL_begin2D(&Rend);
 
 #ifdef TESTING
 	MEL_draw_rect(mctx.window_ctx, &Rend, &bg, default_camera);
 	MEL_draw_tex(mctx.window_ctx, &Rend, &crate,  camera);
 	MEL_draw_tex(mctx.window_ctx, &Rend, &smiley, camera);
 	MEL_draw_rect(mctx.window_ctx, &Rend, &rectangle, camera);
-
-	MEL_debug_menu(&mctx);
 #endif
 
-	MEL_end_rendering2D();
+	MEL_end2D(&Rend);
 }

@@ -4,6 +4,7 @@
 #include "MEL_opengl.h"
 #include "MEL_def.h"
 #include "MEL_shader.h"
+#include "MEL_Camera.h"
 
 #define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
@@ -16,6 +17,7 @@
 #define MAX_INDEX_COUNT  (INDEX_COUNT * MAX_QUAD_COUNT)
 
 typedef struct{
+	GLuint id;
 	vec2 pos;
 	vec2 size;
 	vec4 color;
@@ -31,43 +33,17 @@ typedef struct {
 	GLuint * default_texture;
 
 	GLuint VAO, VBO, EBO, shader;
-	GLint ID, MAX_TEXTURES;
-	GLuint indices[6];
-	GLfloat vertices[104];
+	GLint ID, tex_count, max_tex;
+	GLuint indices[MAX_INDEX_COUNT];
+	GLfloat vertices[MAX_VERTEX_COUNT];
 } MEL_Renderer2D;
-
-#define MEL_Renderer2D_destroy(Renderer){\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
-	glDeleteVertexArrays(1, &Renderer.VAO);\
-	glDeleteBuffers(1, &Renderer.VBO);\
-	glDeleteBuffers(1, &Renderer.EBO);\
-	glDeleteProgram(Renderer.shader);\
-}
-
-#define MEL_begin_rendering2D(Renderer){\
-	glBindVertexArray(Renderer.VAO);\
-	glBindBuffer(GL_ARRAY_BUFFER, Renderer.VBO);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);\
-	glEnable(GL_BLEND);\
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);\
-	glUseProgram(Renderer.shader);\
-}
-
-#define MEL_end_rendering2D(){\
-	glUseProgram(0);\
-	glBindTexture(GL_TEXTURE_2D, 0);\
-	glBindVertexArray(0);\
-	glBindBuffer(GL_ARRAY_BUFFER, 0);\
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);\
-	glfwSwapBuffers(mctx.window_ctx.window);\
-}
-
-#include "MEL_Camera.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window);
 MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
 void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera);
+
+void MEL_begin2D(MEL_Renderer2D * Renderer);
+void MEL_end2D(MEL_Renderer2D * Renderer);
+void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer);
 
 #endif

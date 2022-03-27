@@ -9,6 +9,7 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 	GLint w, h, c;
 	stbi_uc * data = stbi_load(path, &w, &h, &c, 0);
 	MEL_Texture img = {
+		.id = (Renderer->tex_count < Renderer->max_tex) ? ++Renderer->tex_count : 1,
 		.rect.mvp = GLM_MAT4_IDENTITY_INIT,
 		.rect.model = GLM_MAT4_IDENTITY_INIT,
 		.rect.pos[0] = 0.0f,
@@ -21,9 +22,13 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 		.rect.color[3] = 1.0f,
 		.rect.rotation = 0.0f,
 	};
+
+	if (Renderer->tex_count >= Renderer->max_tex){
+		Renderer->tex_count = 1;
+	}
+
 	/* glActiveTexture(GL_TEXTURE0+img.id); <= Only when batching */
 	glGenTextures(1, &img.texture);
-	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, img.texture);
 
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -38,18 +43,17 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 		//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(GL_TEXTURE_2D, 0, channels, img.rect.size[0], img.rect.size[1], 0, channels, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
-		MEL_log(LOG_SUCCESS, "Successfully loaded image : {%s}", path);
+		MEL_log(LOG_SUCCESS, "Successfully loaded image: {%s}", path);
 	}else{
-		MEL_log(LOG_ERROR, "Failed loading image : {%s}", path);
+		MEL_log(LOG_ERROR, "Failed loading image: {%s}", path);
 	}
-	glBindTexture(GL_TEXTURE_2D, 0);
 	stbi_image_free(data);
 
 	return img;
 }
 
 static void MEL_send_tex(MEL_Renderer2D * Renderer, MEL_Texture source){
-	const uint8_t source_ID = 0;
+	const uint32_t source_ID = source.id;
 
 	/* bottom left */
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+0] = source.rect.pos[0];
@@ -167,7 +171,7 @@ static void MEL_send_tex(MEL_Renderer2D * Renderer, MEL_Texture source){
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+103] = source.rect.mvp[3][3];
 	/* * * * * * * * */
 
-	//++Renderer->ID;
+	++Renderer->ID;
 }
 
 void MEL_draw_tex(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL_Camera Camera){
@@ -182,9 +186,8 @@ void MEL_draw_tex(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_Texture * Img,
 		glm_mat4_mul(Img->rect.mvp, Img->rect.model, Img->rect.mvp);
 		/* https://stackoverflow.com/a/28360579/16946028 */
 		/* glActiveTexture(GL_TEXTURE0+Img.id); <= Only when batching */
-		glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0 + Img->id);
 		glBindTexture(GL_TEXTURE_2D, Img->texture);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	}
 }
