@@ -64,8 +64,8 @@ int main(void){
 	while (!glfwWindowShouldClose(mctx.window_ctx.window)){
 		MEL_update_camera(camera);
 		MEL_poll_events(&mctx);
-
 		MEL_set_clear_color(20, 20, 20, 255);
+
 		MEL_clear(GL_COLOR_BUFFER_BIT);
 
 		/* Drawing */
@@ -181,10 +181,76 @@ void MEL_render(void){
 	MEL_begin2D(&Rend);
 
 #ifdef TESTING
-	MEL_draw_rect(mctx.window_ctx, &Rend, &bg, default_camera);
-	MEL_draw_tex(mctx.window_ctx, &Rend, &crate,  camera);
-	MEL_draw_tex(mctx.window_ctx, &Rend, &smiley, camera);
-	MEL_draw_rect(mctx.window_ctx, &Rend, &rectangle, camera);
+	//vec2 actual_pos = {crate.rect.pos[0], crate.rect.pos[1]};
+	//vec2 actual_size = {crate.rect.size[0], crate.rect.size[1]};
+	crate.rect.size[0] = 20;
+	crate.rect.size[1] = 20;
+	/* An integer 2D array to hold our map each integer representing a 32x32 texture */
+    /* 1280 / 32 = 22.5 = 23 ; 720 / 32 = 40 */
+    unsigned int world[23][40] = {
+                        {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 2, 2, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        {1, 1, 1, 1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                        };
+
+    unsigned int row = 0;
+    unsigned int column = 0;
+    for (row = 0; row < 23; row++){
+        for (column = 0; column < 40; column++){
+            crate.rect.pos[0] = column * 32;
+            crate.rect.pos[1] = row * 32;
+            if ((crate.rect.pos[0]+32) > 0 || (crate.rect.pos[0]) < 1280 || (crate.rect.pos[1]+32) > 0 ||\
+					(crate.rect.pos[1]) < 720){
+                /* Only rendering what's visible */
+				MEL_draw_tex(mctx.window_ctx, &Rend, &crate, camera);
+				/**
+                switch(world[row][column]){
+                    case TILE_DIRT:
+                        SDL_RenderCopy(rend, dirt, NULL, &dest);
+                        break;
+                    case TILE_GRASS:
+                        SDL_RenderCopy(rend, grass, NULL, &dest);
+                        break;
+                    case TILE_ROCKS:
+                        SDL_RenderCopy(rend, rocks, NULL, &dest);
+                        break;
+                    default:
+                        log(WARN, "Undefined map value at : world[%d][%d] : {%d}", row, column, world[row][column]);
+                        break; // log "Undefined map value at world[row][column]"
+            }
+			*/
+            }
+        }
+    }
+	//crate.rect.pos[0] = actual_pos[0];
+	//crate.rect.pos[1] = actual_pos[1];
+	//crate.rect.size[0] = actual_size[0];
+	//crate.rect.size[1] = actual_size[1];
+
+	//MEL_draw_rect(mctx.window_ctx, &Rend, &bg, default_camera);
+	//MEL_draw_tex(mctx.window_ctx, &Rend, &crate,  camera);
+	//MEL_draw_tex(mctx.window_ctx, &Rend, &smiley, camera);
+	//MEL_draw_rect(mctx.window_ctx, &Rend, &rectangle, camera);
 #endif
 
 	MEL_end2D(&Rend);
