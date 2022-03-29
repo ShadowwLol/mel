@@ -179,7 +179,6 @@ void MEL_draw_tex(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_Texture * Img,
 	((Img->rect.pos[1] < MELW.mode->height) && ((Img->rect.pos[1]+Img->rect.size[1]) > 0))){
 
 		MEL_send_tex(Renderer, *Img);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer->vertices), Renderer->vertices);
 		glm_mat4_identity(Img->rect.model);
 		glm_rotate_at(Img->rect.model, (vec3){(float)(Img->rect.pos[0] + Img->rect.size[0]/2.0f), (float)(Img->rect.pos[1] + Img->rect.size[1]/2.0f), 0.0f}, glm_rad(Img->rect.rotation), (vec3){0.0f, 0.0f, 1.0f});
 		glm_mat4_mul(Renderer->projection, Camera.view, Img->rect.mvp);

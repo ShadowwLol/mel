@@ -228,7 +228,6 @@ void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * R
 	((Rect->pos[1] < MELW.mode->height) && ((Rect->pos[1]+Rect->size[1]) > 0))){
 
 		MEL_send_rect(Renderer, *Rect);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Renderer->vertices), Renderer->vertices);
 		glm_mat4_identity(Rect->model);
 		glm_rotate_at(Rect->model, (vec3){(float)(Rect->pos[0] + Rect->size[0]/2.0f), (float)(Rect->pos[1] + Rect->size[1]/2.0f), 0.0f}, glm_rad(Rect->rotation), (vec3){0.0f, 0.0f, 1.0f});
 		glm_mat4_mul(Renderer->projection, Camera.view, Rect->mvp);
@@ -248,10 +247,11 @@ void MEL_begin2D(MEL_Renderer2D * Renderer){
 }
 
 void MEL_end2D(MEL_Renderer2D * Renderer){
+	glBufferSubData(GL_ARRAY_BUFFER, 0, ((sizeof(Renderer->vertices[0]) * VERTEX_COUNT) * Renderer->ID), Renderer->vertices);
 	GLint loc = glGetUniformLocation(Renderer->shader, "u_Textures");
-	int samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+	int32_t samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	glUniform1iv(loc, 10, samplers);
-	glDrawElements(GL_TRIANGLES, (sizeof(Renderer->indices) / sizeof(Renderer->indices[0])), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, (Renderer->ID * INDEX_COUNT), GL_UNSIGNED_INT, 0);
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
