@@ -174,9 +174,16 @@ static void MEL_send_tex(MEL_Renderer2D * Renderer, MEL_Texture source){
 	++Renderer->ID;
 }
 
-void MEL_draw_tex(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL_Camera Camera){
-	if (((Img->rect.pos[0] < MELW.mode->width) && ((Img->rect.pos[0]+Img->rect.size[0]) > 0)) &&\
-	((Img->rect.pos[1] < MELW.mode->height) && ((Img->rect.pos[1]+Img->rect.size[1]) > 0))){
+void MEL_draw_tex(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL_Camera Camera){
+	if (is_visible(ctx, Img->rect, Camera)){
+		if (Renderer->ID >= MAX_QUAD_COUNT){
+			glBufferSubData(GL_ARRAY_BUFFER, 0, ((sizeof(Renderer->vertices[0]) * VERTEX_COUNT) * Renderer->ID), Renderer->vertices);
+			GLint loc = glGetUniformLocation(Renderer->shader, "u_Textures");
+			int32_t samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			glUniform1iv(loc, 10, samplers);
+			glDrawElements(GL_TRIANGLES, (Renderer->ID * INDEX_COUNT), GL_UNSIGNED_INT, 0);
+			Renderer->ID = 1;
+		}
 
 		MEL_send_tex(Renderer, *Img);
 		glm_mat4_identity(Img->rect.model);

@@ -30,4 +30,5 @@ void window_size_callback(GLFWwindow * window, int width, int height){
 	mctx.window_ctx.pady = ((height - t_h)/2.0f);
 	glViewport(mctx.window_ctx.padx, mctx.window_ctx.pady, t_w, t_h);
 	glm_ortho(0, mctx.width, mctx.height, 0, -1.0f, 1.0f, Rend.projection);
+
 }

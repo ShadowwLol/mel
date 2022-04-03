@@ -223,9 +223,16 @@ static void MEL_send_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr){
 	++Renderer->ID;
 }
 
-void MEL_draw_rect(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera){
-	if (((Rect->pos[0] < MELW.mode->width) && ((Rect->pos[0]+Rect->size[0]) > 0)) &&\
-	((Rect->pos[1] < MELW.mode->height) && ((Rect->pos[1]+Rect->size[1]) > 0))){
+void MEL_draw_rect(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera){
+	if (is_visible(ctx, *Rect, Camera)){
+		if (Renderer->ID >= MAX_QUAD_COUNT){
+			glBufferSubData(GL_ARRAY_BUFFER, 0, ((sizeof(Renderer->vertices[0]) * VERTEX_COUNT) * Renderer->ID), Renderer->vertices);
+			GLint loc = glGetUniformLocation(Renderer->shader, "u_Textures");
+			int32_t samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			glUniform1iv(loc, 10, samplers);
+			glDrawElements(GL_TRIANGLES, (Renderer->ID * INDEX_COUNT), GL_UNSIGNED_INT, 0);
+			Renderer->ID = 1;
+		}
 
 		MEL_send_rect(Renderer, *Rect);
 		glm_mat4_identity(Rect->model);
@@ -270,4 +277,33 @@ void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer){
 	glDeleteBuffers(1, &Renderer->EBO);
 	glDeleteProgram(Renderer->shader);
 
+}
+
+/* FIXME: Clipping when pos < 0 ? */
+bool is_visible(MEL_ctx ctx, MEL_Rect rect, MEL_Camera camera){
+	const GLfloat v1 = rect.pos[0];
+	const GLfloat v2 = rect.pos[1] + rect.size[1];
+	const GLfloat v3 = rect.pos[0];
+	const GLfloat v4 = rect.pos[1];
+	const GLfloat v5 = rect.pos[0]+rect.size[0];
+	const GLfloat v6 = rect.pos[1];
+	const GLfloat v7 = rect.pos[0]+rect.size[0];
+	const GLfloat v8 = rect.pos[1]+rect.size[1];
+
+	mat4 m4[4] = {{v1, v2, 0.0f, 1.0f},\
+				  {v3, v4, 0.0f, 1.0f},\
+				  {v5, v6, 0.0f, 1.0f},\
+				  {v7, v8, 0.0f, 1.0f}};
+	glm_mat4_mul(m4[0], rect.mvp, m4[0]);
+	glm_mat4_mul(m4[1], rect.mvp, m4[1]);
+	glm_mat4_mul(m4[2], rect.mvp, m4[2]);
+	glm_mat4_mul(m4[3], rect.mvp, m4[3]);
+
+	for (uint8_t i = 0; i < 4; ++i){
+		if ((*m4[i][0] >= 0 && *m4[i][0] <= ctx.window_ctx.mode->width) &&\
+			(*m4[i][1] >= 0 && *m4[i][1] <= ctx.window_ctx.mode->height)){
+			return true;
+		}
+	}
+	return false;
 }

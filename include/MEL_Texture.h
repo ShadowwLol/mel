@@ -22,6 +22,6 @@ typedef struct {
 }
 
 MEL_Texture MEL_load_tex(MEL_Renderer2D *, GLchar *, GLenum, GLenum, GLenum);
-void MEL_draw_tex(MEL_Window MELW, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL_Camera Camera);
+void MEL_draw_tex(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL_Camera Camera);
 
 #endif

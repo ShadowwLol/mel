@@ -9,8 +9,7 @@ out vec4 ourColor;
 out vec2 TexCoord;
 out float v_TexIndex;
 
-void main()
-{
+void main(){
 	gl_Position = mvp * vec4(aPos, 1.0);
 
 	ourColor = aColor;
