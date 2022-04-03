@@ -82,7 +82,6 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 	MEL_ColorRect cr = {
 		.id = (Renderer->tex_count < Renderer->max_tex) ? ++Renderer->tex_count : 1,
 		.mvp = GLM_MAT4_IDENTITY_INIT,
-		.model = GLM_MAT4_IDENTITY_INIT,
 		.pos[0] = 0.0f,
 		.pos[1] = 0.0f,
 		.size[0] = 1,
@@ -235,10 +234,8 @@ void MEL_draw_rect(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect,
 		}
 
 		MEL_send_rect(Renderer, *Rect);
-		glm_mat4_identity(Rect->model);
-		glm_rotate_at(Rect->model, (vec3){(float)(Rect->pos[0] + Rect->size[0]/2.0f), (float)(Rect->pos[1] + Rect->size[1]/2.0f), 0.0f}, glm_rad(Rect->rotation), (vec3){0.0f, 0.0f, 1.0f});
 		glm_mat4_mul(Renderer->projection, Camera.view, Rect->mvp);
-		glm_mat4_mul(Rect->mvp, Rect->model, Rect->mvp);
+		glm_rotate_at(Rect->mvp, (vec3){(float)(Rect->pos[0] + Rect->size[0]/2.0f), (float)(Rect->pos[1] + Rect->size[1]/2.0f), 0.0f}, glm_rad(Rect->rotation), (vec3){0.0f, 0.0f, 1.0f});
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, *Renderer->default_texture);
 	}

@@ -21,7 +21,6 @@ typedef struct{
 	vec2 pos;
 	vec2 size;
 	vec4 color;
-	mat4 model;
 	mat4 mvp;
 	GLfloat rotation;
 } MEL_Rect;

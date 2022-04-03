@@ -11,7 +11,6 @@ MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channe
 	MEL_Texture img = {
 		.id = (Renderer->tex_count < Renderer->max_tex) ? ++Renderer->tex_count : 1,
 		.rect.mvp = GLM_MAT4_IDENTITY_INIT,
-		.rect.model = GLM_MAT4_IDENTITY_INIT,
 		.rect.pos[0] = 0.0f,
 		.rect.pos[1] = 0.0f,
 		.rect.size[0] = w,
@@ -186,10 +185,8 @@ void MEL_draw_tex(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img, MEL
 		}
 
 		MEL_send_tex(Renderer, *Img);
-		glm_mat4_identity(Img->rect.model);
-		glm_rotate_at(Img->rect.model, (vec3){(float)(Img->rect.pos[0] + Img->rect.size[0]/2.0f), (float)(Img->rect.pos[1] + Img->rect.size[1]/2.0f), 0.0f}, glm_rad(Img->rect.rotation), (vec3){0.0f, 0.0f, 1.0f});
 		glm_mat4_mul(Renderer->projection, Camera.view, Img->rect.mvp);
-		glm_mat4_mul(Img->rect.mvp, Img->rect.model, Img->rect.mvp);
+		glm_rotate_at(Img->rect.mvp, (vec3){(float)(Img->rect.pos[0] + Img->rect.size[0]/2.0f), (float)(Img->rect.pos[1] + Img->rect.size[1]/2.0f), 0.0f}, glm_rad(Img->rect.rotation), (vec3){0.0f, 0.0f, 1.0f});
 		/* https://stackoverflow.com/a/28360579/16946028 */
 		/* glActiveTexture(GL_TEXTURE0+Img.id); <= Only when batching */
 		glActiveTexture(GL_TEXTURE0 + Img->id);
