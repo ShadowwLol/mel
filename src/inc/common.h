@@ -5,8 +5,8 @@
 #define TICK(X) clock_t X = clock()
 #define TOCK(X) printf("time %s: %g sec.\n", (#X), (double)(clock() - (X)) / CLOCKS_PER_SEC)
 
-#include "MEL_opengl.h"
-#include "MEL_IO.h"
+#include "mel.h"
+#include "IO.h"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,7 +1,5 @@
-#include "../include/MEL_Renderer2D.h"
-#include "../include/MEL_Texture.h"
-
-extern MEL_ctx mctx;
+#include "inc/renderer2d.h"
+#include "inc/texture.h"
 
 MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	MEL_Renderer2D Renderer = {
@@ -250,7 +248,7 @@ void MEL_begin2D(MEL_Renderer2D * Renderer){
 	glUseProgram(Renderer->shader);
 }
 
-void MEL_end2D(MEL_Renderer2D * Renderer){
+void MEL_end2D(MEL_ctx * ctx, MEL_Renderer2D * Renderer){
 	glBufferSubData(GL_ARRAY_BUFFER, 0, ((sizeof(Renderer->vertices[0]) * VERTEX_COUNT) * Renderer->ID), Renderer->vertices);
 	GLint loc = glGetUniformLocation(Renderer->shader, "u_Textures");
 	int32_t samplers[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -261,7 +259,7 @@ void MEL_end2D(MEL_Renderer2D * Renderer){
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glfwSwapBuffers(mctx.window_ctx.window);
+	glfwSwapBuffers(ctx->window_ctx.window);
 	Renderer->ID = 1;
 }
 

@@ -1,10 +1,10 @@
 #ifndef _MEL_RENDER_H
 #define _MEL_RENDER_H
 
-#include "MEL_opengl.h"
-#include "MEL_def.h"
-#include "MEL_shader.h"
-#include "MEL_Camera.h"
+#include "mel.h"
+#include "def.h"
+#include "shaders.h"
+#include "camera.h"
 
 #define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
 #define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
@@ -43,7 +43,7 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
 void MEL_draw_rect(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_ColorRect * Rect, MEL_Camera Camera);
 
 void MEL_begin2D(MEL_Renderer2D * Renderer);
-void MEL_end2D(MEL_Renderer2D * Renderer);
+void MEL_end2D(MEL_ctx * ctx, MEL_Renderer2D * Renderer);
 void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer);
 
 #endif

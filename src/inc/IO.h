@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MEL_logs.h"
+#include "logs.h"
 
 #include <errno.h>
 #include <sys/stat.h>

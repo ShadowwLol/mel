@@ -1,11 +1,11 @@
 #ifndef _MEL_SHADER_H
 #define _MEL_SHADER_H
 
-#include "MEL_opengl.h"
-#include "MEL_common.h"
-#include "MEL_logs.h"
-#include "MEL_def.h"
-#include "MEL_IO.h"
+#include "mel.h"
+#include "common.h"
+#include "logs.h"
+#include "def.h"
+#include "IO.h"
 
 static MEL_FN MEL_shader(const char * vert_path, const char * frag_path);
 inline static MEL_FN MEL_shader(const char * vert_path, const char * frag_path){

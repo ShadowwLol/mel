@@ -1,14 +1,14 @@
 #ifndef _MEL_IMAGE_H
 #define _MEL_IMAGE_H
 
-#include "MEL_opengl.h"
-#include "MEL_Renderer2D.h"
-#include "MEL_shader.h"
-#include "MEL_def.h"
+#include "mel.h"
+#include "renderer2d.h"
+#include "shaders.h"
+#include "def.h"
 
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
-#include "external/stb_image.h"
+#include "ext/stb_image.h"
 
 typedef struct {
 	GLuint id;      /* Texture ID: [i]   */

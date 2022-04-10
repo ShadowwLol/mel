@@ -1,10 +1,10 @@
 #ifndef _MEL_DEF_H
 #define _MEL_DEF_H
 
-#include "MEL_common.h"
-#include "MEL_logs.h"
-#include "MEL_IO.h"
-#include "MEL_misc.h"
+#include "common.h"
+#include "logs.h"
+#include "IO.h"
+#include "misc.h"
 
 static String _title;
 static double_t _width, _height;

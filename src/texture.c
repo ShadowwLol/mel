@@ -1,6 +1,6 @@
-#include "../include/MEL_def.h"
-#include "../include/MEL_logs.h"
-#include "../include/MEL_Texture.h"
+#include "inc/def.h"
+#include "inc/logs.h"
+#include "inc/texture.h"
 
 MEL_Texture MEL_load_tex(MEL_Renderer2D * Renderer, GLchar * path, GLenum channels, GLenum min_filter, GLenum max_filter){
 	stbi_set_flip_vertically_on_load(true);

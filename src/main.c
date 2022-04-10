@@ -1,10 +1,10 @@
-#include "../include/MEL_opengl.h"	/* for gl defs	*/
-#include "../include/MEL_IO.h"		/* for i/o		*/
-#include "../include/MEL_def.h"		/* for configs	*/
-#include "../include/MEL_common.h"	/* for MEL_ctx	*/
-#include "../include/MEL_Camera.h"	/* for cameras	*/
-#include "../include/MEL_Texture.h" /* for textures */
-#include "../include/MEL_thread.h"	/* for threads	*/
+#include "inc/mel.h"	/* for gl defs	*/
+#include "inc/IO.h"		/* for i/o		*/
+#include "inc/def.h"		/* for configs	*/
+#include "inc/common.h"	/* for MEL_ctx	*/
+#include "inc/camera.h"	/* for cameras	*/
+#include "inc/texture.h" /* for textures */
+#include "inc/threads.h"	/* for threads	*/
 
 MEL_ctx mctx;
 MEL_Renderer2D Rend;
@@ -95,12 +95,10 @@ int main(void){
 	input() controls main input of the program
 	example:
 		MEL_KEY <var> = MEL_get_key(GLFW_KEY_...);
-
 	you can do:
 		if (<var> == MEL_KEY_NONE)
 	or:
 		if (!<var>)
-
 	and you can do:
 		if (<var> == MEL_KEY_PRESS)
 		if (<var> == MEL_KEY_REPEAT)

@@ -1,7 +1,7 @@
 #ifndef _MEL_CAMERA_H
 #define _MEL_CAMERA_H
 
-#include "MEL_opengl.h"
+#include "mel.h"
 
 typedef struct {
 	mat4    view;
