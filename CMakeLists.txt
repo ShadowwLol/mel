@@ -41,22 +41,8 @@ message(STATUS ${CMAKE_C_COMPILER})
 
 if(LINUX)
 	message(STATUS "Current Platform: LINUX")
-
-if (DEBUG)
-	target_link_libraries(${PROJECT_NAME} -ldl -l:libglfw.so -lpthread -l:libGL.so -l:libm.so)
-else()
-	target_link_libraries(${PROJECT_NAME} -ldl -l:libglfw3.a -lpthread -l:libGL.a -l:libm.so)
-endif()
-
+	target_link_libraries(${PROJECT_NAME} -ldl -l:libglfw3.a -pthread -l:libGL.a -lm)
 else()
 	message(STATUS "Current Platform: WINDOWS")
-
-if (DEBUG)
-	link_directories(/usr/i686-w64-mingw32/bin /usr/i686-w64-mingw32/bin)
-	target_link_libraries(${PROJECT_NAME} libglfw3dll.a libopengl32.a libmingw32.a libgdi32.a libuser32.a libkernel32.a libpthread.a libm.a)
-else()
-	link_directories(/usr/i686-w64-mingw32/lib /usr/i686-w64-mingw32/lib)
 	target_link_libraries(${PROJECT_NAME} libglfw3.a libopengl32.a libmingw32.a libgdi32.a libuser32.a libkernel32.a libwinpthread.a libwinpthread.dll.a libssp.a libm.a)
-endif()
-
 endif(LINUX)
