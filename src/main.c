@@ -58,7 +58,7 @@ int main(void){
 	MEL_init_camera(default_camera);
 	MEL_init_camera(camera);
 
-	//mctx.vsync = false;
+	mctx.vsync = false;
 
 	/* Main loop */
 	while (!glfwWindowShouldClose(mctx.window_ctx.window)){
@@ -74,6 +74,8 @@ int main(void){
 		MEL_render();
 		//TOCK(RENDERING);
 		MEL_TIMER_END();
+
+		printf("FPS:[%d]\n", MEL_fps());
 
 	}
 

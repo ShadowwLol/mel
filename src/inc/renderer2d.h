@@ -6,10 +6,10 @@
 #include "shaders.h"
 #include "camera.h"
 
-#define TEXTURE_VERT_SHADER_PATH "resources/shaders/image.vert"
-#define TEXTURE_FRAG_SHADER_PATH "resources/shaders/image.frag"
+#define TEXTURE_VERT_SHADER_PATH "resources/shaders/texture.vert"
+#define TEXTURE_FRAG_SHADER_PATH "resources/shaders/texture.frag"
 
-#define VERTEX_COUNT (104)
+#define VERTEX_COUNT (36)
 #define INDEX_COUNT (6)
 
 #define MAX_QUAD_COUNT  (1000)

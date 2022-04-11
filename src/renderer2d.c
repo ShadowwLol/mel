@@ -48,27 +48,18 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Renderer.EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Renderer.indices), Renderer.indices, GL_STATIC_DRAW);
 
-	/* Position Attribute [x,y,z] */
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)0);
+	/* Position Attribute [x,y] */
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	/* Color Attribute [R,G,B,A] */
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(2 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	/* Texture Coords Attribute [x, y] */
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(7 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	/* Sampler Attribute [i] */
-	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(9 * sizeof(float)));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(8 * sizeof(float)));
 	glEnableVertexAttribArray(3);
-	/* MVP Attribute [4][4] */
-	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(10 * sizeof(float)));
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(14 * sizeof(float)));
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(18 * sizeof(float)));
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, 26 * sizeof(float), (void*)(22 * sizeof(float)));
-	glEnableVertexAttribArray(7);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -99,122 +90,70 @@ MEL_ColorRect MEL_init_rect(MEL_Renderer2D * Renderer){
 }
 
 static void MEL_send_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr){
+	vec4 coords, result = GLM_VEC4_ZERO_INIT;
+	coords[2] = 0.0f;
+	coords[3] = 1.0f;
+
 	const uint32_t rect_ID = 0;
 
 	/* bottom left */
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+0] = cr.pos[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+1] = cr.pos[1] + cr.size[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+2] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+3] = cr.color[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+4] = cr.color[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+5] = cr.color[2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+6] = cr.color[3];
+	coords[0] = cr.pos[0];
+	coords[1] = cr.pos[1] + cr.size[1];
+	glm_mat4_mulv(cr.mvp, coords, result);
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+0] = result[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+1] = result[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+2] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+3] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+4] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+5] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+6] = 0.0f;
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+7] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+8] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+9] = rect_ID;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+10] = cr.mvp[0][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+11] = cr.mvp[0][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+12] = cr.mvp[0][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+13] = cr.mvp[0][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+14] = cr.mvp[1][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+15] = cr.mvp[1][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+16] = cr.mvp[1][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+17] = cr.mvp[1][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+18] = cr.mvp[2][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+19] = cr.mvp[2][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+20] = cr.mvp[2][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+21] = cr.mvp[2][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+22] = cr.mvp[3][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+23] = cr.mvp[3][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+24] = cr.mvp[3][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+25] = cr.mvp[3][3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+8] = rect_ID;
 	/* * * * * * * */
 
 	/* top left  */
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+26] = cr.pos[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+27] = cr.pos[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+28] = 0.0f;
+	coords[0] = cr.pos[0];
+	coords[1] = cr.pos[1];
+	glm_mat4_mulv(cr.mvp, coords, result);
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+9]  = result[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+10] = result[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+11] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+12] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+13] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+14] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+15] = 0.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+16] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+17] = rect_ID;
+	/* * * * * * */
+
+	/* top right */
+	coords[0] = cr.pos[0] + cr.size[0];
+	coords[1] = cr.pos[1];
+	glm_mat4_mulv(cr.mvp, coords, result);
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+18] = result[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+19] = result[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+20] = cr.color[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+21] = cr.color[1];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+22] = cr.color[2];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+23] = cr.color[3];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+24] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+25] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+26] = rect_ID;
+	/* * * * * * */
+
+	/* bottom right  */
+	coords[0] = cr.pos[0] + cr.size[0];
+	coords[1] = cr.pos[1] + cr.size[1];
+	glm_mat4_mulv(cr.mvp, coords, result);
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+27] = result[0];
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+28] = result[1];
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+29] = cr.color[0];
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+30] = cr.color[1];
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+31] = cr.color[2];
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+32] = cr.color[3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+33] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+34] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+33] = 1.0f;
+	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+34] = 0.0f;
 	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+35] = rect_ID;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+36] = cr.mvp[0][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+37] = cr.mvp[0][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+38] = cr.mvp[0][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+39] = cr.mvp[0][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+40] = cr.mvp[1][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+41] = cr.mvp[1][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+42] = cr.mvp[1][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+43] = cr.mvp[1][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+44] = cr.mvp[2][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+45] = cr.mvp[2][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+46] = cr.mvp[2][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+47] = cr.mvp[2][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+48] = cr.mvp[3][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+49] = cr.mvp[3][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+50] = cr.mvp[3][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+51] = cr.mvp[3][3];
-	/* * * * * * */
-
-	/* top right */
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+52] = cr.pos[0]+cr.size[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+53] = cr.pos[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+54] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+55] = cr.color[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+56] = cr.color[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+57] = cr.color[2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+58] = cr.color[3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+59] = 1.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+60] = 1.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+61] = rect_ID;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+62] = cr.mvp[0][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+63] = cr.mvp[0][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+64] = cr.mvp[0][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+65] = cr.mvp[0][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+66] = cr.mvp[1][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+67] = cr.mvp[1][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+68] = cr.mvp[1][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+69] = cr.mvp[1][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+70] = cr.mvp[2][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+71] = cr.mvp[2][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+72] = cr.mvp[2][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+73] = cr.mvp[2][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+74] = cr.mvp[3][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+75] = cr.mvp[3][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+76] = cr.mvp[3][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+77] = cr.mvp[3][3];
-	/* * * * * * */
-
-	/* bottom right  */
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+78] = cr.pos[0]+cr.size[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+79] = cr.pos[1]+cr.size[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+80] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+81] = cr.color[0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+82] = cr.color[1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+83] = cr.color[2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+84] = cr.color[3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+85] = 1.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+86] = 0.0f;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+87] = rect_ID;
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+88] = cr.mvp[0][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+89] = cr.mvp[0][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+90] = cr.mvp[0][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+91] = cr.mvp[0][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+92] = cr.mvp[1][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+93] = cr.mvp[1][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+94] = cr.mvp[1][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+95] = cr.mvp[1][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+96] = cr.mvp[2][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+97] = cr.mvp[2][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+98] = cr.mvp[2][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+99] = cr.mvp[2][3];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+100] = cr.mvp[3][0];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+101] = cr.mvp[3][1];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+102] = cr.mvp[3][2];
-	Renderer->vertices[(VERTEX_COUNT * Renderer->ID)+103] = cr.mvp[3][3];
 	/* * * * * * * * */
 
 	++Renderer->ID;
@@ -274,31 +213,28 @@ void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer){
 
 }
 
-/* FIXME: Clipping when pos < 0 ? */
+/* TODO: Fix function */
 bool is_visible(MEL_ctx ctx, MEL_Rect rect, MEL_Camera camera){
+	return true;
+#if 0
+/* FIXME: Clipping when pos < 0 ? */
 	const GLfloat v1 = rect.pos[0];
 	const GLfloat v2 = rect.pos[1] + rect.size[1];
-	const GLfloat v3 = rect.pos[0];
 	const GLfloat v4 = rect.pos[1];
-	const GLfloat v5 = rect.pos[0]+rect.size[0];
-	const GLfloat v6 = rect.pos[1];
-	const GLfloat v7 = rect.pos[0]+rect.size[0];
-	const GLfloat v8 = rect.pos[1]+rect.size[1];
+	const GLfloat v5 = rect.pos[0] + rect.size[0];
 
 	mat4 m4[4] = {{v1, v2, 0.0f, 1.0f},\
-				  {v3, v4, 0.0f, 1.0f},\
-				  {v5, v6, 0.0f, 1.0f},\
-				  {v7, v8, 0.0f, 1.0f}};
-	glm_mat4_mul(m4[0], rect.mvp, m4[0]);
-	glm_mat4_mul(m4[1], rect.mvp, m4[1]);
-	glm_mat4_mul(m4[2], rect.mvp, m4[2]);
-	glm_mat4_mul(m4[3], rect.mvp, m4[3]);
+								{v1, v4, 0.0f, 1.0f},\
+								{v5, v4, 0.0f, 1.0f},\
+								{v5, v2, 0.0f, 1.0f}};
 
 	for (uint8_t i = 0; i < 4; ++i){
+		glm_mat4_mul(m4[i], rect.mvp, m4[i]);
 		if ((*m4[i][0] >= 0 && *m4[i][0] <= ctx.window_ctx.mode->width) &&\
 			(*m4[i][1] >= 0 && *m4[i][1] <= ctx.window_ctx.mode->height)){
 			return true;
 		}
 	}
 	return false;
+#endif
 }
