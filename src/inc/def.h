@@ -77,8 +77,8 @@ inline static MEL_ctx MEL_ctx_init(const char * title, double_t width, double_t 
 	/* * * * * * * * * * * * * * */
 
 	/* Window hints  */
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, 1);
 	/* * * * * * * * * * * */
