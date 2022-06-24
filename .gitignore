@@ -1,8 +1,2 @@
-build/mel*
-build/CMakeCache.txt
-build/Makefile
-build/CMakeFiles/
-build/cmake_install.cmake
-*.su
-*.dll
-*.exe
+dist/
+.bsh/
