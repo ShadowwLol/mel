@@ -1,7 +1,7 @@
 DEFINES=""
 DDEFINES="" #"-D_MEL_DEBUG"
 
-INCLUDE=./src/inc
+INCLUDE=./mel/inc
 
 case "$1" in
 "--debug"|"-d")
@@ -55,7 +55,7 @@ fi
 
 cd .bsh
 
-cfiles=$(find ../src/ | grep "\.c$")
+cfiles=$(find ../mel/ | grep "\.c$")
 
 printf "[+] Compiling:\n"
 
