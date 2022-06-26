@@ -15,9 +15,15 @@
 #define mkdir(A, B) mkdir(A)
 #endif
 
-#define FN uint8_t
-#define EX_S (0)
-#define EX_F (255)
+#ifndef fn
+#define fn uint8_t
+#endif
+#ifndef xs
+#define xs (0)
+#endif
+#ifndef xf
+#define xf (255)
+#endif
 
 typedef struct {
   char* buffer;
@@ -37,10 +43,10 @@ static char* MEL_strlcat(char* , const char* , size_t);
 
 /* String operations */
 static String init_str(const char* );
-static FN realloc_str(String *, uint64_t);
-static FN set_str(String *, const char* );
-static FN append_str(String *, const char* );
-static FN remove_str(String *);
+static fn realloc_str(String *, uint64_t);
+static fn set_str(String *, const char* );
+static fn append_str(String *, const char* );
+static fn remove_str(String *);
 /* * * * * * * * * * */
 
 /* String_View operations  */
@@ -85,14 +91,14 @@ inline static String init_str(const char* s) {
 }
 
 /* Reallocate a String */
-inline static FN realloc_str(String * s, uint64_t bytes) {
+inline static fn realloc_str(String * s, uint64_t bytes) {
   s->buffer = (char *) realloc(s->buffer, sizeof(char) * bytes);
   s->cap = sizeof(char) * bytes;
   return 0;
 }
 
 /* Set String `str`s buffer to `src` and update String */
-inline static FN set_str(String * str, const char* src) {
+inline static fn set_str(String * str, const char* src) {
   if (!str->length) {
     *str = init_str(src);
     return 0;
@@ -109,7 +115,7 @@ inline static FN set_str(String * str, const char* src) {
 }
 
 /* Append String `str`s buffer with `src` and update String */
-inline static FN append_str(String * str, const char* src) {
+inline static fn append_str(String * str, const char* src) {
   size_t src_len = strlen(src);
   str->length += src_len;
   if (str->cap < str->length) {
@@ -121,7 +127,7 @@ inline static FN append_str(String * str, const char* src) {
 }
 
 /* Remove String */
-inline static FN remove_str(String * str) {
+inline static fn remove_str(String * str) {
   free(str->buffer);
   str->length = 0;
   str->cap = 0;
@@ -191,10 +197,10 @@ inline static char* MEL_read_file(const char* f_name) {
   return str;
 }
 
-static FN mkpath(char* file_path, mode_t mode);
-inline static FN mkpath(char* file_path, mode_t mode) {
+static fn mkpath(char* file_path, mode_t mode);
+inline static fn mkpath(char* file_path, mode_t mode) {
   if (!file_path || !*file_path) {
-    return EX_F;
+    return xf;
   }
 
   for (char *p = strchr(file_path + 1, '/'); p; p = strchr(p + 1, '/')) {
@@ -203,22 +209,22 @@ inline static FN mkpath(char* file_path, mode_t mode) {
       if (errno != EEXIST) {
         *p = '/';
         mlog(LOG_ERROR, "Failed creating path");
-        return EX_F;
+        return xf;
       }
     }
     *p = '/';
   }
-  return EX_S;
+  return xs;
 }
 
-static FN get_input(char* str, size_t sz, FILE * fd);
-inline static FN get_input(char* str, size_t sz, FILE * fd) {
+static fn get_input(char* str, size_t sz, FILE * fd);
+inline static fn get_input(char* str, size_t sz, FILE * fd) {
   if (!fgets(str, sz, fd)) {
     mlog(LOG_ERROR, "Failed getting input");
-    return EX_F;
+    return xf;
   }
   str[strlen(str) - 1] = '\0';
-  return EX_S;
+  return xs;
 }
 
 #ifndef _WIN32

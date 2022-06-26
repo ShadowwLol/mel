@@ -4,8 +4,8 @@
 #include "mel.h"
 #include "common.h"
 
-static MEL_FN MEL_shader(const char* vert_path, const char* frag_path);
-inline static MEL_FN MEL_shader(const char* vert_path, const char* frag_path) {
+static i8 MEL_shader(const char* vert_path, const char* frag_path);
+inline static i8 MEL_shader(const char* vert_path, const char* frag_path) {
   GLint success = 0;
   GLchar errnoo[1025] = "\0";
   String vertex_source = init_str(MEL_read_file(vert_path));
@@ -13,7 +13,7 @@ inline static MEL_FN MEL_shader(const char* vert_path, const char* frag_path) {
 
   if (!vertex_source.length || !fragment_source.length) {
     mlog(LOG_WARNING, "Could not create shader program");
-    return EX_F;
+    return xf;
   }
 
   /* Create vertex shader object and its reference */
@@ -30,7 +30,7 @@ inline static MEL_FN MEL_shader(const char* vert_path, const char* frag_path) {
     mlog(LOG_WARNING, "Failed compiling vertex shader : {%s}\n[%s]",
          vert_path, errnoo);
     glDeleteShader(vertex_shader);
-    return EX_F;
+    return xf;
   } else {
     mlog(LOG_SUCCESS, "Successfully compiled vertex shader : {%s}",
          vert_path);
@@ -51,7 +51,7 @@ inline static MEL_FN MEL_shader(const char* vert_path, const char* frag_path) {
          frag_path, errnoo);
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-    return EX_F;
+    return xf;
   } else {
     mlog(LOG_SUCCESS, "Successfully compiled fragment shader : {%s}",
          frag_path);
@@ -74,14 +74,13 @@ inline static MEL_FN MEL_shader(const char* vert_path, const char* frag_path) {
   return shader_program;
 }
 
-static MEL_FN MEL_str2shader(const char* vert_path, const char* frag_path);
-inline static MEL_FN MEL_str2shader(const char* vert_path,
-                                    const char* frag_path) {
+static i8 MEL_str2shader(const char* vert_path, const char* frag_path);
+inline static i8 MEL_str2shader(const char* vert_path, const char* frag_path) {
   GLint success = 0;
   GLchar errnoo[1025] = "\0";
   if (!strlen(vert_path) || !strlen(frag_path)) {
     mlog(LOG_WARNING, "Could not create shader program");
-    return EX_F;
+    return xf;
   }
 
   /* Create vertex shader object and its reference */
@@ -96,7 +95,7 @@ inline static MEL_FN MEL_str2shader(const char* vert_path,
     glGetShaderInfoLog(vertex_shader, 1024, NULL, errnoo);
     mlog(LOG_WARNING, "Failed compiling vertex shader: [%s]", errnoo);
     glDeleteShader(vertex_shader);
-    return EX_F;
+    return xf;
   } else {
     mlog(LOG_SUCCESS, "Successfully compiled vertex shader");
   }
@@ -115,7 +114,7 @@ inline static MEL_FN MEL_str2shader(const char* vert_path,
     mlog(LOG_WARNING, "Failed compiling fragment shader: [%s]", errnoo);
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-    return EX_F;
+    return xf;
   } else {
     mlog(LOG_SUCCESS, "Successfully compiled fragment shader");
   }

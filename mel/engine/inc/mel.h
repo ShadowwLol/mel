@@ -1,22 +1,30 @@
-#ifndef _MEL_DEF_H
-#define _MEL_DEF_H
+#ifndef _MEL_H
+#define _MEL_H
 
 #include "common.h"
+#include "input.h"
 #include "misc.h"
 
 typedef struct {
   GLFWwindow* window;
   GLFWvidmode* mode;
-  String title;                 /* Window title                                       */
-  f64 initial_width, initial_height;  /* Window dimensions       => [widthxheight]          */
+  String title;
+  f64 initial_width, initial_height;
   f64 width, height;
+  GLint MSAA, MAX_MSAA;
   flag cfg;
-  GLint MSAA;                   /* Antialiasing samples < MEL_get_max_aa_samples()    */
+
+  void (*init)(void);
+  void (*quit)(void);
+
+  void (*update)(void);
+  void (*resize)(GLFWwindow *, i32, i32);
+
+  void (*input)(void);
+  void (*joystick)(i32, i32);
 } mel_t;
 
 static mel_t old = { NULL };
-
-static GLint _MAX_MSAA;
 
 /* flag definition */
 #define MEL_VSYNC      (1)
@@ -26,60 +34,51 @@ static GLint _MAX_MSAA;
 #define MEL_FOCUSED    (16)
 /* * * * * * * * * */
 
-static GLint MEL_get_max_aa_samples();
-static fn mel_init(mel_t * ctx, const char* title, f64 width,
-                   f64 height, flag cfg);
-static void update_cfg(mel_t * ctx);
-static void MEL_quit(mel_t * ctx);
+/* mel (de)initialization  */
+static fn mel_init(mel_t * ctx, const char* title,
+                   f64 width, f64 height,
+                   void (*init)(void), void (*quit)(void),
+                   void (*update)(void), void (*resize)(GLFWwindow *, i32,
+                                                        i32),
+                   void (*input)(void), void (*joystick)(i32, i32), u8 cfg);
+static void mel_free(mel_t * ctx);
+/* * * * * * * * * * * * * */
 
-static void MEL_poll_events(mel_t * ctx);
+static void mel_poll(mel_t * ctx);
 
-/* Input */
-static int16_t keyboard[512];
+inline static void error_callback(i32 error, const char* description) {
+  mlog(LOG_ERROR, description);
+}
 
-#define MEL_KEY_NONE    (0)
-#define MEL_KEY_PRESS   (1)
-#define MEL_KEY_REPEAT  (2)
-#define MEL_KEY_RELEASE (3)
+inline static fn mel_init(mel_t * ctx, const char* title,
+                          f64 width, f64 height,
+                          void (*init)(void),
+                          void(*quit)(void),
+                          void(*update)(void),
+                          void(*resize)(GLFWwindow *, i32, i32),
+                          void(*input)(void),
+                          void(*joystick)(i32, i32), flag cfg) {
 
-static void k_input(GLFWwindow *, int, int, int, int);
-inline static void k_input(GLFWwindow * window, int key, int scancode,
-                           int action, int mods) {
-  if (action == GLFW_RELEASE) {
-    action = MEL_KEY_RELEASE;
+  if (!ctx || !title || !width || !height || !init || !quit || !update
+      || !resize || !input || !joystick) {
+    mlog(LOG_ERROR, "Failed initializing MEL");
+    return xf;
   }
-  keyboard[key] = action;
-}
+  mlog(LOG_SUCCESS, "Successfully initialized MEL");
 
-static int8_t MEL_get_key(int16_t key);
-inline static int8_t MEL_get_key(int16_t key) {
-  return keyboard[key];
-}
-
-void input(void);
-void MEL_render(void);
-/* * * * */
-void window_size_callback(GLFWwindow *, int, int);
-void error_callback(int, const char* );
-void joystick_callback(int, int);
-void MEL_global_mouse_pos(mel_t ctx, double* x, double* y);
-void MEL_local_mouse_pos(mel_t ctx, double* x, double* y);
-
-inline static GLint MEL_get_max_aa_samples() {
-  return _MAX_MSAA;
-}
-
-inline static fn mel_init(mel_t * ctx, const char* title, f64 width,
-                          f64 height, flag cfg) {
-
+  ctx->title = init_str(title);
   ctx->initial_width = width;
   ctx->initial_height = height;
   ctx->width = width;
   ctx->height = height;
-  ctx->cfg = cfg;
   ctx->MSAA = 0;
-
-  ctx->title = init_str(title);
+  ctx->cfg = cfg;
+  ctx->init = init;
+  ctx->quit = quit;
+  ctx->update = update;
+  ctx->resize = resize;
+  ctx->input = input;
+  ctx->joystick = joystick;
 
   /* Initializing the library  */
   if (!glfwInit()) {
@@ -120,8 +119,8 @@ inline static fn mel_init(mel_t * ctx, const char* title, f64 width,
   gladLoadGL();
   glViewport(0, 0, width, height);
 
-  glGetIntegerv(GL_MAX_SAMPLES, &_MAX_MSAA);
-  ctx->MSAA = _MAX_MSAA;
+  glGetIntegerv(GL_MAX_SAMPLES, &ctx->MAX_MSAA);
+  ctx->MSAA = ctx->MAX_MSAA;
 
   GLint major, minor;
   glGetIntegerv(GL_MAJOR_VERSION, &major);
@@ -132,19 +131,23 @@ inline static fn mel_init(mel_t * ctx, const char* title, f64 width,
   /* Callbacks */
   glfwSetErrorCallback(error_callback);
   glfwSetInputMode(ctx->window, GLFW_STICKY_KEYS, GLFW_TRUE);
-  glfwSetKeyCallback(ctx->window, k_input);
-  glfwSetFramebufferSizeCallback(ctx->window, window_size_callback);
+  glfwSetKeyCallback(ctx->window, _input);
+  glfwSetFramebufferSizeCallback(ctx->window, ctx->resize);
   glfwSetWindowSizeLimits(ctx->window,
                           (ctx->mode->width / 2),
                           (ctx->mode->height / 2),
                           ctx->mode->width, ctx->mode->height);
   /* * * * * * */
 
-  /* Initializing keyboard */
-  for (uint16_t i = 0; i < (sizeof(keyboard) / sizeof(keyboard[0])); ++i) {
-    keyboard[i] = MEL_KEY_NONE;
+  init_keyboard();
+  ctx->init();
+
+  while (!glfwWindowShouldClose(ctx->window)) {
+    mel_poll(ctx);
+    ctx->update();
   }
-  /* * * * * * * * * * * * */
+
+  ctx->quit();
 
   return xs;
 }
@@ -154,8 +157,8 @@ inline static void update_cfg(mel_t * ctx) {
   /* Update window title */
   if (!old.title.buffer || strncmp(ctx->title.buffer, old.title.buffer,
                                    ((ctx->title.length >
-                                     old.title.length) ? ctx->title.
-                                    length : old.title.length)) != 0) {
+                                     old.title.length) ? ctx->
+                                    title.length : old.title.length)) != 0) {
     set_str(&old.title, ctx->title.buffer);
     glfwSetWindowTitle(ctx->window, old.title.buffer);
   }
@@ -165,7 +168,7 @@ inline static void update_cfg(mel_t * ctx) {
   if (ctx->width != old.width || ctx->height != old.height) {
     old.width = ctx->width;
     old.height = ctx->height;
-    window_size_callback(ctx->window, old.width, old.height);
+    ctx->resize(ctx->window, old.width, old.height);
   }
   /* * * * * * * * * * * */
 
@@ -209,7 +212,7 @@ inline static void update_cfg(mel_t * ctx) {
 
     /* Updating MSAA */
     if (ctx->MSAA != old.MSAA) {
-      if (ctx->MSAA <= _MAX_MSAA) {
+      if (ctx->MSAA <= ctx->MAX_MSAA) {
         old.MSAA = ctx->MSAA;
         glfwWindowHint(GLFW_SAMPLES, old.MSAA);
       } else {
@@ -230,17 +233,13 @@ inline static void MEL_quit(mel_t * ctx) {
   glfwTerminate();
 }
 
-inline static void MEL_poll_events(mel_t * ctx) {
+inline static void mel_poll(mel_t * ctx) {
   update_cfg(ctx);
   glfwPollEvents();
-  input();
-  for (uint16_t i = 0; i < (sizeof(keyboard) / sizeof(keyboard[0])); ++i) {
-    if (keyboard[i] == MEL_KEY_RELEASE) {
-      keyboard[i] = MEL_KEY_NONE;
-    }
-  }
+  ctx->input();
+  reset_keyboard();
   MEL_calculate_delta();
   MEL_calculate_fps();
 }
 
-#endif
+#endif /* _MEL_H */
