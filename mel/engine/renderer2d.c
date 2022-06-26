@@ -1,7 +1,7 @@
 #include "inc/renderer2d.h"
 #include "inc/texture.h"
 
-MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win) {
+MEL_Renderer2D MEL_Renderer2D_init(mel_t ctx) {
   MEL_Renderer2D Renderer = {
     .default_texture = (GLuint *) calloc(1, sizeof(GLuint)),
     .tex_count = 0,
@@ -25,7 +25,7 @@ MEL_Renderer2D MEL_Renderer2D_init(MEL_Window win) {
   /* Create texture atlas instead of binding multiple textures in different places, just binding the atlas once */
 
   glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &Renderer.max_tex);
-  glm_ortho(0.0f, (float) win.mode->width, (float) win.mode->height, 0.0f,
+  glm_ortho(0.0f, (float) ctx.mode->width, (float) ctx.mode->height, 0.0f,
             -1.0f, 1.0f, Renderer.projection);
 
   glGenTextures(1, Renderer.default_texture);
@@ -169,7 +169,7 @@ static void MEL_send_rect(MEL_Renderer2D * Renderer, MEL_ColorRect cr) {
   ++Renderer->ID;
 }
 
-void MEL_draw_rect(MEL_ctx ctx, MEL_Renderer2D * Renderer,
+void MEL_draw_rect(mel_t ctx, MEL_Renderer2D * Renderer,
                    MEL_ColorRect * Rect, MEL_Camera Camera) {
   if (is_visible(ctx, *Rect, Camera)) {
     if (Renderer->ID >= MAX_QUAD_COUNT) {
@@ -205,7 +205,7 @@ void MEL_begin2D(MEL_Renderer2D * Renderer) {
   glUseProgram(Renderer->shader);
 }
 
-void MEL_end2D(MEL_ctx * ctx, MEL_Renderer2D * Renderer) {
+void MEL_end2D(mel_t * ctx, MEL_Renderer2D * Renderer) {
   glBufferSubData(GL_ARRAY_BUFFER, 0,
                   ((sizeof(Renderer->vertices[0]) * VERTEX_COUNT) *
                    Renderer->ID), Renderer->vertices);
@@ -219,7 +219,7 @@ void MEL_end2D(MEL_ctx * ctx, MEL_Renderer2D * Renderer) {
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glfwSwapBuffers(ctx->window_ctx.window);
+  glfwSwapBuffers(ctx->window);
   Renderer->ID = 1;
 }
 
@@ -235,7 +235,7 @@ void MEL_Renderer2D_destroy(MEL_Renderer2D * Renderer) {
 }
 
 /* TODO: Fix function */
-bool is_visible(MEL_ctx ctx, MEL_Rect rect, MEL_Camera camera) {
+bool is_visible(mel_t ctx, MEL_Rect rect, MEL_Camera camera) {
   return true;
 #if 0
 /* FIXME: Clipping when pos < 0 ? */
@@ -252,8 +252,8 @@ bool is_visible(MEL_ctx ctx, MEL_Rect rect, MEL_Camera camera) {
 
   for (uint8_t i = 0; i < 4; ++i) {
     glm_mat4_mul(m4[i], rect.mvp, m4[i]);
-    if ((*m4[i][0] >= 0 && *m4[i][0] <= ctx.window_ctx.mode->width) &&
-        (*m4[i][1] >= 0 && *m4[i][1] <= ctx.window_ctx.mode->height)) {
+    if ((*m4[i][0] >= 0 && *m4[i][0] <= ctx.mode->width) &&
+        (*m4[i][1] >= 0 && *m4[i][1] <= ctx.mode->height)) {
       return true;
     }
   }

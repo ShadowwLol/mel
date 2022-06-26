@@ -7632,6 +7632,7 @@ extern "C" {
 #define glRenderbufferStorageMultisampleAdvancedAMD glad_glRenderbufferStorageMultisampleAdvancedAMD
   typedef void (APIENTRYP
                 PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC)
+   
     (GLuint renderbuffer, GLsizei samples, GLsizei storageSamples,
      GLenum internalformat, GLsizei width, GLsizei height);
   GLAPI PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLEADVANCEDAMDPROC
@@ -15415,6 +15416,7 @@ extern "C" {
 #define glNamedRenderbufferStorageMultisampleEXT glad_glNamedRenderbufferStorageMultisampleEXT
   typedef void (APIENTRYP
                 PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC)
+   
     (GLuint renderbuffer, GLsizei coverageSamples, GLsizei colorSamples,
      GLenum internalformat, GLsizei width, GLsizei height);
   GLAPI PFNGLNAMEDRENDERBUFFERSTORAGEMULTISAMPLECOVERAGEEXTPROC
@@ -21895,6 +21897,7 @@ extern "C" {
   GLAPI int GLAD_GL_NV_vdpau_interop2;
   typedef GLvdpauSurfaceNV(APIENTRYP
                            PFNGLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENVPROC)
+   
     (const void* vdpSurface, GLenum target, GLsizei numTextureNames,
      const GLuint * textureNames, GLboolean isFrameStructure);
   GLAPI PFNGLVDPAUREGISTERVIDEOSURFACEWITHPICTURESTRUCTURENVPROC
@@ -24266,6 +24269,7 @@ extern "C" {
 #define glReplacementCodeuiTexCoord2fVertex3fvSUN glad_glReplacementCodeuiTexCoord2fVertex3fvSUN
   typedef void (APIENTRYP
                 PFNGLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FSUNPROC)
+   
     (GLuint rc, GLfloat s, GLfloat t, GLfloat nx, GLfloat ny, GLfloat nz,
      GLfloat x, GLfloat y, GLfloat z);
   GLAPI PFNGLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FSUNPROC
@@ -24273,6 +24277,7 @@ extern "C" {
 #define glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN glad_glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN
   typedef void (APIENTRYP
                 PFNGLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FVSUNPROC)
+   
     (const GLuint * rc, const GLfloat * tc, const GLfloat * n,
      const GLfloat * v);
   GLAPI PFNGLREPLACEMENTCODEUITEXCOORD2FNORMAL3FVERTEX3FVSUNPROC
@@ -24280,6 +24285,7 @@ extern "C" {
 #define glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN glad_glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN
   typedef void (APIENTRYP
                 PFNGLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FSUNPROC)
+   
     (GLuint rc, GLfloat s, GLfloat t, GLfloat r, GLfloat g, GLfloat b,
      GLfloat a, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat x, GLfloat y,
      GLfloat z);
@@ -24288,6 +24294,7 @@ extern "C" {
 #define glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN glad_glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN
   typedef void (APIENTRYP
                 PFNGLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUNPROC)
+   
     (const GLuint * rc, const GLfloat * tc, const GLfloat * c,
      const GLfloat * n, const GLfloat * v);
   GLAPI PFNGLREPLACEMENTCODEUITEXCOORD2FCOLOR4FNORMAL3FVERTEX3FVSUNPROC

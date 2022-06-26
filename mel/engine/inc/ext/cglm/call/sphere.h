@@ -16,16 +16,16 @@ extern "C" {
   CGLM_EXPORT float
     glmc_sphere_radii(vec4 s);
 
-    CGLM_EXPORT void
+  CGLM_EXPORT void
     glmc_sphere_transform(vec4 s, mat4 m, vec4 dest);
 
-    CGLM_EXPORT void
+  CGLM_EXPORT void
     glmc_sphere_merge(vec4 s1, vec4 s2, vec4 dest);
 
-    CGLM_EXPORT bool
+  CGLM_EXPORT bool
     glmc_sphere_sphere(vec4 s1, vec4 s2);
 
-    CGLM_EXPORT bool
+  CGLM_EXPORT bool
     glmc_sphere_point(vec4 s, vec3 point);
 
 #ifdef __cplusplus

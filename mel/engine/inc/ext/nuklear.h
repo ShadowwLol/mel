@@ -4493,8 +4493,7 @@ extern "C" {
                                            const struct nk_font_config* );
 #ifdef NK_INCLUDE_DEFAULT_FONT
   NK_API struct nk_font* nk_font_atlas_add_default(struct nk_font_atlas* ,
-                                                   float height,
-                                                   const struct
+                                                   float height, const struct
                                                    nk_font_config* );
 #endif
   NK_API struct nk_font* nk_font_atlas_add_from_memory(struct nk_font_atlas*
@@ -5330,18 +5329,14 @@ extern "C" {
 /* drawing */
 #define nk_draw_list_foreach(cmd, can, b) for((cmd)=nk__draw_list_begin(can, b); (cmd)!=0; (cmd)=nk__draw_list_next(cmd, b, can))
   NK_API const struct nk_draw_command* nk__draw_list_begin(const struct
-                                                           nk_draw_list* ,
-                                                           const struct
+                                                           nk_draw_list* , const struct
                                                            nk_buffer* );
   NK_API const struct nk_draw_command* nk__draw_list_next(const struct
-                                                          nk_draw_command* ,
-                                                          const struct
-                                                          nk_buffer* ,
-                                                          const struct
+                                                          nk_draw_command* , const struct
+                                                          nk_buffer* , const struct
                                                           nk_draw_list* );
   NK_API const struct nk_draw_command* nk__draw_list_end(const struct
-                                                         nk_draw_list* ,
-                                                         const struct
+                                                         nk_draw_list* , const struct
                                                          nk_buffer* );
 
 /* path */
@@ -6317,7 +6312,8 @@ template < typename T, int size_diff > struct nk_helper {
   enum { value = size_diff };
 };
 template < typename T > struct nk_helper <T, 0 > { enum { value =
-      nk_alignof < T >::value };
+      nk_alignof < T >::value
+};
 };
 template < typename T > struct nk_alignof {
   struct Big {
@@ -6959,7 +6955,7 @@ NK_LIB void nk_property(struct nk_context* ctx, const char* name,
 
 /* Allow consumer to define own STBTT_malloc/STBTT_free, and use the font atlas' allocator otherwise */
 #ifndef STBTT_malloc
-static void*  nk_stbtt_malloc(nk_size size, void* user_data) {
+static void* nk_stbtt_malloc(nk_size size, void* user_data) {
   struct nk_allocator* alloc = (struct nk_allocator *) user_data;
   return alloc->alloc(alloc->userdata, 0, size);
 }
@@ -7266,7 +7262,7 @@ NK_LIB int nk_to_lower(int c) {
 
 #ifndef NK_MEMCPY
 #define NK_MEMCPY nk_memcopy
-NK_LIB void*  nk_memcopy(void* dst0, const void* src0, nk_size length) {
+NK_LIB void* nk_memcopy(void* dst0, const void* src0, nk_size length) {
   nk_ptr t;
   char* dst = (char *) dst0;
   const char* src = (const char *) src0;
@@ -7291,8 +7287,8 @@ NK_LIB void*  nk_memcopy(void* dst0, const void* src0, nk_size length) {
     }
     t = length / nk_wsize;
     NK_TLOOP(*(nk_word *) (void *) dst =
-             *(const nk_word *) (const void *) src; src += nk_wsize;
-             dst += nk_wsize);
+             *(const nk_word *) (const void *) src;
+             src += nk_wsize; dst += nk_wsize);
     t = length & nk_wmask;
     NK_TLOOP(*dst++ = *src++);
   } else {
@@ -7714,7 +7710,7 @@ NK_INTERN void nk_strrev_ascii(char* s) {
     s[len - 1 - i] = t;
   }
 }
-NK_LIB char*  nk_itoa(char* s, long n) {
+NK_LIB char* nk_itoa(char* s, long n) {
   long i = 0;
   if (n == 0) {
     s[i++] = '0';
@@ -7739,7 +7735,7 @@ NK_LIB char*  nk_itoa(char* s, long n) {
 
 #ifndef NK_DTOA
 #define NK_DTOA nk_dtoa
-NK_LIB char*  nk_dtoa(char* s, double n) {
+NK_LIB char* nk_dtoa(char* s, double n) {
   int useExp = 0;
   int digit = 0, m = 0, m1 = 0;
   char* c = s;
@@ -8786,8 +8782,8 @@ NK_INTERN nk_rune nk_utf_decode_byte(char c, int* i) {
   if (!i)
     return 0;
   for (*i = 0; *i < (int) NK_LEN(nk_utfmask); ++(*i)) {
-    if( ( (nk_byte) c & nk_utfmask[*i]) == nk_utfbyte[*i])
-      return(nk_byte)(c & ~nk_utfmask[*i]);
+    if (((nk_byte) c & nk_utfmask[*i]) == nk_utfbyte[*i])
+      return (nk_byte)(c & ~nk_utfmask[*i]);
   }
   return 0;
 }
@@ -8902,7 +8898,7 @@ nk_utf_at(const char* buffer, int length, int index,
  *
  * ===============================================================*/
 #ifdef NK_INCLUDE_DEFAULT_ALLOCATOR
-NK_LIB void*  nk_malloc(nk_handle unused, void* old, nk_size size) {
+NK_LIB void* nk_malloc(nk_handle unused, void* old, nk_size size) {
   NK_UNUSED(unused);
   NK_UNUSED(old);
   return malloc(size);
@@ -9150,13 +9146,13 @@ NK_API void nk_buffer_info(struct nk_memory_status* s, struct nk_buffer* b) {
   s->memory = b->memory.ptr;
   s->calls = b->calls;
 }
-NK_API void*  nk_buffer_memory(struct nk_buffer* buffer) {
+NK_API void* nk_buffer_memory(struct nk_buffer* buffer) {
   NK_ASSERT(buffer);
   if (!buffer)
     return 0;
   return buffer->memory.ptr;
 }
-NK_API const void*  nk_buffer_memory_const(const struct nk_buffer* buffer) {
+NK_API const void* nk_buffer_memory_const(const struct nk_buffer* buffer) {
   NK_ASSERT(buffer);
   if (!buffer)
     return 0;
@@ -9486,7 +9482,7 @@ NK_API void nk_str_delete_runes(struct nk_str* s, int pos, int len) {
     return;
   nk_str_delete_chars(s, (int) (begin - temp), (int) (end - begin));
 }
-NK_API char*  nk_str_at_char(struct nk_str* s, int pos) {
+NK_API char* nk_str_at_char(struct nk_str* s, int pos) {
   NK_ASSERT(s);
   if (!s || pos > (int) s->buffer.allocated)
     return 0;
@@ -9529,7 +9525,7 @@ nk_str_at_rune(struct nk_str* str, int pos, nk_rune * unicode, int* len) {
     return 0;
   return text + src_len;
 }
-NK_API const char*  nk_str_at_char_const(const struct nk_str* s, int pos) {
+NK_API const char* nk_str_at_char_const(const struct nk_str* s, int pos) {
   NK_ASSERT(s);
   if (!s || pos > (int) s->buffer.allocated)
     return 0;
@@ -9579,13 +9575,13 @@ NK_API nk_rune nk_str_rune_at(const struct nk_str* str, int pos) {
   nk_str_at_const(str, pos, &unicode, &len);
   return unicode;
 }
-NK_API char*  nk_str_get(struct nk_str* s) {
+NK_API char* nk_str_get(struct nk_str* s) {
   NK_ASSERT(s);
   if (!s || !s->len || !s->buffer.allocated)
     return 0;
   return (char *) s->buffer.memory.ptr;
 }
-NK_API const char*  nk_str_get_const(const struct nk_str* s) {
+NK_API const char* nk_str_get_const(const struct nk_str* s) {
   NK_ASSERT(s);
   if (!s || !s->len || !s->buffer.allocated)
     return 0;
@@ -10263,9 +10259,9 @@ nk_draw_list_setup(struct nk_draw_list* canvas,
   canvas->cmd_count = 0;
   canvas->path_count = 0;
 }
+
 NK_API const struct nk_draw_command* nk__draw_list_begin(const struct
-                                                         nk_draw_list* canvas,
-                                                         const struct
+                                                         nk_draw_list* canvas, const struct
                                                          nk_buffer* buffer) {
   nk_byte* memory;
   nk_size offset;
@@ -10280,6 +10276,7 @@ NK_API const struct nk_draw_command* nk__draw_list_begin(const struct
   cmd = nk_ptr_add(const struct nk_draw_command, memory, offset);
   return cmd;
 }
+
 NK_API const struct nk_draw_command* nk__draw_list_end(const struct
                                                        nk_draw_list* canvas,
                                                        const struct nk_buffer*
@@ -10301,13 +10298,11 @@ NK_API const struct nk_draw_command* nk__draw_list_end(const struct
   end -= (canvas->cmd_count - 1);
   return end;
 }
+
 NK_API const struct nk_draw_command* nk__draw_list_next(const struct
-                                                        nk_draw_command* cmd,
-                                                        const struct
-                                                        nk_buffer* buffer,
-                                                        const struct
-                                                        nk_draw_list* canvas) 
-{
+                                                        nk_draw_command* cmd, const struct
+                                                        nk_buffer* buffer, const struct
+                                                        nk_draw_list* canvas) {
   const struct nk_draw_command* end;
   NK_ASSERT(buffer);
   NK_ASSERT(canvas);
@@ -10347,6 +10342,7 @@ NK_INTERN struct nk_vec2 nk_draw_list_path_last(struct nk_draw_list* list) {
   point += (list->path_count - 1);
   return *point;
 }
+
 NK_INTERN struct nk_draw_command* nk_draw_list_push_command(struct
                                                             nk_draw_list*
                                                             list,
@@ -10382,6 +10378,7 @@ NK_INTERN struct nk_draw_command* nk_draw_list_push_command(struct
   list->clip_rect = clip;
   return cmd;
 }
+
 NK_INTERN struct nk_draw_command* nk_draw_list_command_last(struct
                                                             nk_draw_list*
                                                             list) {
@@ -10485,10 +10482,10 @@ NK_INTERN nk_draw_index* nk_draw_list_alloc_elements(struct nk_draw_list*
   cmd->elem_count += (unsigned int) count;
   return ids;
 }
-NK_INTERN int
-nk_draw_vertex_layout_element_is_end_of_layout(const struct
-                                               nk_draw_vertex_layout_element*
-                                               element) {
+
+NK_INTERN int nk_draw_vertex_layout_element_is_end_of_layout(const struct
+                                                             nk_draw_vertex_layout_element*
+                                                             element) {
   return (element->attribute == NK_VERTEX_ATTRIBUTE_COUNT
           || element->format == NK_FORMAT_COUNT);
 }
@@ -10616,10 +10613,10 @@ nk_draw_vertex_element(void* dst, const float* values, int value_count,
         }
         break;
       case NK_FORMAT_UCHAR:{
-          unsigned char value =
-            (unsigned char) NK_CLAMP((float) NK_UCHAR_MIN,
-                                     values[value_index],
-                                     (float) NK_UCHAR_MAX);
+          unsigned char value = (unsigned char) NK_CLAMP((float) NK_UCHAR_MIN,
+                                                         values[value_index],
+                                                         (float)
+                                                         NK_UCHAR_MAX);
           NK_MEMCPY(attribute, &value, sizeof(value));
           attribute = (void *) ((char *) attribute + sizeof(unsigned char));
         } break;
@@ -11775,6 +11772,7 @@ NK_API const struct nk_draw_command* nk__draw_end(const struct nk_context*
                                                   buffer) {
   return nk__draw_list_end(&ctx->draw_list, buffer);
 }
+
 NK_API const struct nk_draw_command* nk__draw_next(const struct
                                                    nk_draw_command* cmd,
                                                    const struct nk_buffer*
@@ -11974,7 +11972,7 @@ extern "C" {
 }
 #endif
 #endif
-/* //////////////////////////////////////////////////////////////////////////// *//*  *//*      IMPLEMENTATION SECTION *//*  */
+                                                                                                                                                                                                                                                                                                                                                                           /* //////////////////////////////////////////////////////////////////////////// *//*  *//*      IMPLEMENTATION SECTION *//*  */
 #ifdef STB_RECT_PACK_IMPLEMENTATION
 #ifndef STBRP_SORT
 #include <stdlib.h>
@@ -13664,7 +13662,7 @@ extern "C" {
 }
 #endif
 #endif                          /*  __STB_INCLUDE_STB_TRUETYPE_H__ */
-/* ///////////////////////////////////////////////////////////////////////////// *//* ///////////////////////////////////////////////////////////////////////////// *//* // *//* //   IMPLEMENTATION *//* // *//* // */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             /* ///////////////////////////////////////////////////////////////////////////// *//* ///////////////////////////////////////////////////////////////////////////// *//* // *//* //   IMPLEMENTATION *//* // *//* // */
 #ifdef STB_TRUETYPE_IMPLEMENTATION
 #ifndef STBTT_MAX_OVERSAMPLE
 #define STBTT_MAX_OVERSAMPLE   8
@@ -17019,9 +17017,8 @@ STBTT_DEF int stbtt_PackFontRangesGatherRects(stbtt_pack_context * spc,
   k = 0;
   for (i = 0; i < num_ranges; ++i) {
     float fh = ranges[i].font_size;
-    float scale =
-      fh > 0 ? stbtt_ScaleForPixelHeight(info,
-                                         fh) :
+    float scale = fh > 0 ? stbtt_ScaleForPixelHeight(info,
+                                                     fh) :
       stbtt_ScaleForMappingEmToPixels(info, -fh);
     ranges[i].h_oversample = (unsigned char) spc->h_oversample;
     ranges[i].v_oversample = (unsigned char) spc->v_oversample;
@@ -17096,9 +17093,8 @@ STBTT_DEF int stbtt_PackFontRangesRenderIntoRects(stbtt_pack_context * spc,
   k = 0;
   for (i = 0; i < num_ranges; ++i) {
     float fh = ranges[i].font_size;
-    float scale =
-      fh > 0 ? stbtt_ScaleForPixelHeight(info,
-                                         fh) :
+    float scale = fh > 0 ? stbtt_ScaleForPixelHeight(info,
+                                                     fh) :
       stbtt_ScaleForMappingEmToPixels(info, -fh);
     float recip_h, recip_v, sub_x, sub_y;
     spc->h_oversample = ranges[i].h_oversample;
@@ -18119,11 +18115,11 @@ NK_INTERN int nk_range_glyph_count(const nk_rune * range, int count) {
   }
   return total_glyphs;
 }
-NK_API const nk_rune*  nk_font_default_glyph_ranges(void) {
+NK_API const nk_rune* nk_font_default_glyph_ranges(void) {
   NK_STORAGE const nk_rune ranges[] = { 0x0020, 0x00FF, 0 };
   return ranges;
 }
-NK_API const nk_rune*  nk_font_chinese_glyph_ranges(void) {
+NK_API const nk_rune* nk_font_chinese_glyph_ranges(void) {
   NK_STORAGE const nk_rune ranges[] = {
     0x0020, 0x00FF,
     0x3000, 0x30FF,
@@ -18134,7 +18130,7 @@ NK_API const nk_rune*  nk_font_chinese_glyph_ranges(void) {
   };
   return ranges;
 }
-NK_API const nk_rune*  nk_font_cyrillic_glyph_ranges(void) {
+NK_API const nk_rune* nk_font_cyrillic_glyph_ranges(void) {
   NK_STORAGE const nk_rune ranges[] = {
     0x0020, 0x00FF,
     0x0400, 0x052F,
@@ -18144,7 +18140,7 @@ NK_API const nk_rune*  nk_font_cyrillic_glyph_ranges(void) {
   };
   return ranges;
 }
-NK_API const nk_rune*  nk_font_korean_glyph_ranges(void) {
+NK_API const nk_rune* nk_font_korean_glyph_ranges(void) {
   NK_STORAGE const nk_rune ranges[] = {
     0x0020, 0x00FF,
     0x3131, 0x3163,
@@ -18822,7 +18818,7 @@ NK_INTERN void nk__lit(unsigned char* data, unsigned int length) {
   NK_MEMCPY(nk__dout, data, length);
   nk__dout += length;
 }
-NK_INTERN unsigned char*  nk_decompress_token(unsigned char* i) {
+NK_INTERN unsigned char* nk_decompress_token(unsigned char* i) {
 #define nk__in2(x)   ((i[x] << 8) + i[(x)+1])
 #define nk__in3(x)   ((i[x] << 16) + nk__in2((x)+1))
 #define nk__in4(x)   ((i[x] << 24) + nk__in3((x)+1))
@@ -19128,6 +19124,7 @@ NK_API struct nk_font* nk_font_atlas_add(struct nk_font_atlas* atlas,
   atlas->font_num++;
   return font;
 }
+
 NK_API struct nk_font* nk_font_atlas_add_from_memory(struct nk_font_atlas*
                                                      atlas, void* memory,
                                                      nk_size size,
@@ -19159,8 +19156,7 @@ NK_API struct nk_font* nk_font_atlas_add_from_memory(struct nk_font_atlas*
 NK_API struct nk_font* nk_font_atlas_add_from_file(struct nk_font_atlas*
                                                    atlas,
                                                    const char* file_path,
-                                                   float height,
-                                                   const struct
+                                                   float height, const struct
                                                    nk_font_config* config) {
   nk_size size;
   char* memory;
@@ -19190,8 +19186,7 @@ NK_API struct nk_font* nk_font_atlas_add_compressed(struct nk_font_atlas*
                                                     atlas,
                                                     void* compressed_data,
                                                     nk_size compressed_size,
-                                                    float height,
-                                                    const struct
+                                                    float height, const struct
                                                     nk_font_config* config) {
   unsigned int decompressed_size;
   void* decompressed_data;
@@ -19227,6 +19222,7 @@ NK_API struct nk_font* nk_font_atlas_add_compressed(struct nk_font_atlas*
   cfg.ttf_data_owned_by_atlas = 1;
   return nk_font_atlas_add(atlas, &cfg);
 }
+
 NK_API struct nk_font* nk_font_atlas_add_compressed_base85(struct
                                                            nk_font_atlas*
                                                            atlas,
@@ -19332,8 +19328,8 @@ nk_font_atlas_bake(struct nk_font_atlas* atlas, int* width, int* height,
                                                     0,
                                                     sizeof(struct
                                                            nk_font_glyph) *
-                                                    (nk_size) atlas->
-                                                    glyph_count);
+                                                    (nk_size)
+                                                    atlas->glyph_count);
   NK_ASSERT(atlas->glyphs);
   if (!atlas->glyphs)
     goto failed;
@@ -19831,7 +19827,7 @@ NK_GLOBAL const char* nk_color_names[NK_COLOR_COUNT] = {
 #undef NK_COLOR
 };
 
-NK_API const char*  nk_style_get_color_by_name(enum nk_style_colors c) {
+NK_API const char* nk_style_get_color_by_name(enum nk_style_colors c) {
   return nk_color_names[c];
 }
 NK_API struct nk_style_item nk_style_item_color(struct nk_color col) {
@@ -21100,7 +21096,7 @@ NK_LIB nk_uint* nk_find_value(struct nk_window* win, nk_hash name) {
  *                              PANEL
  *
  * ===============================================================*/
-NK_LIB void*  nk_create_panel(struct nk_context* ctx) {
+NK_LIB void* nk_create_panel(struct nk_context* ctx) {
   struct nk_page_element* elem;
   elem = nk_create_page_element(ctx);
   if (!elem)
@@ -21400,14 +21396,14 @@ nk_panel_begin(struct nk_context* ctx, const char* title,
         }
         if (nk_do_button_symbol
             (&ws, &win->buffer, button,
-             (layout->flags & NK_WINDOW_MINIMIZED) ? style->window.header.
-             maximize_symbol : style->window.header.minimize_symbol,
+             (layout->flags & NK_WINDOW_MINIMIZED) ? style->window.
+             header.maximize_symbol : style->window.header.minimize_symbol,
              NK_BUTTON_DEFAULT, &style->window.header.minimize_button, in,
              style->font) && !(win->flags & NK_WINDOW_ROM))
           layout->flags =
-            (layout->flags & NK_WINDOW_MINIMIZED) ? layout->
-            flags & (nk_flags) ~ NK_WINDOW_MINIMIZED : layout->
-            flags | NK_WINDOW_MINIMIZED;
+            (layout->
+             flags & NK_WINDOW_MINIMIZED) ? layout->flags & (nk_flags) ~
+            NK_WINDOW_MINIMIZED : layout->flags | NK_WINDOW_MINIMIZED;
       }
     }
 
@@ -21787,7 +21783,7 @@ NK_LIB void nk_panel_end(struct nk_context* ctx) {
  *                              WINDOW
  *
  * ===============================================================*/
-NK_LIB void*  nk_create_window(struct nk_context* ctx) {
+NK_LIB void* nk_create_window(struct nk_context* ctx) {
   struct nk_page_element* elem;
   elem = nk_create_page_element(ctx);
   if (!elem)
@@ -21997,13 +21993,11 @@ nk_begin_titled(struct nk_context* ctx, const char* name, const char* title,
       ctx->style.font->height + 2.0f * style->window.header.padding.y +
       (2.0f * style->window.header.label_padding.y);
     struct nk_rect win_bounds =
-      (!(win->flags & NK_WINDOW_MINIMIZED)) ? win->bounds : nk_rect(win->
-                                                                    bounds.x,
-                                                                    win->
-                                                                    bounds.y,
-                                                                    win->
-                                                                    bounds.w,
-                                                                    h);
+      (!(win->flags & NK_WINDOW_MINIMIZED)) ? win->
+      bounds : nk_rect(win->bounds.x,
+                       win->bounds.y,
+                       win->bounds.w,
+                       h);
 
     /* activate window if hovered and no other window is overlapping this window */
     inpanel =
@@ -25567,6 +25561,7 @@ nk_button_behavior(nk_flags * state, struct nk_rect r,
     *state |= NK_WIDGET_STATE_LEFT;
   return ret;
 }
+
 NK_LIB const struct nk_style_item* nk_draw_button(struct nk_command_buffer*
                                                   out,
                                                   const struct nk_rect*
@@ -27140,9 +27135,8 @@ nk_slider_float(struct nk_context* ctx, float min_value, float* value,
   state = nk_widget(&bounds, ctx);
   if (!state)
     return ret;
-  in =
-    ( /*state == NK_WIDGET_ROM || */ layout->
-     flags & NK_WINDOW_ROM) ? 0 : &ctx->input;
+  in = ( /*state == NK_WIDGET_ROM || */ layout->
+        flags & NK_WINDOW_ROM) ? 0 : &ctx->input;
 
   old_value = *value;
   *value =
@@ -28465,6 +28459,7 @@ NK_INTERN void nk_textedit_discard_redo(struct nk_text_undo_state* state) {
                 num * sizeof(state->undo_rec[0]));
   }
 }
+
 NK_INTERN struct nk_text_undo_record* nk_textedit_create_undo_record(struct
                                                                      nk_text_undo_state*
                                                                      state,
@@ -30290,8 +30285,8 @@ nk_chart_push_line(struct nk_context* ctx, struct nk_window* win,
       ret =
         nk_input_is_mouse_hovering_rect(i, bounds) ? NK_CHART_HOVERING : 0;
       ret |= (i->mouse.buttons[NK_BUTTON_LEFT].down
-              && i->mouse.buttons[NK_BUTTON_LEFT].
-              clicked) ? NK_CHART_CLICKED : 0;
+              && i->mouse.
+              buttons[NK_BUTTON_LEFT].clicked) ? NK_CHART_CLICKED : 0;
       color = g->slots[slot].highlight;
     }
     nk_fill_rect(out, bounds, 0, color);
@@ -30315,8 +30310,8 @@ nk_chart_push_line(struct nk_context* ctx, struct nk_window* win,
     if (nk_input_is_mouse_hovering_rect(i, bounds)) {
       ret = NK_CHART_HOVERING;
       ret |= (!i->mouse.buttons[NK_BUTTON_LEFT].down &&
-              i->mouse.buttons[NK_BUTTON_LEFT].
-              clicked) ? NK_CHART_CLICKED : 0;
+              i->mouse.
+              buttons[NK_BUTTON_LEFT].clicked) ? NK_CHART_CLICKED : 0;
       color = g->slots[slot].highlight;
     }
   }

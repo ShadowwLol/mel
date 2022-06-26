@@ -4,7 +4,7 @@
 #include "engine/inc/texture.h"
 #include "engine/inc/threads.h"
 
-MEL_ctx mctx;
+mel_t ctx;
 MEL_Renderer2D Rend;
 MEL_Camera camera;
 MEL_Camera default_camera;
@@ -15,8 +15,13 @@ MEL_ColorRect bg;
 MEL_ColorRect rectangle;
 
 i32 main(i32 argc, char** argv) {
-  mctx = MEL_ctx_init("Shadowws Game", 1280, 720, true);
-  Rend = MEL_Renderer2D_init(mctx.window_ctx);
+  if (xf ==
+      mel_init(&ctx, "Shadowws Game", 1280, 720,
+               MEL_FULLSCREEN | MEL_VSYNC)) {
+    return xf;
+  }
+
+  Rend = MEL_Renderer2D_init(ctx);
 
 
   /* Textures && Rects  */
@@ -29,8 +34,8 @@ i32 main(i32 argc, char** argv) {
   rectangle.rotation = 70;
 
   bg = MEL_init_rect(&Rend);
-  bg.size[0] = mctx.width;
-  bg.size[1] = mctx.height;
+  bg.size[0] = ctx.width;
+  bg.size[1] = ctx.height;
   bg.color[0] = 0.2f;
   bg.color[1] = 0.0f;
   bg.color[2] = 0.8;
@@ -54,12 +59,10 @@ i32 main(i32 argc, char** argv) {
   MEL_init_camera(default_camera);
   MEL_init_camera(camera);
 
-  mctx.vsync = false;
-
   /* Main loop */
-  while (!glfwWindowShouldClose(mctx.window_ctx.window)) {
+  while (!glfwWindowShouldClose(ctx.window)) {
     MEL_update_camera(camera);
-    MEL_poll_events(&mctx);
+    MEL_poll_events(&ctx);
     MEL_set_clear_color(20, 20, 20, 255);
 
     MEL_clear(GL_COLOR_BUFFER_BIT);
@@ -81,7 +84,7 @@ i32 main(i32 argc, char** argv) {
   MEL_destroy_image(smiley);
   MEL_destroy_image(crate);
   MEL_Renderer2D_destroy(&Rend);
-  MEL_quit(&mctx);
+  MEL_quit(&ctx);
   /* * * * * * * */
 
   return 0;
@@ -108,12 +111,16 @@ void input() {
 
   if (KEY_ESCAPE == MEL_KEY_RELEASE) {
     /* Close the game */
-    glfwSetWindowShouldClose(mctx.window_ctx.window, GLFW_TRUE);
+    glfwSetWindowShouldClose(ctx.window, GLFW_TRUE);
   }
 
   if (KEY_F11 == MEL_KEY_RELEASE) {
     /* Fullscreen the game */
-    MEL_toggle_fullscreen(mctx);
+    if (ctx.cfg & MEL_FULLSCREEN) {
+      ctx.cfg &= ~MEL_FULLSCREEN;
+    } else {
+      ctx.cfg |= MEL_FULLSCREEN;
+    }
   }
 
   /* Testing */
@@ -166,9 +173,8 @@ void input() {
   if (KEY_L == MEL_KEY_RELEASE) {
     const char* t1 = "A Game!";
     const char* t2 = "Not a Game!";
-    strcmp(mctx.title.buffer, t1) == 0 ? set_str(&mctx.title,
-                                                 t2) : set_str(&mctx.title,
-                                                               t1);
+    strcmp(ctx.title.buffer, t1) == 0 ? set_str(&ctx.title,
+                                                t2) : set_str(&ctx.title, t1);
   }
   /* * * * * */
 }
@@ -176,18 +182,18 @@ void input() {
 void MEL_render(void) {
   MEL_begin2D(&Rend);
 
-  MEL_draw_rect(mctx, &Rend, &bg, default_camera);
+  MEL_draw_rect(ctx, &Rend, &bg, default_camera);
   crate.rect.size[0] = 20;
   crate.rect.size[1] = 20;
   for (u32 row = 0; row < 100; ++row) {
     for (u32 column = 0; column < 100; ++column) {
       crate.rect.pos[0] = column * 20;
       crate.rect.pos[1] = row * 20;
-      MEL_draw_tex(mctx, &Rend, &crate, camera);
+      MEL_draw_tex(ctx, &Rend, &crate, camera);
     }
   }
 
-  MEL_end2D(&mctx, &Rend);
+  MEL_end2D(&ctx, &Rend);
 }
 
 void error_callback(i32 error, const char* description) {
@@ -207,56 +213,34 @@ void joystick_callback(i32 jid, i32 event) {
   }
 }
 
-void MEL_toggle_fullscreen(MEL_ctx ctx) {
-  if (!glfwGetWindowMonitor(ctx.window_ctx.window)) {
-    /* Currently windowed */
-    glfwSetWindowMonitor(ctx.window_ctx.window, glfwGetPrimaryMonitor(),
-                         (((f32) ctx.window_ctx.mode->width / 2.0f) -
-                          (ctx.width / 2.0f)),
-                         (((f32) ctx.window_ctx.mode->height / 2.0f) -
-                          (ctx.height / 2.0f)), ctx.width, ctx.height,
-                         ctx.window_ctx.mode->refreshRate);
-  } else {
-    /* Currently fullscreen */
-    glfwSetWindowMonitor(ctx.window_ctx.window, NULL,
-                         (((f32) ctx.window_ctx.mode->width / 2.0f) -
-                          (ctx.height / 2.0f)),
-                         (((f32) ctx.window_ctx.mode->height / 2.0f) -
-                          (ctx.height / 2.0f)), ctx.width, ctx.height,
-                         ctx.window_ctx.mode->refreshRate);
-  }
-}
-
-void MEL_local_mouse_pos(MEL_ctx ctx, f64 * x, f64 * y) {
-  glfwGetCursorPos(ctx.window_ctx.window, x, y);
-  vec2 scale =
-    { (ctx.window_ctx.n_width / ctx.width),
-(ctx.window_ctx.n_height / ctx.height) };
-  vec2 real = { ctx.width * scale[0], ctx.height * scale[1] };
-  vec2 r =
-    { ((ctx.window_ctx.n_width / 2) - (real[0] / 2)),
-((ctx.window_ctx.n_height / 2) - (real[1] / 2)) };
+void MEL_local_mouse_pos(mel_t ctx, f64 * x, f64 * y) {
+  glfwGetCursorPos(ctx.window, x, y);
+  vec2 scale = { (ctx.width / ctx.initial_width),
+    (ctx.height / ctx.initial_height)
+  };
+  vec2 real = { ctx.initial_width * scale[0], ctx.initial_height * scale[1] };
+  vec2 r = { ((ctx.width / 2) - (real[0] / 2)),
+    ((ctx.height / 2) - (real[1] / 2))
+  };
   vec2 adjustedMouse = { *x - r[0], *y - r[1] };
 
-  *x = (f32) adjustedMouse[0] / (f32) real[0] * (f32) ctx.width;
-  *y = (f32) adjustedMouse[1] / (f32) real[1] * (f32) ctx.height;
-
+  *x = (f32) adjustedMouse[0] / (f32) real[0] * (f32) ctx.initial_width;
+  *y = (f32) adjustedMouse[1] / (f32) real[1] * (f32) ctx.initial_height;
 }
 
 void window_size_callback(GLFWwindow * window, i32 width, i32 height) {
-  mctx.window_ctx.n_width = width;
-  mctx.window_ctx.n_height = height;
+  ctx.width = width;
+  ctx.height = height;
 
   f32 t_w = width;
-  f32 t_h = (width / (mctx.width / mctx.height));
+  f32 t_h = (width / (ctx.initial_width / ctx.initial_height));
   if (t_h > height) {
     t_h = height;
-    t_w = (t_h * (mctx.width / mctx.height));
+    t_w = (t_h * (ctx.initial_width / ctx.initial_height));
   }
 
-  mctx.window_ctx.padx = ((width - t_w) / 2.0f);
-  mctx.window_ctx.pady = ((height - t_h) / 2.0f);
-  glViewport(mctx.window_ctx.padx, mctx.window_ctx.pady, t_w, t_h);
-  glm_ortho(0, mctx.width, mctx.height, 0, -1.0f, 1.0f, Rend.projection);
+  glViewport(((width - t_w) / 2.0f), ((height - t_h) / 2.0f), t_w, t_h);
+  glm_ortho(0, ctx.initial_width, ctx.initial_height, 0, -1.0f, 1.0f,
+            Rend.projection);
 
 }

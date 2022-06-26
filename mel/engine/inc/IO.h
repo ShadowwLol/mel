@@ -93,6 +93,11 @@ inline static FN realloc_str(String * s, uint64_t bytes) {
 
 /* Set String `str`s buffer to `src` and update String */
 inline static FN set_str(String * str, const char* src) {
+  if (!str->length) {
+    *str = init_str(src);
+    return 0;
+  }
+
   size_t src_len = strlen(src);
   str->length = src_len;
   if (str->cap < str->length) {

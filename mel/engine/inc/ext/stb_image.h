@@ -565,8 +565,7 @@ extern "C" {
   STBIDEF char* stbi_zlib_decode_malloc_guesssize_headerflag(const char*
                                                              buffer, int len,
                                                              int initial_size,
-                                                             int* outlen,
-                                                             int
+                                                             int* outlen, int
                                                              parse_header);
   STBIDEF char* stbi_zlib_decode_malloc(const char* buffer, int len,
                                         int* outlen);
@@ -1365,14 +1364,12 @@ static FILE* stbi__fopen(char const* filename, char const* mode) {
 #if defined(_WIN32) && defined(STBI_WINDOWS_UTF8)
   wchar_t wMode[64];
   wchar_t wFilename[1024];
-  if (0 ==
-      MultiByteToWideChar(65001 /* UTF8 */ , 0, filename, -1, wFilename,
-                          sizeof(wFilename) / sizeof(*wFilename)))
+  if (0 == MultiByteToWideChar(65001 /* UTF8 */ , 0, filename, -1, wFilename,
+                               sizeof(wFilename) / sizeof(*wFilename)))
     return 0;
 
-  if (0 ==
-      MultiByteToWideChar(65001 /* UTF8 */ , 0, mode, -1, wMode,
-                          sizeof(wMode) / sizeof(*wMode)))
+  if (0 == MultiByteToWideChar(65001 /* UTF8 */ , 0, mode, -1, wMode,
+                               sizeof(wMode) / sizeof(*wMode)))
     return 0;
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -2052,9 +2049,8 @@ static stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp) {
     n = comp - 1;
   for (i = 0; i < x * y; ++i) {
     for (k = 0; k < n; ++k) {
-      float z =
-        (float) pow(data[i * comp + k] * stbi__h2l_scale_i,
-                    stbi__h2l_gamma_i) * 255 + 0.5f;
+      float z = (float) pow(data[i * comp + k] * stbi__h2l_scale_i,
+                            stbi__h2l_gamma_i) * 255 + 0.5f;
       if (z < 0)
         z = 0;
       if (z > 255)
@@ -2258,7 +2254,8 @@ static void stbi__grow_buffer_unsafe(stbi__jpeg * j) {
 // (1 << n) - 1
 static const stbi__uint32 stbi__bmask[17] =
   { 0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383,
-32767, 65535 };
+  32767, 65535
+};
 
 // decode a jpeg huffman value from the bitstream
 stbi_inline static int stbi__jpeg_huff_decode(stbi__jpeg * j,
@@ -2304,8 +2301,8 @@ stbi_inline static int stbi__jpeg_huff_decode(stbi__jpeg * j,
   // convert the huffman code to the symbol id
   c = ((j->code_buffer >> (32 - k)) & stbi__bmask[k]) + h->delta[k];
   STBI_ASSERT((((j->code_buffer) >> (32 -
-                                     h->size[c])) & stbi__bmask[h->
-                                                                size[c]]) ==
+                                     h->
+                                     size[c])) & stbi__bmask[h->size[c]]) ==
               h->code[c]);
 
   // convert the id to a symbol
@@ -2317,7 +2314,8 @@ stbi_inline static int stbi__jpeg_huff_decode(stbi__jpeg * j,
 // bias[n] = (-1<<n) + 1
 static const int stbi__jbias[16] =
   { 0, -1, -3, -7, -15, -31, -63, -127, -255, -511, -1023, -2047, -4095,
--8191, -16383, -32767 };
+  -8191, -16383, -32767
+};
 
 // combined JPEG 'receive' and JPEG 'extend', since baseline
 // always extends everything it receives.
@@ -2791,30 +2789,29 @@ static void stbi__idct_simd(stbi_uc * out, int out_stride, short data[64]) {
          dct_bfly32o(row3,row4, x3,x4,bias,shift); \
       }
 
-  __m128i rot0_0 =
-    dct_const(stbi__f2f(0.5411961f),
-              stbi__f2f(0.5411961f) + stbi__f2f(-1.847759065f));
-  __m128i rot0_1 =
-    dct_const(stbi__f2f(0.5411961f) + stbi__f2f(0.765366865f),
-              stbi__f2f(0.5411961f));
+  __m128i rot0_0 = dct_const(stbi__f2f(0.5411961f),
+                             stbi__f2f(0.5411961f) +
+                             stbi__f2f(-1.847759065f));
+  __m128i rot0_1 = dct_const(stbi__f2f(0.5411961f) + stbi__f2f(0.765366865f),
+                             stbi__f2f(0.5411961f));
   __m128i rot1_0 =
     dct_const(stbi__f2f(1.175875602f) + stbi__f2f(-0.899976223f),
               stbi__f2f(1.175875602f));
-  __m128i rot1_1 =
-    dct_const(stbi__f2f(1.175875602f),
-              stbi__f2f(1.175875602f) + stbi__f2f(-2.562915447f));
+  __m128i rot1_1 = dct_const(stbi__f2f(1.175875602f),
+                             stbi__f2f(1.175875602f) +
+                             stbi__f2f(-2.562915447f));
   __m128i rot2_0 =
     dct_const(stbi__f2f(-1.961570560f) + stbi__f2f(0.298631336f),
               stbi__f2f(-1.961570560f));
-  __m128i rot2_1 =
-    dct_const(stbi__f2f(-1.961570560f),
-              stbi__f2f(-1.961570560f) + stbi__f2f(3.072711026f));
+  __m128i rot2_1 = dct_const(stbi__f2f(-1.961570560f),
+                             stbi__f2f(-1.961570560f) +
+                             stbi__f2f(3.072711026f));
   __m128i rot3_0 =
     dct_const(stbi__f2f(-0.390180644f) + stbi__f2f(2.053119869f),
               stbi__f2f(-0.390180644f));
-  __m128i rot3_1 =
-    dct_const(stbi__f2f(-0.390180644f),
-              stbi__f2f(-0.390180644f) + stbi__f2f(1.501321110f));
+  __m128i rot3_1 = dct_const(stbi__f2f(-0.390180644f),
+                             stbi__f2f(-0.390180644f) +
+                             stbi__f2f(1.501321110f));
 
   // rounding biases in column/row passes, see stbi__idct_block for explanation.
   __m128i bias_0 = _mm_set1_epi32(512);
@@ -4625,17 +4622,19 @@ static const int stbi__zlength_base[31] = {
 
 static const int stbi__zlength_extra[31] =
   { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5,
-5, 5, 5, 0, 0, 0 };
+  5, 5, 5, 0, 0, 0
+};
 
 static const int stbi__zdist_base[32] =
   { 1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
   257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385,
-    24577, 0, 0
+  24577, 0, 0
 };
 
 static const int stbi__zdist_extra[32] =
   { 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10,
-11, 11, 12, 12, 13, 13 };
+  11, 11, 12, 12, 13, 13
+};
 
 static int stbi__parse_huffman_block(stbi__zbuf * a) {
   char* zout = a->zout;
@@ -4801,28 +4800,28 @@ static int stbi__parse_zlib_header(stbi__zbuf * a) {
 
 static const stbi_uc stbi__zdefault_length[STBI__ZNSYMS] = {
   8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 8, 8, 8,
+  8, 8, 8, 8, 8, 8, 8,
   8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 8, 8, 8,
+  8, 8, 8, 8, 8, 8, 8,
   8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 8, 8, 8,
+  8, 8, 8, 8, 8, 8, 8,
   8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 8, 8, 8,
+  8, 8, 8, 8, 8, 8, 8,
   8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-    9, 9, 9, 9, 9, 9, 9,
+  9, 9, 9, 9, 9, 9, 9,
   9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-    9, 9, 9, 9, 9, 9, 9,
+  9, 9, 9, 9, 9, 9, 9,
   9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-    9, 9, 9, 9, 9, 9, 9,
+  9, 9, 9, 9, 9, 9, 9,
   9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
-    9, 9, 9, 9, 9, 9, 9,
+  9, 9, 9, 9, 9, 9, 9,
   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8,
-    8, 8, 8, 8, 8, 8, 8
+  8, 8, 8, 8, 8, 8, 8
 };
 
 static const stbi_uc stbi__zdefault_distance[32] = {
   5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 5, 5, 5, 5, 5
+  5, 5, 5, 5, 5, 5, 5
 };
 
 /*
@@ -5740,8 +5739,7 @@ static int stbi__parse_png_file(stbi__png * z, int scan, int req_comp) {
             return stbi__err("no IDAT", "Corrupt PNG");
           // initial guess for decoded data size to avoid unnecessary reallocs
           bpl = (s->img_x * z->depth + 7) / 8;  // bytes per line, per component
-          raw_len =
-            bpl * s->img_y * s->img_n /* pixels */  +
+          raw_len = bpl * s->img_y * s->img_n /* pixels */  +
             s->img_y /* filter mode per row */ ;
           z->expanded =
             (stbi_uc *) stbi_zlib_decode_malloc_guesssize_headerflag((char *)
@@ -5977,9 +5975,9 @@ static int stbi__shiftsigned(unsigned int v, int shift, int bits) {
   static unsigned int mul_table[9] = {
     0,
     0xff /*0b11111111 */ , 0x55 /*0b01010101 */ , 0x49 /*0b01001001 */ ,
-      0x11 /*0b00010001 */ ,
+    0x11 /*0b00010001 */ ,
     0x21 /*0b00100001 */ , 0x41 /*0b01000001 */ , 0x81 /*0b10000001 */ ,
-      0x01 /*0b00000001 */ ,
+    0x01 /*0b00000001 */ ,
   };
   static unsigned int shift_table[9] = {
     0, 0, 0, 1, 0, 2, 4, 6, 0,
@@ -7549,8 +7547,8 @@ static stbi_uc* stbi__gif_load_next(stbi__context * s, stbi__gif * g,
 
           if (g->lflags & 0x80) {
             stbi__gif_parse_colortable(s, g->lpal, 2 << (g->lflags & 7),
-                                       g->eflags & 0x01 ? g->
-                                       transparent : -1);
+                                       g->
+                                       eflags & 0x01 ? g->transparent : -1);
             g->color_table = (stbi_uc *) g->lpal;
           } else if (g->flags & 0x80) {
             g->color_table = (stbi_uc *) g->pal;
@@ -7675,9 +7673,9 @@ static void* stbi__load_gif_main(stbi__context * s, int** delays, int* x,
           }
 
           if (delays) {
-            int* new_delays =
-              (int *) STBI_REALLOC_SIZED(*delays, delays_size,
-                                         sizeof(int) * layers);
+            int* new_delays = (int *) STBI_REALLOC_SIZED(*delays, delays_size,
+                                                         sizeof(int) *
+                                                         layers);
             if (!new_delays)
               return stbi__load_gif_main_outofmem(&g, out, delays);
             *delays = new_delays;

@@ -141,7 +141,7 @@ static void MEL_send_tex(MEL_Renderer2D * Renderer, MEL_Texture source) {
   ++Renderer->ID;
 }
 
-void MEL_draw_tex(MEL_ctx ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img,
+void MEL_draw_tex(mel_t ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img,
                   MEL_Camera Camera) {
   if (is_visible(ctx, Img->rect, Camera)) {
     if (Renderer->ID >= MAX_QUAD_COUNT) {
