@@ -2301,8 +2301,8 @@ stbi_inline static int stbi__jpeg_huff_decode(stbi__jpeg * j,
   // convert the huffman code to the symbol id
   c = ((j->code_buffer >> (32 - k)) & stbi__bmask[k]) + h->delta[k];
   STBI_ASSERT((((j->code_buffer) >> (32 -
-                                     h->size[c])) & stbi__bmask[h->
-                                                                size[c]]) ==
+                                     h->
+                                     size[c])) & stbi__bmask[h->size[c]]) ==
               h->code[c]);
 
   // convert the id to a symbol
@@ -7547,8 +7547,8 @@ static stbi_uc* stbi__gif_load_next(stbi__context * s, stbi__gif * g,
 
           if (g->lflags & 0x80) {
             stbi__gif_parse_colortable(s, g->lpal, 2 << (g->lflags & 7),
-                                       g->eflags & 0x01 ? g->
-                                       transparent : -1);
+                                       g->
+                                       eflags & 0x01 ? g->transparent : -1);
             g->color_table = (stbi_uc *) g->lpal;
           } else if (g->flags & 0x80) {
             g->color_table = (stbi_uc *) g->pal;

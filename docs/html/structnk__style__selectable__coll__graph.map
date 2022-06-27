@@ -1,0 +1,10 @@
+<map id="nk_style_selectable" name="nk_style_selectable">
+<area shape="rect" id="node1" title=" " alt="" coords="71,613,208,640"/>
+<area shape="rect" id="node2" href="$structnk__style__item.html" title=" " alt="" coords="137,451,240,477"/>
+<area shape="rect" id="node3" href="$unionnk__style__item__data.html" title=" " alt="" coords="159,273,293,300"/>
+<area shape="rect" id="node4" href="$structnk__color.html" title=" " alt="" coords="71,184,141,211"/>
+<area shape="rect" id="node5" href="$structnk__image.html" title=" " alt="" coords="157,95,236,121"/>
+<area shape="rect" id="node7" href="$structnk__nine__slice.html" title=" " alt="" coords="261,184,362,211"/>
+<area shape="rect" id="node6" href="$unionnk__handle.html" title=" " alt="" coords="5,5,87,32"/>
+<area shape="rect" id="node8" href="$structnk__vec2.html" title=" " alt="" coords="264,451,335,477"/>
+</map>

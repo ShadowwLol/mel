@@ -23,7 +23,7 @@ MEL_Texture crate;
 MEL_ColorRect bg;
 MEL_ColorRect rectangle;
 
-/* here you can (de)initialize the mel context used 
+/*! here you can (de)initialize the mel context used 
    and run non-OpenGL code before the application  */
 i32 main(i32 argc, char** argv) {
   return mel_init(&ctx, "Shadowws Game", 1280, 720, init, quit, update,
@@ -32,7 +32,7 @@ i32 main(i32 argc, char** argv) {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* here you can write OpenGL code 
+/*! here you can write OpenGL code 
    that runs before the whole application  */
 static void init(void) {
   Rend = MEL_Renderer2D_init(ctx);
@@ -73,7 +73,7 @@ static void init(void) {
 
 /* * * * * * * * * * * * * * * * * * * * * */
 
-/* here you can write OpenGL code 
+/*! here you can write OpenGL code 
    that runs after the whole application  */
 static void quit(void) {
   MEL_destroy_image(smiley);

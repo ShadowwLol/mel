@@ -7287,8 +7287,8 @@ NK_LIB void* nk_memcopy(void* dst0, const void* src0, nk_size length) {
     }
     t = length / nk_wsize;
     NK_TLOOP(*(nk_word *) (void *) dst =
-             *(const nk_word *) (const void *) src; src += nk_wsize;
-             dst += nk_wsize);
+             *(const nk_word *) (const void *) src;
+             src += nk_wsize; dst += nk_wsize);
     t = length & nk_wmask;
     NK_TLOOP(*dst++ = *src++);
   } else {
@@ -8782,8 +8782,8 @@ NK_INTERN nk_rune nk_utf_decode_byte(char c, int* i) {
   if (!i)
     return 0;
   for (*i = 0; *i < (int) NK_LEN(nk_utfmask); ++(*i)) {
-    if( ( (nk_byte) c & nk_utfmask[*i]) == nk_utfbyte[*i])
-      return(nk_byte)(c & ~nk_utfmask[*i]);
+    if (((nk_byte) c & nk_utfmask[*i]) == nk_utfbyte[*i])
+      return (nk_byte)(c & ~nk_utfmask[*i]);
   }
   return 0;
 }
@@ -11972,7 +11972,7 @@ extern "C" {
 }
 #endif
 #endif
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /* //////////////////////////////////////////////////////////////////////////// *//*  *//*      IMPLEMENTATION SECTION *//*  */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             /* //////////////////////////////////////////////////////////////////////////// *//*  *//*      IMPLEMENTATION SECTION *//*  */
 #ifdef STB_RECT_PACK_IMPLEMENTATION
 #ifndef STBRP_SORT
 #include <stdlib.h>
@@ -13662,7 +13662,7 @@ extern "C" {
 }
 #endif
 #endif                          /*  __STB_INCLUDE_STB_TRUETYPE_H__ */
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            /* ///////////////////////////////////////////////////////////////////////////// *//* ///////////////////////////////////////////////////////////////////////////// *//* // *//* //   IMPLEMENTATION *//* // *//* // */
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           /* ///////////////////////////////////////////////////////////////////////////// *//* ///////////////////////////////////////////////////////////////////////////// *//* // *//* //   IMPLEMENTATION *//* // *//* // */
 #ifdef STB_TRUETYPE_IMPLEMENTATION
 #ifndef STBTT_MAX_OVERSAMPLE
 #define STBTT_MAX_OVERSAMPLE   8
@@ -21396,14 +21396,14 @@ nk_panel_begin(struct nk_context* ctx, const char* title,
         }
         if (nk_do_button_symbol
             (&ws, &win->buffer, button,
-             (layout->flags & NK_WINDOW_MINIMIZED) ? style->window.header.
-             maximize_symbol : style->window.header.minimize_symbol,
+             (layout->flags & NK_WINDOW_MINIMIZED) ? style->window.
+             header.maximize_symbol : style->window.header.minimize_symbol,
              NK_BUTTON_DEFAULT, &style->window.header.minimize_button, in,
              style->font) && !(win->flags & NK_WINDOW_ROM))
           layout->flags =
-            (layout->flags & NK_WINDOW_MINIMIZED) ? layout->
-            flags & (nk_flags) ~ NK_WINDOW_MINIMIZED : layout->
-            flags | NK_WINDOW_MINIMIZED;
+            (layout->
+             flags & NK_WINDOW_MINIMIZED) ? layout->flags & (nk_flags) ~
+            NK_WINDOW_MINIMIZED : layout->flags | NK_WINDOW_MINIMIZED;
       }
     }
 
@@ -21993,13 +21993,11 @@ nk_begin_titled(struct nk_context* ctx, const char* name, const char* title,
       ctx->style.font->height + 2.0f * style->window.header.padding.y +
       (2.0f * style->window.header.label_padding.y);
     struct nk_rect win_bounds =
-      (!(win->flags & NK_WINDOW_MINIMIZED)) ? win->bounds : nk_rect(win->
-                                                                    bounds.x,
-                                                                    win->
-                                                                    bounds.y,
-                                                                    win->
-                                                                    bounds.w,
-                                                                    h);
+      (!(win->flags & NK_WINDOW_MINIMIZED)) ? win->
+      bounds : nk_rect(win->bounds.x,
+                       win->bounds.y,
+                       win->bounds.w,
+                       h);
 
     /* activate window if hovered and no other window is overlapping this window */
     inpanel =
@@ -30287,8 +30285,8 @@ nk_chart_push_line(struct nk_context* ctx, struct nk_window* win,
       ret =
         nk_input_is_mouse_hovering_rect(i, bounds) ? NK_CHART_HOVERING : 0;
       ret |= (i->mouse.buttons[NK_BUTTON_LEFT].down
-              && i->mouse.buttons[NK_BUTTON_LEFT].
-              clicked) ? NK_CHART_CLICKED : 0;
+              && i->mouse.
+              buttons[NK_BUTTON_LEFT].clicked) ? NK_CHART_CLICKED : 0;
       color = g->slots[slot].highlight;
     }
     nk_fill_rect(out, bounds, 0, color);
@@ -30312,8 +30310,8 @@ nk_chart_push_line(struct nk_context* ctx, struct nk_window* win,
     if (nk_input_is_mouse_hovering_rect(i, bounds)) {
       ret = NK_CHART_HOVERING;
       ret |= (!i->mouse.buttons[NK_BUTTON_LEFT].down &&
-              i->mouse.buttons[NK_BUTTON_LEFT].
-              clicked) ? NK_CHART_CLICKED : 0;
+              i->mouse.
+              buttons[NK_BUTTON_LEFT].clicked) ? NK_CHART_CLICKED : 0;
       color = g->slots[slot].highlight;
     }
   }

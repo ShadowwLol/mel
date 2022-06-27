@@ -1,0 +1,13 @@
+<map id="nk_text_edit" name="nk_text_edit">
+<area shape="rect" id="node1" title=" " alt="" coords="167,404,261,431"/>
+<area shape="rect" id="node2" href="$structnk__text__undo__state.html" title=" " alt="" coords="11,315,147,341"/>
+<area shape="rect" id="node3" href="$structnk__text__undo__record.html" title=" " alt="" coords="5,225,148,252"/>
+<area shape="rect" id="node4" href="$structnk__clipboard.html" title=" " alt="" coords="120,175,215,201"/>
+<area shape="rect" id="node5" href="$unionnk__handle.html" title=" " alt="" coords="129,5,211,32"/>
+<area shape="rect" id="node9" href="$structnk__allocator.html" title=" " alt="" coords="168,124,260,151"/>
+<area shape="rect" id="node6" href="$structnk__vec2.html" title=" " alt="" coords="307,315,377,341"/>
+<area shape="rect" id="node7" href="$structnk__str.html" title=" " alt="" coords="223,315,282,341"/>
+<area shape="rect" id="node8" href="$structnk__buffer.html" title=" " alt="" coords="291,225,367,252"/>
+<area shape="rect" id="node10" href="$structnk__buffer__marker.html" title=" " alt="" coords="285,124,407,151"/>
+<area shape="rect" id="node11" href="$structnk__memory.html" title=" " alt="" coords="431,124,522,151"/>
+</map>

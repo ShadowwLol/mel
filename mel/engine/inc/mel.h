@@ -37,10 +37,10 @@ static mel_t old = { NULL };
 /* mel (de)initialization  */
 static fn mel_init(mel_t * ctx, const char* title,
                    f64 width, f64 height,
-                   void (*init)(void), void (*quit)(void),
-                   void (*update)(void), void (*resize)(GLFWwindow *, i32,
-                                                        i32),
-                   void (*input)(void), void (*joystick)(i32, i32), u8 cfg);
+                   void (*init)(void), void(*quit)(void),
+                   void(*update)(void), void(*resize)(GLFWwindow *, i32,
+                                                      i32),
+                   void(*input)(void), void(*joystick)(i32, i32), u8 cfg);
 static void mel_free(mel_t * ctx);
 /* * * * * * * * * * * * * */
 
@@ -53,14 +53,14 @@ inline static void error_callback(i32 error, const char* description) {
 inline static fn mel_init(mel_t * ctx, const char* title,
                           f64 width, f64 height,
                           void (*init)(void),
-                          void(*quit)(void),
-                          void(*update)(void),
-                          void(*resize)(GLFWwindow *, i32, i32),
-                          void(*input)(void),
-                          void(*joystick)(i32, i32), flag cfg) {
+                          void (*quit)(void),
+                          void (*update)(void),
+                          void (*resize)(GLFWwindow *, i32, i32),
+                          void (*input)(void),
+                          void (*joystick)(i32, i32), flag cfg) {
 
-  if (!ctx || !title || !width || !height || !init || !quit || !update
-      || !resize || !input || !joystick) {
+  if(!ctx || !title || !width || !height || !init || !quit || !update
+     || !resize || !input || !joystick) {
     mlog(LOG_ERROR, "Failed initializing MEL");
     return xf;
   }
@@ -157,8 +157,8 @@ inline static void update_cfg(mel_t * ctx) {
   /* Update window title */
   if (!old.title.buffer || strncmp(ctx->title.buffer, old.title.buffer,
                                    ((ctx->title.length >
-                                     old.title.length) ? ctx->
-                                    title.length : old.title.length)) != 0) {
+                                     old.title.length) ? ctx->title.
+                                    length : old.title.length)) != 0) {
     set_str(&old.title, ctx->title.buffer);
     glfwSetWindowTitle(ctx->window, old.title.buffer);
   }
