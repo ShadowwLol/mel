@@ -10,18 +10,23 @@
 #include "ext/stb_image.h"
 
 typedef struct {
-  GLuint id;                    /* Texture ID: [i]   */
-  GLuint texture;               /* Texture   : [i]   */
-  MEL_Rect rect;                /* Rect      : [...] */
-} MEL_Texture;
+  GLuint id;      /* Texture ID : [i]               */
+  GLuint texture; /* Texture    : [i]               */
+  vec4 src;       /* src[0:1] => pos ; src[2:3] = sz */
+  vec4 dst;       /* dst[0:1] => pos ; dst[2:3] = sz */
+  vec2 sz;
+  vec4 col;
+  f32 rot;
 
-#define MEL_destroy_image(image){\
-	glBindTexture(GL_TEXTURE_2D, 0);\
-	glDeleteTextures(1, &image.texture);\
-}
+  mat4 mvp;
+} texture_t;
 
-MEL_Texture MEL_load_tex(MEL_Renderer2D *, GLchar *, GLenum, GLenum, GLenum);
-void MEL_draw_tex(mel_t ctx, MEL_Renderer2D * Renderer, MEL_Texture * Img,
-                  MEL_Camera Camera);
+texture_t mel_rect(MEL_Renderer2D * Renderer);
+texture_t MEL_load_tex(MEL_Renderer2D *, GLchar *, GLenum, GLenum, GLenum);
+void MEL_draw_rect(mel_t, MEL_Renderer2D *, texture_t *,
+                  MEL_Camera);
+void MEL_draw_tex(mel_t, MEL_Renderer2D *, texture_t *,
+                  MEL_Camera);
+void mel_free_texture(texture_t * texture);
 
 #endif

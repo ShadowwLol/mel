@@ -18,12 +18,10 @@ MEL_Renderer2D Rend;
 MEL_Camera camera;
 MEL_Camera default_camera;
 
-MEL_Texture smiley;
-MEL_Texture crate;
-MEL_ColorRect bg;
-MEL_ColorRect rectangle;
+texture_t atlas;
+texture_t bg;
 
-/*! here you can (de)initialize the mel context used 
+/*! here you can (de)initialize the mel context used
    and run non-OpenGL code before the application  */
 i32 main(i32 argc, char** argv) {
   return mel_init(&ctx, "Shadowws Game", 1280, 720, init, quit, update,
@@ -32,40 +30,31 @@ i32 main(i32 argc, char** argv) {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*! here you can write OpenGL code 
+/*! here you can write OpenGL code
    that runs before the whole application  */
 static void init(void) {
   Rend = MEL_Renderer2D_init(ctx);
 
   /* Textures && Rects  */
-  rectangle = MEL_init_rect(&Rend);
-  rectangle.size[0] = 200;
-  rectangle.size[1] = 400;
-  rectangle.color[0] = 0.8f;
-  rectangle.color[1] = 0.0f;
-  rectangle.color[2] = 0.2f;
-  rectangle.rotation = 70;
+  bg = mel_rect(&Rend);
+  bg.dst[2] = ctx.width;
+  bg.dst[3] = ctx.height;
+  bg.sz[0] = ctx.width;
+  bg.sz[1] = ctx.height;
+  bg.col[0] = 0.2f;
+  bg.col[1] = 0.0f;
+  bg.col[2] = 0.8;
 
-  bg = MEL_init_rect(&Rend);
-  bg.size[0] = ctx.width;
-  bg.size[1] = ctx.height;
-  bg.color[0] = 0.2f;
-  bg.color[1] = 0.0f;
-  bg.color[2] = 0.8;
-
-  smiley =
-    MEL_load_tex(&Rend, "resources/images/smiley.png", GL_RGBA,
+  atlas =
+    MEL_load_tex(&Rend, "resources/images/atlas.png", GL_RGBA,
                  GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-  smiley.rect.pos[0] = 640.0f;
-  smiley.rect.pos[1] = 360.0f;
-  smiley.rect.color[3] = 0.5f;
-  crate =
-    MEL_load_tex(&Rend, "resources/images/container.jpg", GL_RGB,
-                 GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-  smiley.rect.pos[0] = 640.0f;
 
-  crate.rect.size[0] /= 2;
-  crate.rect.size[1] /= 2;
+  atlas.src[0]    = 0.0f;
+  atlas.src[1]    = 0.0f;
+  atlas.src[2]   /= 4; // 4 = hindex
+  atlas.src[3]   /= 4; // 4  = vindex
+  atlas.dst[2] /= 2;
+  atlas.dst[3] /= 2;
 
   MEL_init_camera(default_camera);
   MEL_init_camera(camera);
@@ -73,11 +62,10 @@ static void init(void) {
 
 /* * * * * * * * * * * * * * * * * * * * * */
 
-/*! here you can write OpenGL code 
+/*! here you can write OpenGL code
    that runs after the whole application  */
 static void quit(void) {
-  MEL_destroy_image(smiley);
-  MEL_destroy_image(crate);
+  mel_free_texture(&atlas);
   MEL_Renderer2D_destroy(&Rend);
   MEL_quit(&ctx);
 }
@@ -95,18 +83,19 @@ static void update(void) {
   MEL_begin2D(&Rend);
 
   MEL_draw_rect(ctx, &Rend, &bg, default_camera);
-  crate.rect.size[0] = 20;
-  crate.rect.size[1] = 20;
+  //crate.dest.size[0] = 20;
+  //crate.dest.size[1] = 20;
 
-  /* draw 10,000 entities */
-  for (u32 row = 0; row < 100; ++row) {
-    for (u32 column = 0; column < 100; ++column) {
-      crate.rect.pos[0] = column * 20;
-      crate.rect.pos[1] = row * 20;
-      MEL_draw_tex(ctx, &Rend, &crate, camera);
-    }
-  }
-
+//  /* draw 10,000 entities */
+//  for (u32 row = 0; row < 100; ++row) {
+//    for (u32 column = 0; column < 100; ++column) {
+//      crate.dest.pos[0] = column * 20;
+//      crate.dest.pos[1] = row * 20;
+//      MEL_draw_tex(ctx, &Rend, &crate, camera);
+//    }
+//  }
+//
+  MEL_draw_tex(ctx, &Rend, &atlas, camera);
   MEL_end2D(&ctx, &Rend);
 }
 
@@ -160,6 +149,7 @@ static void input(void) {
   i8 KEY_DOWN = mel_key(GLFW_KEY_DOWN);
 
   i8 KEY_L = mel_key(GLFW_KEY_L);
+  i8 KEY_SPACE = mel_key(GLFW_KEY_SPACE);
 
   if (KEY_W && !KEY_S) {
     camera.pos[1] -= 800 * MEL_delta();
@@ -186,6 +176,14 @@ static void input(void) {
     camera.scale[0] -= 0.4f * MEL_delta();
     camera.scale[1] -= 0.4f * MEL_delta();
   }
+
+  if (KEY_SPACE == MEL_RELEASE){
+    atlas.src[0] += atlas.sz[0] / 4;
+    if (atlas.src[0] >= atlas.sz[0]){
+      atlas.src[0] = 0.0f;
+    }
+  }
+
   /* * * * * */
 }
 

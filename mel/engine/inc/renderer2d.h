@@ -16,17 +16,6 @@
 #define MAX_INDEX_COUNT  (INDEX_COUNT * MAX_QUAD_COUNT)
 
 typedef struct {
-  GLuint id;
-  vec2 pos;
-  vec2 size;
-  vec4 color;
-  mat4 mvp;
-  GLfloat rotation;
-} MEL_Rect;
-
-typedef MEL_Rect MEL_ColorRect;
-
-typedef struct {
   mat4 projection;
   GLuint* default_texture;
 
@@ -36,11 +25,7 @@ typedef struct {
   GLfloat vertices[MAX_VERTEX_COUNT];
 } MEL_Renderer2D;
 
-bool is_visible(mel_t ctx, MEL_Rect rect, MEL_Camera camera);
 MEL_Renderer2D MEL_Renderer2D_init(mel_t);
-MEL_ColorRect MEL_init_rect(MEL_Renderer2D *);
-void MEL_draw_rect(mel_t ctx, MEL_Renderer2D * Renderer,
-                   MEL_ColorRect * Rect, MEL_Camera Camera);
 
 void MEL_begin2D(MEL_Renderer2D * Renderer);
 void MEL_end2D(mel_t * ctx, MEL_Renderer2D * Renderer);
